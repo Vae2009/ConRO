@@ -44,6 +44,7 @@ ConRO.Colors = {
 	[10] = '|cFF00FF96',
 	[11] = '|cFFFF7D0A',
 	[12] = '|cFFA330C9',
+	[13] = '|cFF33937F',
 }
 
 ConRO.ClassRGB = {
@@ -59,6 +60,7 @@ ConRO.ClassRGB = {
 	[10] = {r = 0.00,g = 1.00,b = 0.60, a = 1.00},
 	[11] = {r = 1.00,g = 0.49,b = 0.04, a = 1.00},
 	[12] = {r = 0.64,g = 0.19,b = 0.79, a = 1.00},
+	[13] = {r = 0.16,g = 0.45,b = 0.39, a = 1.00},
 }
 
 ConRO.Classes = {
@@ -74,6 +76,7 @@ ConRO.Classes = {
 	[10] = 'Monk',
 	[11] = 'Druid',
 	[12] = 'DemonHunter',
+	[13] = 'Evoker'
 }
 
 local defaultOptions = {
@@ -2515,13 +2518,15 @@ function ConRO:HealSpec()
 		[9] = 'Warlock',
 		[10] = 'Monk',
 		[11] = 'Druid',
-		[12] = 'DemonHunter',]]
+		[12] = 'DemonHunter',
+		[13] = 'Evoker']]
 
 	if (classId == 2 and specId == 1) or
 	(classId == 5 and specId == 2) or
 	(classId == 7 and specId == 3) or
 	(classId == 10 and specId == 2) or
-	(classId == 11 and specId == 4)	then
+	(classId == 11 and specId == 4)	or
+	(classId == 13 and specId == 2) then
 		return true;
 	end
 	return false;
