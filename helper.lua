@@ -977,6 +977,13 @@ function ConRO:PetAssist()
 	return attackstate, petspell;
 end
 
+function ConRO:Totem(slot)
+	local havetotem, totemName, startTime, duration = GetTotemInfo(slot);
+	local est_dur = round(startTime+duration-GetTime())
+
+	return havetotem, est_dur;
+end
+
 function ConRO:FormatTime(left)
 	local seconds = left >= 0        and math.floor((left % 60)    / 1   ) or 0;
 	local minutes = left >= 60       and math.floor((left % 3600)  / 60  ) or 0;
