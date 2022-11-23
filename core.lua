@@ -1,3 +1,4 @@
+---@diagnostic disable: missing-parameter
 local AceGUI = LibStub('AceGUI-3.0');
 local lsm = LibStub('AceGUISharedMediaWidgets-1.0');
 local media = LibStub('LibSharedMedia-3.0');
