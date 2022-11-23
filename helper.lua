@@ -979,7 +979,7 @@ end
 
 function ConRO:Totem(slot)
 	local havetotem, totemName, startTime, duration = GetTotemInfo(slot);
-	local est_dur = round(startTime+duration-GetTime())
+	local est_dur = startTime + duration - GetTime()
 
 	return havetotem, est_dur;
 end
