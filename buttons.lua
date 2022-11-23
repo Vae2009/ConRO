@@ -1116,7 +1116,9 @@ function ConRO:FindKeybinding(id)
 	if self.Keybinds[id] ~= nil then
 		for k, button in pairs(self.Keybinds[id]) do
 			for i = 1, 12 do
-				if button == 'MultiBarBottomLeftButton' .. i then
+				if button == 'ActionButton' .. i then
+					button = 'ACTIONBUTTON' .. i;
+				elseif button == 'MultiBarBottomLeftButton' .. i then
 					button = 'MULTIACTIONBAR1BUTTON' .. i;
 				elseif button == 'MultiBarBottomRightButton' .. i then
 					button = 'MULTIACTIONBAR2BUTTON' .. i;
@@ -1124,6 +1126,12 @@ function ConRO:FindKeybinding(id)
 					button = 'MULTIACTIONBAR3BUTTON' .. i;
 				elseif button == 'MultiBarLeftButton' .. i then
 					button = 'MULTIACTIONBAR4BUTTON' .. i;
+				elseif button == 'MultiBar5Button' .. i then
+					button = 'MULTIACTIONBAR5BUTTON' .. i;
+				elseif button == 'MultiBar6Button' .. i then
+					button = 'MULTIACTIONBAR6BUTTON' .. i;
+				elseif button == 'MultiBar7Button' .. i then
+					button = 'MULTIACTIONBAR7BUTTON' .. i;
 				end
 
 				keybind = GetBindingKey(button);
@@ -2228,7 +2236,7 @@ function ConRO:FetchDef()
 end
 
 function ConRO:FetchBlizzard()
-	local ActionBarsBlizzard = {'Stance', 'PetAction', 'Action', 'MultiBarBottomLeft', 'MultiBarBottomRight', 'MultiBarRight', 'MultiBarLeft'};
+	local ActionBarsBlizzard = {'Stance', 'PetAction', 'Action', 'MultiBarBottomLeft', 'MultiBarBottomRight', 'MultiBarRight', 'MultiBarLeft', 'MultiBar5', 'MultiBar6', 'MultiBar7'};
 	for _, barName in pairs(ActionBarsBlizzard) do
 		if barName == 'Stance' then
 			local x = GetNumShapeshiftForms();
@@ -2256,7 +2264,7 @@ function ConRO:FetchBlizzard()
 end
 
 function ConRO:DefFetchBlizzard()
-	local ActionBarsBlizzard = {'Stance', 'PetAction', 'Action', 'MultiBarBottomLeft', 'MultiBarBottomRight', 'MultiBarRight', 'MultiBarLeft'};
+	local ActionBarsBlizzard = {'Stance', 'PetAction', 'Action', 'MultiBarBottomLeft', 'MultiBarBottomRight', 'MultiBarRight', 'MultiBarLeft', 'MultiBar5', 'MultiBar6', 'MultiBar7'};
 	for _, barName in pairs(ActionBarsBlizzard) do
 		if barName == 'Stance' then
 			local x = GetNumShapeshiftForms();
@@ -2743,7 +2751,7 @@ function ConRO:AbilityInterrupt(_Spell, _Condition)
 	local color = ConRO.db.profile._Interrupt_Overlay_Color;
 	if self.Flags[_Spell] == nil then
 		self.Flags[_Spell] = false;
-		self:ClearAbilityInterruptIndependent(spell, spell);		--Trying out 8.2.8
+		self:ClearAbilityInterruptIndependent(_Spelll);
 		ConROInterruptWindow:SetSize(ConRO.db.profile.flashIconSize * .25, ConRO.db.profile.flashIconSize * .25);
 		ConROInterruptWindow.texture:SetVertexColor(.1, .1, .1);
 		if UIFrameIsFlashing(ConROInterruptWindow) then
@@ -2783,7 +2791,7 @@ function ConRO:AbilityPurge(_Spell, _Condition)
 	local color = ConRO.db.profile._Purge_Overlay_Color;
 	if self.Flags[_Spell] == nil then
 		self.Flags[_Spell] = false;
-		self:ClearAbilityPurgeIndependent(spell, spell);
+		self:ClearAbilityPurgeIndependent(_Spell);
 		ConROPurgeWindow:SetSize(ConRO.db.profile.flashIconSize * .25, ConRO.db.profile.flashIconSize * .25);
 		ConROPurgeWindow.texture:SetVertexColor(.1, .1, .1);
 		if UIFrameIsFlashing(ConROPurgeWindow) then
