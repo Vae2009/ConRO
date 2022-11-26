@@ -14,15 +14,17 @@ end
 
 function ConRO:CheckTalents()
 	self.PlayerTalents = {};
-	wipe(self.PlayerTalents)
-	local specID = PlayerUtil.GetCurrentSpecID();
-	local configID = C_ClassTalents.GetLastSelectedSavedConfigID(specID) or C_ClassTalents.GetActiveConfigID();
-	local configInfo = C_Traits.GetConfigInfo(configID);
-	local treeID = configInfo.treeIDs[1];
-	local nodes = C_Traits.GetTreeNodes(treeID);
+	local _Player_Level = UnitLevel("player");
+	if _Player_Level >= 10 then
+		wipe(self.PlayerTalents)
+		local specID = PlayerUtil.GetCurrentSpecID();
+		local configID = C_ClassTalents.GetLastSelectedSavedConfigID(specID) or C_ClassTalents.GetActiveConfigID();
+		local configInfo = C_Traits.GetConfigInfo(configID);
+		local treeID = configInfo.treeIDs[1];
+		local nodes = C_Traits.GetTreeNodes(treeID);
 
-	for _, nodeID in ipairs(nodes) do
-		local nodeInfo = C_Traits.GetNodeInfo(configID, nodeID);
+		for _, nodeID in ipairs(nodes) do
+			local nodeInfo = C_Traits.GetNodeInfo(configID, nodeID);
 			if nodeInfo.currentRank and nodeInfo.currentRank > 0 then
 				local entryID = nodeInfo.activeEntry and nodeInfo.activeEntry.entryID and nodeInfo.activeEntry.entryID;
 				local entryInfo = entryID and C_Traits.GetEntryInfo(configID, entryID)
@@ -34,6 +36,7 @@ function ConRO:CheckTalents()
 					tinsert(self.PlayerTalents[entryID], {["talentName"] = name, ["rank"] = nodeInfo.currentRank})
 				end
 			end
+		end
 	end
 end
 
