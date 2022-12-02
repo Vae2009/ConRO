@@ -18,24 +18,26 @@ function ConRO:CheckTalents()
 	wipe(self.PlayerTalents)
 	if select(1, GetSpecialization()) ~= 5 then
 		local specID = PlayerUtil.GetCurrentSpecID();
-		local configID = C_ClassTalents.GetLastSelectedSavedConfigID(specID) or C_ClassTalents.GetActiveConfigID();
+		local configID = C_ClassTalents.GetLastSelectedSavedConfigID(specID);
 		local configInfo = C_Traits.GetConfigInfo(configID);
-		if configInfo ~= nil then
-			local treeID = configInfo.treeIDs[1];
-			local nodes = C_Traits.GetTreeNodes(treeID);
+		if configInfo == nil then
+			configID = C_ClassTalents.GetActiveConfigID();
+			configInfo = C_Traits.GetConfigInfo(configID);
+		end
+		local treeID = configInfo.treeIDs[1];
+		local nodes = C_Traits.GetTreeNodes(treeID);
 
-			for _, nodeID in ipairs(nodes) do
-				local nodeInfo = C_Traits.GetNodeInfo(configID, nodeID);
-				if nodeInfo.currentRank and nodeInfo.currentRank > 0 then
-					local entryID = nodeInfo.activeEntry and nodeInfo.activeEntry.entryID and nodeInfo.activeEntry.entryID;
-					local entryInfo = entryID and C_Traits.GetEntryInfo(configID, entryID)
-					local definitionInfo = entryInfo and entryInfo.definitionID and C_Traits.GetDefinitionInfo(entryInfo.definitionID)
-					if definitionInfo ~= nil then
-						local name = TalentUtil.GetTalentName(definitionInfo.overrideName, definitionInfo.spellID)
-						tinsert(self.PlayerTalents, entryID);
-						self.PlayerTalents[entryID] = {};
-						tinsert(self.PlayerTalents[entryID], {["talentName"] = name, ["rank"] = nodeInfo.currentRank})
-					end
+		for _, nodeID in ipairs(nodes) do
+			local nodeInfo = C_Traits.GetNodeInfo(configID, nodeID);
+			if nodeInfo.currentRank and nodeInfo.currentRank > 0 then
+				local entryID = nodeInfo.activeEntry and nodeInfo.activeEntry.entryID and nodeInfo.activeEntry.entryID;
+				local entryInfo = entryID and C_Traits.GetEntryInfo(configID, entryID)
+				local definitionInfo = entryInfo and entryInfo.definitionID and C_Traits.GetDefinitionInfo(entryInfo.definitionID)
+				if definitionInfo ~= nil then
+					local name = TalentUtil.GetTalentName(definitionInfo.overrideName, definitionInfo.spellID)
+					tinsert(self.PlayerTalents, entryID);
+					self.PlayerTalents[entryID] = {};
+					tinsert(self.PlayerTalents[entryID], {["talentName"] = name, ["rank"] = nodeInfo.currentRank})
 				end
 			end
 		end
