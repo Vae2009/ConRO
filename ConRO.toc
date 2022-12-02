@@ -1,6 +1,6 @@
 ## Title:-|cffFFFFFFConRO|r- Conflict Rotation Optimizer
 ## Notes: Rotation helper framework.
-## Version: 10.0.8
+## Version: 10.0.9
 ## Author: Vae
 ## Interface: 100002
 ## SavedVariables: ConROPreferences
