@@ -895,6 +895,7 @@ end
 function ConRO:Cooldown(spellid, timeShift)
 	local start, maxCooldown, enabled = GetSpellCooldown(spellid);
 	local baseCooldownMS, gcdMS = GetSpellBaseCooldown(spellid);
+	local baseCooldown = 0;
 
 	if baseCooldownMS ~= nil then
 		baseCooldown = (baseCooldownMS/1000) + (timeShift or 0);
@@ -912,6 +913,7 @@ end
 function ConRO:ItemCooldown(itemid, timeShift)
 	local start, maxCooldown, enabled = GetItemCooldown(itemid);
 	local baseCooldownMS, gcdMS = GetSpellBaseCooldown(itemid);
+	local baseCooldown = 0;
 
 	if baseCooldownMS ~= nil then
 		baseCooldown = baseCooldownMS/1000;
