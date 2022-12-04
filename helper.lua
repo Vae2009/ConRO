@@ -797,6 +797,8 @@ function ConRO:AbilityReady(spellCheck, timeShift, spelltype)
 	local rdy = false;
 		if spelltype == 'pet' then
 			have = IsSpellKnown(spellid, true);
+		elseif spelltype == 'pvp' then
+			have = ConRO:PvPTalentChosen(entryID);
 		end
 		if have then
 			known = true;
