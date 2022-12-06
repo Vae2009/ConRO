@@ -193,6 +193,8 @@ ConRO.EnergyList = {
 }
 
 function ConRO:PlayerPower(_EnergyType)
+	local resource;
+
 	for k, v in pairs(ConRO.EnergyList) do
 		if v == _EnergyType then
 			resource = k;
@@ -794,6 +796,7 @@ function ConRO:AbilityReady(spellCheck, timeShift, spelltype)
 	local known = IsPlayerSpell(spellid);
 	local usable, notEnough = IsUsableSpell(spellid);
 	local castTimeMilli = select(4, GetSpellInfo(spellid));
+	local castTime;
 	local rdy = false;
 		if spelltype == 'pet' then
 			have = IsSpellKnown(spellid, true);
@@ -1000,6 +1003,26 @@ function ConRO:Totem(spellID)
 		end
 	end
 	return false, 0;
+end
+
+function ConRO:Dragonriding()
+	local Is_Dragonriding = false;
+	local Dragons = {
+		CliffsideWylderdrake = 368901,
+		HighlandDrake = 360954,
+		RenewedProtoDrake = 368896,
+		Soar = 369536,
+		WindborneVelocidrake = 368899,
+	}
+
+	for k, v in pairs(Dragons) do
+		local Dragonriding_BUFF = ConRO:Form(v);
+		if Dragonriding_BUFF then
+			Is_Dragonriding = true;
+			break
+		end
+	end
+	return Is_Dragonriding;
 end
 
 function ConRO:FormatTime(left)
