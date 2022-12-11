@@ -189,7 +189,7 @@ ConRO.EnergyList = {
 	[13] = 'Insanity',
 	[16] = 'ArcaneCharges',
 	[17] = 'Fury',
-	[20] = 'Essence',
+	[19] = 'Essence',
 }
 
 function ConRO:PlayerPower(_EnergyType)
