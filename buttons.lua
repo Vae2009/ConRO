@@ -2898,7 +2898,7 @@ function ConRO:GlowSpell(spellID)
 		end
 		self.SpellsGlowing[spellID] = 1;
 	else
-		if UnitAffectingCombat('player') and not _IsSwapSpell then
+		if UnitAffectingCombat('player') and not _IsSwapSpell and not ConRO:Dragonriding() then
 			if spellName ~= nil then
 				self:Print(self.Colors.Error .. 'Spell not found on action bars: ' .. ' ' .. spellName .. ' ' .. '(' .. spellID .. ')');
 			else
@@ -2921,7 +2921,7 @@ function ConRO:GlowDef(spellID)
 		end
 		self.DefGlowing[spellID] = 1;
 	else
-		if UnitAffectingCombat('player') then
+		if UnitAffectingCombat('player') and not _IsSwapSpell and not ConRO:Dragonriding() then
 			if spellName ~= nil then
 				self:Print(self.Colors.Error .. 'Spell not found on action bars: ' .. ' ' .. spellName .. ' ' .. '(' .. spellID .. ')');
 			else
