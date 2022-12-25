@@ -2331,7 +2331,7 @@ end
 
 function ConRO:PLAYER_ENTERING_WORLD()
 	self:UpdateButtonGlow();
-	if not self.rotationEnabled and not UnitHasVehicleUI("player") and not ConRO:Dragonriding() then
+	if not self.rotationEnabled and not UnitHasVehicleUI("player") then
 		self:Print(self.Colors.Success .. 'Auto enable on login!');
 		self:Print(self.Colors.Info .. 'Loading class module');
 		self:LoadModule();
@@ -2348,7 +2348,7 @@ end
 
 function ConRO:LOADING_SCREEN_DISABLED()
 	self:UpdateButtonGlow();
-	if not self.rotationEnabled and not UnitHasVehicleUI("player") and not ConRO:Dragonriding() then
+	if not self.rotationEnabled and not UnitHasVehicleUI("player") then
 		self:Print(self.Colors.Success .. 'Auto enable on login!');
 		self:Print(self.Colors.Info .. 'Loading class module');
 		self:LoadModule();
@@ -2393,7 +2393,7 @@ end
 
 function ConRO:PLAYER_REGEN_DISABLED()
 	self:UpdateButtonGlow();
-	if not self.rotationEnabled and not UnitHasVehicleUI("player") and not ConRO:Dragonriding() then
+	if not self.rotationEnabled and not UnitHasVehicleUI("player") then
 		self:LoadModule();
 		self:EnableRotation();
 		self:EnableDefense();
