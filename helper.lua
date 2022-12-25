@@ -435,6 +435,7 @@ function ConRO:Heroism()
 	local _Bloodlust = 2825;
 	local _TimeWarp	= 80353;
 	local _Heroism = 32182;
+	local _PrimalRage = 264667;
 	local _AncientHysteria = 90355;
 	local _Netherwinds = 160452;
 	local _DrumsofFury = 120257;
@@ -446,7 +447,7 @@ function ConRO:Heroism()
 	local _Sated = 57724;
 	local _TemporalDisplacement = 80354;
 	local _Insanity = 95809;
-	local _Fatigued = 160455;
+	local _Fatigued = 264689;
 
 	local buffed = false;
 	local sated = false;
@@ -455,6 +456,7 @@ function ConRO:Heroism()
 			bl = ConRO:Aura(_Bloodlust, timeShift);
 			tw = ConRO:Aura(_TimeWarp, timeShift);
 			hero = ConRO:Aura(_Heroism, timeShift);
+			pr = ConRO:Aura(_PrimalRage, timeShift);
 			ah = ConRO:Aura(_AncientHysteria, timeShift);
 			nw = ConRO:Aura(_Netherwinds, timeShift);
 			dof = ConRO:Aura(_DrumsofFuryBuff, timeShift);
