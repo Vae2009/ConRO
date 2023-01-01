@@ -13,6 +13,7 @@ function ConRO:SpecName()
 end
 
 function ConRO:CheckTalents()
+	--print("Bing")
 	self.PlayerTalents = {};
 
 	wipe(self.PlayerTalents)
