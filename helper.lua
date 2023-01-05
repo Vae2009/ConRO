@@ -981,7 +981,7 @@ end
 
 function ConRO:SpellCharges(spellid)
 	local currentCharges, maxCharges, cooldownStart, maxCooldown = GetSpellCharges(spellid);
-	local currentCooldown = 10000;
+	local currentCooldown = 0;
 		if currentCharges ~= nil and currentCharges < maxCharges then
 			currentCooldown = (maxCooldown - (GetTime() - cooldownStart));
 		end

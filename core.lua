@@ -2618,7 +2618,7 @@ function ConRO:MeleeSpec()
 		[11] = 'Druid',
 		[12] = 'DemonHunter',]]
 
-	if classId == 1 or classId == 2 or (classId == 3 and specId == 3) or classId == 4 or classId == 6 or (classId == 7 and specId == 2) or classId == 10 or (classId == 11 and (specId == 2 or specId == 3)) or classId == 12 then
+	if classId == 1 or classId == 2 or classId == 3 or classId == 4 or classId == 5 or classId == 6 or (classId == 7 and specId == 2) or classId == 10 or classId == 11 or classId == 12 then
 		return true;
 	end
 	return false;
