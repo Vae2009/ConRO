@@ -1107,6 +1107,10 @@ function ConRO:FindKeybinding(id)
 				end
 
 				keybind = GetBindingKey(button);
+
+				if keybind ~= nil then
+					return keybind;
+				end
 			end
 		end
 	end
