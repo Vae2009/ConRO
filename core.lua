@@ -2954,9 +2954,10 @@ function ConRO:MeleeSpec()
 		[9] = 'Warlock',
 		[10] = 'Monk',
 		[11] = 'Druid',
-		[12] = 'DemonHunter',]]
+		[12] = 'DemonHunter',
+		[13] = 'Evoker', ]]
 
-	if classId == 1 or classId == 2 or classId == 3 or classId == 4 or classId == 5 or classId == 6 or classId == 7 or classId == 10 or classId == 11 or classId == 12 then
+	if classId == 1 or classId == 2 or classId == 3 or classId == 4 or classId == 5 or classId == 6 or classId == 7 or classId == 10 or classId == 11 or classId == 12 or classId == 13 then
 		return true;
 	end
 	return false;
