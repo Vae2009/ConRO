@@ -331,7 +331,7 @@ function ConRO:Targets(spellID)
 
 			for i = 1, 15 do
 				if not UnitIsFriend("player", 'nameplate' .. i) then
-					if UnitExists('nameplate' .. i) and IsItemInRange(37727, "nameplate"..i) == true then
+					if UnitExists('nameplate' .. i) and IsItemInRange(37727, "nameplate"..i) == true and UnitName('nameplate' .. i) ~= "Explosive" then
 						number_in_range = number_in_range + 1
 					end
 				end
@@ -343,7 +343,7 @@ function ConRO:Targets(spellID)
 
 			for i = 1, 15 do
 				if not UnitIsFriend("player", 'nameplate' .. i) then
-					if UnitExists('nameplate' .. i) and IsItemInRange(32321, "nameplate"..i) == true then
+					if UnitExists('nameplate' .. i) and IsItemInRange(32321, "nameplate"..i) == true and UnitName('nameplate' .. i) ~= "Explosive" then
 						number_in_range = number_in_range + 1
 					end
 				end
@@ -355,7 +355,7 @@ function ConRO:Targets(spellID)
 
 			for i = 1, 15 do
 				if not UnitIsFriend("player", 'nameplate' .. i) then
-					if UnitExists('nameplate' .. i) and IsItemInRange(33069, "nameplate"..i) == true then
+					if UnitExists('nameplate' .. i) and IsItemInRange(33069, "nameplate"..i) == true and UnitName('nameplate' .. i) ~= "Explosive" then
 						number_in_range = number_in_range + 1
 					end
 				end
@@ -367,7 +367,7 @@ function ConRO:Targets(spellID)
 
 			for i = 1, 15 do
 				if not UnitIsFriend("player", 'nameplate' .. i) then
-					if UnitExists('nameplate' .. i) and IsItemInRange(24268, "nameplate"..i) == true then
+					if UnitExists('nameplate' .. i) and IsItemInRange(24268, "nameplate"..i) == true and UnitName('nameplate' .. i) ~= "Explosive" then
 						number_in_range = number_in_range + 1
 					end
 				end
@@ -379,7 +379,7 @@ function ConRO:Targets(spellID)
 
 			for i = 1, 15 do
 				if not UnitIsFriend("player", 'nameplate' .. i) then
-					if UnitExists('nameplate' .. i) and IsItemInRange(28767, "nameplate"..i) == true then
+					if UnitExists('nameplate' .. i) and IsItemInRange(28767, "nameplate"..i) == true and UnitName('nameplate' .. i) ~= "Explosive" then
 						number_in_range = number_in_range + 1
 					end
 				end
@@ -390,7 +390,7 @@ function ConRO:Targets(spellID)
 			end
 
 			for i = 1, 15 do
-				if UnitExists('nameplate' .. i) and ConRO:IsSpellInRange(spellID, 'nameplate' .. i) then
+				if UnitExists('nameplate' .. i) and ConRO:IsSpellInRange(spellID, 'nameplate' .. i) and UnitName('nameplate' .. i) ~= "Explosive" then
 					number_in_range = number_in_range + 1
 				end
 			end
