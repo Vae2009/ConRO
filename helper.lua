@@ -1258,6 +1258,7 @@ function ConRO:Dragonriding()
 		RenewedProtoDrake = 368896,
 		Soar = 369536,
 		WindborneVelocidrake = 368899,
+		WindingSlitherdrake = 368893,
 	}
 
 	for k, v in pairs(Dragons) do
