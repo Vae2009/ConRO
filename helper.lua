@@ -1,6 +1,7 @@
 ConRO.RaidBuffs = {};
 ConRO.WarningFlags = {};
 
+lrc = LibStub("LibRangeCheck-3.0")
 -- Global cooldown spell id
 -- GlobalCooldown = 61304;
 
@@ -385,69 +386,96 @@ local HarmItems = {
     },
 }]]
 
+function ConRO:CheckInteractDistance(unit, index)
+	local minRange, maxRange = lrc:GetRange(unit)
+	if index == 3 then
+		if maxRange and maxRange <= 9.9 then
+			return true
+		else
+			return false
+		end
+	end
+end
+
 function ConRO:Targets(spellID)
 	local target_in_range = false;
 	local number_in_range = 0;
+	local minRange, maxRange = lrc:GetRange('target')
 		if spellID == "Melee" then
-			if IsItemInRange(37727, "target") then
+		if maxRange and maxRange <= 5 then
 				target_in_range = true;
 			end
 
 			for i = 1, 15 do
 				if not UnitIsFriend("player", 'nameplate' .. i) then
-					if UnitExists('nameplate' .. i) and IsItemInRange(37727, "nameplate"..i) == true and UnitName('nameplate' .. i) ~= "Explosive" then
+				if UnitExists('nameplate' .. i) then
+					minRange, maxRange = lrc:GetRange('nameplate' .. i)
+					if maxRange and maxRange <= 5 and UnitName('nameplate' .. i) ~= "Explosive" then
 						number_in_range = number_in_range + 1
 					end
 				end
 			end
+		end
 		elseif spellID == "10" then
-			if IsItemInRange(32321, "target") then
+		if maxRange and maxRange <= 10 then
 				target_in_range = true;
 			end
 
 			for i = 1, 15 do
 				if not UnitIsFriend("player", 'nameplate' .. i) then
-					if UnitExists('nameplate' .. i) and IsItemInRange(32321, "nameplate"..i) == true and UnitName('nameplate' .. i) ~= "Explosive" then
+				if UnitExists('nameplate' .. i) then
+					minRange, maxRange = lrc:GetRange('nameplate' .. i)
+					if maxRange and maxRange <= 10 and UnitName('nameplate' .. i) ~= "Explosive" then
 						number_in_range = number_in_range + 1
 					end
 				end
 			end
+		end
 		elseif spellID == "15" then
-			if IsItemInRange(33069, "target") then
+		if maxRange and maxRange <= 15 then
 				target_in_range = true;
 			end
 
 			for i = 1, 15 do
 				if not UnitIsFriend("player", 'nameplate' .. i) then
-					if UnitExists('nameplate' .. i) and IsItemInRange(33069, "nameplate"..i) == true and UnitName('nameplate' .. i) ~= "Explosive" then
+				if UnitExists('nameplate' .. i) then
+					minRange, maxRange = lrc:GetRange('nameplate' .. i)
+					if maxRange and maxRange <= 15 and UnitName('nameplate' .. i) ~= "Explosive" then
 						number_in_range = number_in_range + 1
 					end
 				end
 			end
+		end
 		elseif spellID == "25" then
-			if IsItemInRange(24268, "target") then
+		if maxRange and maxRange <= 25 then
 				target_in_range = true;
 			end
 
 			for i = 1, 15 do
 				if not UnitIsFriend("player", 'nameplate' .. i) then
-					if UnitExists('nameplate' .. i) and IsItemInRange(24268, "nameplate"..i) == true and UnitName('nameplate' .. i) ~= "Explosive" then
+				if UnitExists('nameplate' .. i) then
+					minRange, maxRange = lrc:GetRange('nameplate' .. i)
+					if maxRange and maxRange <= 25 and UnitName('nameplate' .. i) ~= "Explosive" then
 						number_in_range = number_in_range + 1
 					end
 				end
 			end
+		end
 		elseif spellID == "40" then
-			if IsItemInRange(28767, "target") then
+		if maxRange and maxRange <= 40 then
 				target_in_range = true;
 			end
 
 			for i = 1, 15 do
 				if not UnitIsFriend("player", 'nameplate' .. i) then
-					if UnitExists('nameplate' .. i) and IsItemInRange(28767, "nameplate"..i) == true and UnitName('nameplate' .. i) ~= "Explosive" then
+				if UnitExists('nameplate' .. i) then
+					minRange, maxRange = lrc:GetRange('nameplate' .. i)
+					if maxRange and maxRange <= 40 and UnitName('nameplate' .. i) ~= "Explosive" then
 						number_in_range = number_in_range + 1
 					end
 				end
 			end
+		end
 		else
 			if ConRO:IsSpellInRange(spellID, "target") then
 				target_in_range = true;
