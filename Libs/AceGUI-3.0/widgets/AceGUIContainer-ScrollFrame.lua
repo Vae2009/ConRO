@@ -1,3 +1,4 @@
+---@diagnostic disable: assign-type-mismatch
 --[[-----------------------------------------------------------------------------
 ScrollFrame Container
 Plain container that scrolls its content and doesn't grow in height.
@@ -132,7 +133,7 @@ local methods = {
 	end,
 
 	["LayoutFinished"] = function(self, width, height)
-		self.content:SetHeight(height or 0 + 20)
+		self.content:SetHeight((height or 0) + 20)
 
 		-- update the scrollframe
 		self:FixScroll()

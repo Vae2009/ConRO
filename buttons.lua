@@ -2047,6 +2047,16 @@ function ConRO:AddStandardButton(button, hotkey)
         end
 
         if type == 'macro' then
+			local slot = button:GetAttribute('action');-- Thanks to Zaphon for this blizzard bug fix
+            if not slot or slot == 0 then
+                slot = button:GetPagedID();
+            end
+            if not slot or slot == 0 then
+                slot = button:CalculateAction();
+            end
+			local macroName = GetActionText(slot);
+			id = GetMacroIndexByName(macroName);--
+
             spellId = GetMacroSpell(id);
             if not spellId then
                 return;
@@ -2100,6 +2110,16 @@ function ConRO:DefAddStandardButton(button, hotkey)
         end
 
         if type == 'macro' then
+			local slot = button:GetAttribute('action');-- Thanks to Zaphon for this blizzard bug fix
+            if not slot or slot == 0 then
+                slot = button:GetPagedID();
+            end
+            if not slot or slot == 0 then
+                slot = button:CalculateAction();
+            end
+			local macroName = GetActionText(slot);
+			id = GetMacroIndexByName(macroName);--
+			
             spellId = GetMacroSpell(id);
             if not spellId then
                 return;
