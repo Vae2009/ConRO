@@ -2,7 +2,7 @@
 ## Notes: Rotation helper framework.
 ## Version: 10.2.0
 ## Author: Vae
-## Interface: 10200
+## Interface: 100200
 ## SavedVariables: ConROPreferences
 ## SavedVariablesPerCharacter: ConROCharacter
 ## OptionalDependencies: Bartender4, ElvUI, ButtonForge
