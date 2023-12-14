@@ -389,8 +389,10 @@ function ConRO:Targets(spellID)
 	local target_in_range = false;
 	local number_in_range = 0;
 		if spellID == "Melee" then
-			if IsItemInRange(37727, "target") then
-				target_in_range = true;
+			if not UnitIsFriend("player", "target") and UnitExists("target") then
+				if IsItemInRange(37727, "target") then
+					target_in_range = true;
+				end
 			end
 
 			for i = 1, 15 do
@@ -401,8 +403,10 @@ function ConRO:Targets(spellID)
 				end
 			end
 		elseif spellID == "10" then
-			if IsItemInRange(32321, "target") then
-				target_in_range = true;
+			if not UnitIsFriend("player", "target") and UnitExists("target") then
+				if IsItemInRange(32321, "target") then
+					target_in_range = true;
+				end
 			end
 
 			for i = 1, 15 do
@@ -413,8 +417,10 @@ function ConRO:Targets(spellID)
 				end
 			end
 		elseif spellID == "15" then
-			if IsItemInRange(33069, "target") then
-				target_in_range = true;
+			if not UnitIsFriend("player", "target") and UnitExists("target") then
+				if IsItemInRange(33069, "target") then
+					target_in_range = true;
+				end
 			end
 
 			for i = 1, 15 do
@@ -425,8 +431,10 @@ function ConRO:Targets(spellID)
 				end
 			end
 		elseif spellID == "25" then
-			if IsItemInRange(24268, "target") then
-				target_in_range = true;
+			if not UnitIsFriend("player", "target") and UnitExists("target") then
+				if IsItemInRange(24268, "target") then
+					target_in_range = true;
+				end
 			end
 
 			for i = 1, 15 do
@@ -437,8 +445,10 @@ function ConRO:Targets(spellID)
 				end
 			end
 		elseif spellID == "40" then
-			if IsItemInRange(28767, "target") then
-				target_in_range = true;
+			if not UnitIsFriend("player", "target") and UnitExists("target") then
+				if IsItemInRange(28767, "target") then
+					target_in_range = true;
+				end
 			end
 
 			for i = 1, 15 do
@@ -459,7 +469,7 @@ function ConRO:Targets(spellID)
 				end
 			end
 		end
---	print(number_in_range .. " " .. target_in_range)
+	--print(number_in_range)
 	return number_in_range, target_in_range;
 end
 
