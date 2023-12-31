@@ -572,12 +572,14 @@ function ConRO:Heroism()
 	local _DrumsofFuryBuff = 178207;
 	local _DrumsoftheMountain = 142406;
 	local _DrumsoftheMountainBuff = 230935;
+	local _FuryoftheAspects = 390386;
 
 	local _Exhaustion = 57723;
 	local _Sated = 57724;
 	local _TemporalDisplacement = 80354;
 	local _Insanity = 95809;
 	local _Fatigued = 264689;
+	local _Exhaustion2 = 390435;
 
 	local buffed = false;
 	local sated = false;
@@ -591,6 +593,7 @@ function ConRO:Heroism()
 			nw = ConRO:Aura(_Netherwinds, timeShift);
 			dof = ConRO:Aura(_DrumsofFuryBuff, timeShift);
 			dotm = ConRO:Aura(_DrumsoftheMountainBuff, timeShift);
+			fota = ConRO:Aura(_FuryoftheAspects, timeShift);
 		}
 		local satedDebuff = {
 			ex = UnitDebuff('player', _Exhaustion);
@@ -598,6 +601,7 @@ function ConRO:Heroism()
 			td = UnitDebuff('player', _TemporalDisplacement);
 			ins = UnitDebuff('player', _Insanity);
 			fat = UnitDebuff('player', _Fatigued);
+			ex2 = UnitDebuff('player', _Exhaustion2);
 		}
 		local hasteCount = 0;
 			for k, v in pairs(hasteBuff) do
@@ -794,7 +798,7 @@ function ConRO:GroupBuffCount(spellID)
 				local unit = "raid" .. i;
 				if UnitExists(unit) then
 					for x=1, 40 do
-						local spell = select(10, UnitAura(unit, x, 'HELPFUL'));
+						local spell = select(10, UnitAura(unit, x, 'PLAYER|HELPFUL'));
 						if spell == spellID then
 							buffCount = buffCount + 1;
 						end
@@ -806,7 +810,7 @@ function ConRO:GroupBuffCount(spellID)
 				local unit = "party" .. i;
 				if UnitExists(unit) then
 					for x=1, 40 do
-						local spell = select(10, UnitAura(unit, x, 'HELPFUL'));
+						local spell = select(10, UnitAura(unit, x, 'PLAYER|HELPFUL'));
 						if spell == spellID then
 							buffCount = buffCount + 1;
 						end
@@ -814,14 +818,14 @@ function ConRO:GroupBuffCount(spellID)
 				end
 			end
 			for x=1, 40 do
-				local spell = select(10, UnitAura('player', x, 'HELPFUL'));
+				local spell = select(10, UnitAura('player', x, 'PLAYER|HELPFUL'));
 				if spell == spellID then
 					buffCount = buffCount + 1;
 				end
 			end
 		elseif numGroupMembers <= 1 then
 			for x=1, 40 do
-				local spell = select(10, UnitAura('player', x, 'HELPFUL'));
+				local spell = select(10, UnitAura('player', x, 'PLAYER|HELPFUL'));
 				if spell == spellID then
 					buffCount = buffCount + 1;
 				end
