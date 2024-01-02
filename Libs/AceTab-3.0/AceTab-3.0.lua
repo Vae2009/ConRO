@@ -1,4 +1,3 @@
----@diagnostic disable: redundant-parameter, param-type-mismatch
 --- AceTab-3.0 provides support for tab-completion.
 -- Note: This library is not yet finalized.
 -- @class file
@@ -428,7 +427,7 @@ function AceTab:OnTabPressed(this)
 			if next(matches) then
 				-- Replace the original string with the greatest common substring of all valid completions.
 				this.at3curMatch = 1
-				this.at3origWord = strsub(text_precursor, this.at3matchStart, this.at3matchStart + pmolengths[desc] - 1) .. (allGCBS or "")
+				this.at3origWord = strsub(text_precursor, this.at3matchStart, this.at3matchStart + pmolengths[desc] - 1) .. allGCBS or ""
 				this.at3origMatch = allGCBS or ""
 				this.at3lastWord = this.at3origWord
 				this.at3lastMatch = this.at3origMatch
