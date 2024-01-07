@@ -2796,6 +2796,7 @@ function ConRO:InvokeNextSpell()
 	local iterate = self:NextSpell(timeShift, currentSpell, gcd, self.PlayerTalents, self.PvPTalents);
 	self.Spell = self.SuggestedSpells[1];
 
+	ConRO:GetTimeToDie();
 --	ConRO:UpdateRotation();
 --	ConRO:UpdateButtonGlow();
 	local spellName, _, spellTexture = GetSpellInfo(self.Spell);
@@ -2889,6 +2890,7 @@ function ConRO:LoadModule()
 
 	local mode = ConRO:CheckSpecialization();
 
+	self:InitTTD();
 	self:EnableRotationModule(mode);
 	self:EnableDefenseModule(mode);
 	self:Print(self.Colors[classId] .. self.Description);

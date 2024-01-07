@@ -66,38 +66,6 @@ function ConRO:CheckTalents()
 			end
 		end
 	end
-
-
-
-	--[[if select(1, GetSpecialization()) ~= 5 then
-		local specID = PlayerUtil.GetCurrentSpecID();
-		local configID = C_ClassTalents.GetLastSelectedSavedConfigID(specID);
-		if configID == nil then
-			configID = C_ClassTalents.GetActiveConfigID();
-		end
-		local configInfo = C_Traits.GetConfigInfo(configID);
-		if configInfo == nil then
-			configID = C_ClassTalents.GetActiveConfigID();
-			configInfo = C_Traits.GetConfigInfo(configID);
-		end
-		local treeID = configInfo.treeIDs[1];
-		local nodes = C_Traits.GetTreeNodes(treeID);
-
-		for _, nodeID in ipairs(nodes) do
-			local nodeInfo = C_Traits.GetNodeInfo(configID, nodeID);
-			if nodeInfo.currentRank and nodeInfo.currentRank > 0 then
-				local entryID = nodeInfo.activeEntry and nodeInfo.activeEntry.entryID and nodeInfo.activeEntry.entryID;
-				local entryInfo = entryID and C_Traits.GetEntryInfo(configID, entryID)
-				local definitionInfo = entryInfo and entryInfo.definitionID and C_Traits.GetDefinitionInfo(entryInfo.definitionID)
-				if definitionInfo ~= nil then
-					local name = TalentUtil.GetTalentName(definitionInfo.overrideName, definitionInfo.spellID)
-					tinsert(self.PlayerTalents, entryID);
-					self.PlayerTalents[entryID] = {};
-					tinsert(self.PlayerTalents[entryID], {["talentName"] = name, ["rank"] = nodeInfo.currentRank})
-				end
-			end
-		end
-	end]]
 end
 
 function ConRO:IsPvP()
@@ -209,6 +177,14 @@ ConRO.ItemSlotList = {
 	"SecondaryHandSlot",
 }
 
+ConRO.TierSlotList = {
+	"HeadSlot",
+	"ShoulderSlot",
+	"ChestSlot",
+	"HandsSlot",
+	"LegsSlot",
+}
+
 function ConRO:ItemEquipped(_item_string)
 	local _match_item_NAME = false;
 	local _, _item_LINK = GetItemInfo(_item_string);
@@ -229,6 +205,83 @@ function ConRO:ItemEquipped(_item_string)
 		end
 	end
 	return _match_item_NAME;
+end
+
+function ConRO:CountTier()
+    local _, _, classIndex = UnitClass("player");
+    local count = 0;
+
+	for _, v in pairs(ConRO.TierSlotList) do
+		local match = nil
+		local _slot_LINK = GetInventoryItemLink("player", GetInventorySlotInfo(v))
+		local _slot_item_NAME;
+
+		if _slot_LINK then
+			_slot_item_NAME = GetItemInfo(_slot_LINK)
+		else
+			break
+		end
+
+		if _slot_item_NAME == nil then
+			return;
+		end
+
+		-- Death Knight
+		if classIndex == 6 then
+			match = string.match(_slot_item_NAME,"of the Risen Nightmare")
+		end
+		-- Demon Hunter
+		if classIndex == 12 then
+			match = string.match(_slot_item_NAME,"Screaming Torchfiend's")
+		end
+		-- Druid
+		if classIndex == 11 then
+			match = string.match(_slot_item_NAME,"Benevolent Embersage's")
+		end
+		-- Evoker
+		if classIndex == 13 then
+			match = string.match(_slot_item_NAME,"Werynkeeper's Timeless")
+		end
+		-- Hunter
+		if classIndex == 3 then
+			match = string.match(_slot_item_NAME,"Blazing Dreamstalker's")
+		end
+		-- Mage
+		if classIndex == 8 then
+			match = string.match(_slot_item_NAME,"Wayward Chronomancer's")
+		end
+		-- Monk
+		if classIndex == 10 then
+			match = string.match(_slot_item_NAME,"Mystic Heron's")
+		end
+		-- Paladin
+		if classIndex == 2 then
+			match = string.match(_slot_item_NAME,"Zealous Pyreknight's")
+		end
+		-- Priest
+		if classIndex == 5 then
+			match = string.match(_slot_item_NAME,"of Lunar Communion")
+		end
+		-- Rogue
+		if classIndex == 4 then
+			match = string.match(_slot_item_NAME,"Lucid Shadewalker's")
+		end
+		-- Shaman
+		if classIndex == 7 then
+			match = string.match(_slot_item_NAME,"Greatwolf Outcast's")
+		end
+		-- Warlock
+		if classIndex == 9 then
+			match = string.match(_slot_item_NAME,"Devout Ashdevil's")
+		end
+		-- Warrior
+		if classIndex == 1 then
+			match = string.match(_slot_item_NAME,"Molten Vanguard's")
+		end
+
+		if match then count = count + 1 end
+	end
+    return count
 end
 
 function ConRO:PlayerSpeed()
@@ -1303,4 +1356,104 @@ function ConRO:FormatTime(left)
 	else
 		return string.format("%d [S]", seconds);
 	end
+end
+
+local GetTime = GetTime;
+local UnitGUID = UnitGUID;
+local UnitExists = UnitExists;
+local TableInsert = tinsert;
+local TableRemove = tremove;
+local MathMin = math.min;
+local wipe = wipe;
+
+function ConRO:InitTTD(maxSamples, interval)
+	interval = interval or 0.25;
+	maxSamples = maxSamples or 50;
+
+	if self.ttd and self.ttd.timer then
+		self:CancelTimer(self.ttd.timer);
+		self.ttd.timer = nil;
+	end
+
+	self.ttd = {
+		interval   = interval,
+		maxSamples = maxSamples,
+		HPTable    = {},
+	};
+
+	self.ttd.timer = self:ScheduleRepeatingTimer('TimeToDie', interval);
+end
+
+function ConRO:DisableTTD()
+	if self.ttd.timer then
+		self:CancelTimer(self.ttd.timer);
+	end
+end
+
+local HPTable = {};
+local trackedGuid;
+function ConRO:TimeToDie(trackedUnit)
+	trackedUnit = trackedUnit or 'target';
+
+	-- Query current time (throttle updating over time)
+	local now = GetTime();
+
+	-- Current data
+	local ttd = self.ttd;
+	local guid = UnitGUID(trackedUnit);
+
+	if trackedGuid ~= guid then
+		wipe(HPTable);
+		trackedGuid = guid;
+	end
+
+	if guid and UnitExists(trackedUnit) then
+		local hpPct = self:PercentHealth('target') * 100;
+		TableInsert(HPTable, 1, { time = now, hp = hpPct});
+
+		if #HPTable > ttd.maxSamples then
+			TableRemove(HPTable);
+		end
+	else
+		wipe(HPTable);
+	end
+end
+
+function ConRO:GetTimeToDie()
+	local seconds = 5*60;
+
+	local n = #HPTable
+	if n > 5 then
+		local a, b = 0, 0;
+		local Ex2, Ex, Exy, Ey = 0, 0, 0, 0;
+
+		local hpPoint, x, y;
+		for i = 1, n do
+			hpPoint = HPTable[i]
+			x, y = hpPoint.time, hpPoint.hp
+
+			Ex2 = Ex2 + x * x
+			Ex = Ex + x
+			Exy = Exy + x * y
+			Ey = Ey + y
+		end
+
+		-- Invariant to find matrix inverse
+		local invariant = 1 / (Ex2 * n - Ex * Ex);
+
+		-- Solve for a and b
+		a = (-Ex * Exy * invariant) + (Ex2 * Ey * invariant);
+		b = (n * Exy * invariant) - (Ex * Ey * invariant);
+
+		if b ~= 0 then
+			-- Use best fit line to calculate estimated time to reach target health
+			seconds = (0 - a) / b;
+			seconds = MathMin(5*60, seconds - (GetTime() - 0));
+
+			if seconds < 0 then
+				seconds = 5*60;
+			end
+		end
+	end
+	return seconds;
 end
