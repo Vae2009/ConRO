@@ -2341,6 +2341,7 @@ function ConRO:OnInitialize()
 	self:CreateAoEButton();
 	self:CreateBurstButton();
 	self:CreateFullButton();
+	self:CreatePvPButton();
 	self:CreateBlockBurstButton();
 	self:CreateBlockAoEButton();
 end
@@ -2937,29 +2938,6 @@ function ConRO:HealSpec()
 	(classId == 10 and specId == 2) or
 	(classId == 11 and specId == 4)	or
 	(classId == 13 and specId == 2) then
-		return true;
-	end
-	return false;
-end
-
-function ConRO:MeleeSpec()
-	local _, _, classId = UnitClass('player');
-	local specId = ConRO:CheckSpecialization();
-	--[[[1] = 'Warrior',
-		[2] = 'Paladin',
-		[3] = 'Hunter',
-		[4] = 'Rogue',
-		[5] = 'Priest',
-		[6] = 'DeathKnight',
-		[7] = 'Shaman',
-		[8] = 'Mage',
-		[9] = 'Warlock',
-		[10] = 'Monk',
-		[11] = 'Druid',
-		[12] = 'DemonHunter',
-		[13] = 'Evoker', ]]
-
-	if classId == 1 or classId == 2 or classId == 3 or classId == 4 or classId == 5 or classId == 6 or classId == 7 or classId == 8 or classId == 9 or classId == 10 or classId == 11 or classId == 12 or classId == 13 then
 		return true;
 	end
 	return false;

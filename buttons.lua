@@ -26,20 +26,11 @@ ConRO.TauntFrames = {};
 local defaults = {
 	["ConRO_Settings_Full"] = true,
 	["ConRO_Settings_Burst"] = false,
-	["ConRO_Settings_Auto"] = false,
-	["ConRO_Settings_Single"] = true,
+	["ConRO_Settings_PvP"] = false,
+	["ConRO_Settings_Auto"] = true,
+	["ConRO_Settings_Single"] = false,
 	["ConRO_Settings_AoE"] = false,
 }
-
-if ConRO:MeleeSpec() then
-	defaults = {
-		["ConRO_Settings_Full"] = true,
-		["ConRO_Settings_Burst"] = false,
-		["ConRO_Settings_Auto"] = true,
-		["ConRO_Settings_Single"] = false,
-		["ConRO_Settings_AoE"] = false,
-	}
-end
 
 ConROCharacter = ConROCharacter or defaults;
 
@@ -391,19 +382,12 @@ function ConRO:CreateAoEButton()
 			if ConRO.db.profile._Unlock_ConRO then
 				ConROButtonFrame:StopMovingOrSizing();
 			end
-			if ConRO:MeleeSpec() then
-				ConRO_AutoButton:Show();
-				self:Hide();
-				ConROCharacter.ConRO_Settings_Auto = true;
-				ConROCharacter.ConRO_Settings_Single = false;
-				ConROCharacter.ConRO_Settings_AoE = false;
-			else
-				ConRO_SingleButton:Show();
-				self:Hide();
-				ConROCharacter.ConRO_Settings_Auto = false;
-				ConROCharacter.ConRO_Settings_Single = true;
-				ConROCharacter.ConRO_Settings_AoE = false;
-			end
+
+			ConRO_AutoButton:Show();
+			self:Hide();
+			ConROCharacter.ConRO_Settings_Auto = true;
+			ConROCharacter.ConRO_Settings_Single = false;
+			ConROCharacter.ConRO_Settings_AoE = false;
 		end)
 end
 
@@ -462,6 +446,7 @@ function ConRO:CreateFullButton()
 			ConRO_BurstButton:Show();
 			ConROCharacter.ConRO_Settings_Full = false;
 			ConROCharacter.ConRO_Settings_Burst = true;
+			ConROCharacter.ConRO_Settings_PvP = false;
 
 			if ConRO.rotationEnabled then
 				if ConRO.fetchTimer then
@@ -532,8 +517,83 @@ function ConRO:CreateBurstButton()
 				ConROButtonFrame:StopMovingOrSizing();
 			end
 			self:Hide();
+			ConRO_PvPButton:Show();
+			ConROCharacter.ConRO_Settings_Burst = false;
+			ConROCharacter.ConRO_Settings_Full = false;
+			ConROCharacter.ConRO_Settings_PvP = true;
+
+			if ConRO.rotationEnabled then
+				if ConRO.fetchTimer then
+					ConRO:CancelTimer(ConRO.fetchTimer);
+					ConRO:CancelTimer(ConRO.fetchdefTimer);
+				end
+				ConRO.fetchTimer = ConRO:ScheduleTimer('Fetch', 0.5);
+				ConRO.fetchdefTimer = ConRO:ScheduleTimer('FetchDef', 0.5);
+			end
+			ConRO:DestroyInterruptOverlays();
+			ConRO:DestroyCoolDownOverlays();
+			ConRO:DestroyPurgableOverlays();
+			ConRO:DestroyRaidBuffsOverlays();
+			ConRO:DestroyMovementOverlays();
+			ConRO:DestroyTauntOverlays();
+		end)
+end
+
+function ConRO:CreatePvPButton()
+	local _, Class = UnitClass("player")
+	local Color = RAID_CLASS_COLORS[Class]
+	local tbutton = CreateFrame("Button", 'ConRO_PvPButton', ConROButtonFrame)
+		tbutton:SetFrameStrata('MEDIUM');
+		tbutton:SetFrameLevel('74')
+		tbutton:SetPoint("TOPLEFT", "ConROButtonFrame", "TOPLEFT", 7, -7)
+		tbutton:SetSize(40, 15)
+		tbutton:SetAlpha(1)
+			if ConROCharacter.ConRO_Settings_PvP then
+				tbutton:Show()
+			else
+				tbutton:Hide()
+			end
+
+		tbutton:SetText("PvP")
+		tbutton:SetNormalFontObject("GameFontHighlightSmall")
+
+		tbutton:SetScript("OnEnter", ETOnEnter)
+		tbutton:SetScript("OnLeave", ETOnLeave)
+
+	local ntex = tbutton:CreateTexture()
+		ntex:SetTexture("Interface\\AddOns\\ConRO\\images\\buttonUp")
+		ntex:SetTexCoord(0, 0.625, 0, 0.6875)
+		ntex:SetVertexColor(Color.r, Color.g, Color.b, 1)
+		ntex:SetAllPoints()
+		tbutton:SetNormalTexture(ntex)
+
+	local htex = tbutton:CreateTexture()
+		htex:SetTexture("Interface\\AddOns\\ConRO\\images\\buttonHighlight")
+		htex:SetTexCoord(0, 0.625, 0, 0.6875)
+		htex:SetAllPoints()
+		tbutton:SetHighlightTexture(htex)
+
+	local ptex = tbutton:CreateTexture()
+		ptex:SetTexture("Interface\\AddOns\\ConRO\\images\\buttonDown")
+		ptex:SetTexCoord(0, 0.625, 0, 0.6875)
+		ptex:SetVertexColor(Color.r, Color.g, Color.b, 1)
+		ptex:SetAllPoints()
+		tbutton:SetPushedTexture(ptex)
+
+		tbutton:SetScript("OnMouseDown", function (self, tbutton, up)
+			if ConRO.db.profile._Unlock_ConRO then
+				ConROButtonFrame:StartMoving();
+			end
+		end)
+
+		tbutton:SetScript("OnMouseUp", function (self, tbutton, up)
+			if ConRO.db.profile._Unlock_ConRO then
+				ConROButtonFrame:StopMovingOrSizing();
+			end
+			self:Hide();
 			ConRO_FullButton:Show();
 			ConROCharacter.ConRO_Settings_Burst = false;
+			ConROCharacter.ConRO_Settings_PvP = false;
 			ConROCharacter.ConRO_Settings_Full = true;
 
 			if ConRO.rotationEnabled then
@@ -649,49 +709,40 @@ function ConRO:SlashUnlock()
 end
 
 function ConRO:SlashToggle()
-	if ConRO:MeleeSpec() then
-		if ConRO_AutoButton:IsVisible() then
-			ConRO_AutoButton:Hide();
-			ConRO_SingleButton:Show();
-			ConROCharacter.ConRO_Settings_Auto = false;
-			ConROCharacter.ConRO_Settings_Single = true;
-		elseif ConRO_SingleButton:IsVisible() then
-			ConRO_SingleButton:Hide();
-			ConRO_AoEButton:Show();
-			ConROCharacter.ConRO_Settings_Single = false;
-			ConROCharacter.ConRO_Settings_AoE = true;
-		elseif ConRO_AoEButton:IsVisible() then
-			ConRO_AoEButton:Hide();
-			ConRO_AutoButton:Show();
-			ConROCharacter.ConRO_Settings_AoE = false;
-			ConROCharacter.ConRO_Settings_Auto = true;
-		end
-	else
-		if ConRO_SingleButton:IsVisible() then
-			ConRO_SingleButton:Hide();
-			ConRO_AoEButton:Show();
-			ConROCharacter.ConRO_Settings_Single = false;
-			ConROCharacter.ConRO_Settings_AoE = true;
-		elseif ConRO_AoEButton:IsVisible() then
-			ConRO_AoEButton:Hide();
-			ConRO_SingleButton:Show();
-			ConROCharacter.ConRO_Settings_AoE = false;
-			ConROCharacter.ConRO_Settings_Single = true;
-		end
+	if ConRO_AutoButton:IsVisible() then
+		ConRO_AutoButton:Hide();
+		ConRO_SingleButton:Show();
+		ConROCharacter.ConRO_Settings_Auto = false;
+		ConROCharacter.ConRO_Settings_Single = true;
+	elseif ConRO_SingleButton:IsVisible() then
+		ConRO_SingleButton:Hide();
+		ConRO_AoEButton:Show();
+		ConROCharacter.ConRO_Settings_Single = false;
+		ConROCharacter.ConRO_Settings_AoE = true;
+	elseif ConRO_AoEButton:IsVisible() then
+		ConRO_AoEButton:Hide();
+		ConRO_AutoButton:Show();
+		ConROCharacter.ConRO_Settings_AoE = false;
+		ConROCharacter.ConRO_Settings_Auto = true;
 	end
 end
 
 function ConRO:SlashBurstToggle()
 	if ConRO_BurstButton:IsVisible() then
 		ConRO_BurstButton:Hide();
-		ConRO_FullButton:Show();
+		ConRO_PvPButton:Show();
 		ConROCharacter.ConRO_Settings_Burst = false;
-		ConROCharacter.ConRO_Settings_Full = true;
+		ConROCharacter.ConRO_Settings_PvP = true;
 	elseif ConRO_FullButton:IsVisible() then
 		ConRO_FullButton:Hide();
 		ConRO_BurstButton:Show();
 		ConROCharacter.ConRO_Settings_Full = false;
 		ConROCharacter.ConRO_Settings_Burst = true;
+	elseif ConRO_PvPButton:IsVisible() then
+		ConRO_PvPButton:Hide();
+		ConRO_FullButton:Show();
+		ConROCharacter.ConRO_Settings_PvP = false;
+		ConROCharacter.ConRO_Settings_Full = true;
 	end
 end
 
@@ -711,6 +762,7 @@ function ConRO:ToggleHealer()
 	ConRO_AoEButton:Hide();
 	ConRO_BurstButton:Hide();
 	ConRO_FullButton:Hide();
+	ConRO_PvPButton:Hide();
 	ConRO_BlockBurstButton:Hide();
 	ConRO_BlockAoEButton:Hide();
 end
@@ -733,9 +785,15 @@ function ConRO:ToggleDamage()
 	if ConROCharacter.ConRO_Settings_Full then
 		ConRO_FullButton:Show();
 		ConRO_BurstButton:Hide();
+		ConRO_PvPButton:Hide();
 	elseif ConROCharacter.ConRO_Settings_Burst then
 		ConRO_FullButton:Hide();
 		ConRO_BurstButton:Show();
+		ConRO_PvPButton:Hide();
+	elseif ConROCharacter.ConRO_Settings_PvP then
+		ConRO_FullButton:Hide();
+		ConRO_BurstButton:Hide();
+		ConRO_PvPButton:Show();
 	end
 	ConRO_BlockBurstButton:Hide();
 	ConRO_BlockAoEButton:Hide();
@@ -751,6 +809,7 @@ function ConRO:EnableSpecialization()  --WIP
 end
 
 function ConRO:BlockBurst()
+	ConRO_PvPButton:Hide();
 	ConRO_BurstButton:Hide();
 	ConRO_FullButton:Hide();
 	ConRO_BlockBurstButton:Show();

@@ -24,48 +24,40 @@
 		end	
 	</Binding>
 	<Binding name="CONROTOGGLE">
-		if ConRO:MeleeSpec() then
-			if ConRO_AutoButton:IsVisible() then
-				ConRO_AutoButton:Hide();
-				ConRO_SingleButton:Show();
-				ConROCharacter.ConRO_Settings_Auto = false;
-				ConROCharacter.ConRO_Settings_Single = true;
-			elseif ConRO_SingleButton:IsVisible() then
-				ConRO_SingleButton:Hide();
-				ConRO_AoEButton:Show();
-				ConROCharacter.ConRO_Settings_Single = false;
-				ConROCharacter.ConRO_Settings_AoE = true;			
-			elseif ConRO_AoEButton:IsVisible() then
-				ConRO_AoEButton:Hide();
-				ConRO_AutoButton:Show();
-				ConROCharacter.ConRO_Settings_AoE = false;
-				ConROCharacter.ConRO_Settings_Auto = true;
-			end
-		else
-			if ConRO_SingleButton:IsVisible() then
-				ConRO_SingleButton:Hide();
-				ConRO_AoEButton:Show();
-				ConROCharacter.ConRO_Settings_Single = false;
-				ConROCharacter.ConRO_Settings_AoE = true;			
-			elseif ConRO_AoEButton:IsVisible() then
-				ConRO_AoEButton:Hide();
-				ConRO_SingleButton:Show();
-				ConROCharacter.ConRO_Settings_AoE = false;
-				ConROCharacter.ConRO_Settings_Single = true;
-			end
+		if ConRO_AutoButton:IsVisible() then
+			ConRO_AutoButton:Hide();
+			ConRO_SingleButton:Show();
+			ConROCharacter.ConRO_Settings_Auto = false;
+			ConROCharacter.ConRO_Settings_Single = true;
+		elseif ConRO_SingleButton:IsVisible() then
+			ConRO_SingleButton:Hide();
+			ConRO_AoEButton:Show();
+			ConROCharacter.ConRO_Settings_Single = false;
+			ConROCharacter.ConRO_Settings_AoE = true;			
+		elseif ConRO_AoEButton:IsVisible() then
+			ConRO_AoEButton:Hide();
+			ConRO_AutoButton:Show();
+			ConROCharacter.ConRO_Settings_AoE = false;
+			ConROCharacter.ConRO_Settings_Auto = true;
 		end
+
 	</Binding>
 	<Binding name="CONROBOSSTOGGLE">
 		if ConRO_BurstButton:IsVisible() then
 			ConRO_BurstButton:Hide();
-			ConRO_FullButton:Show();
+			ConRO_PvPButton:Show();
 			ConROCharacter.ConRO_Settings_Burst = false;
-			ConROCharacter.ConRO_Settings_Full = true;
+			ConROCharacter.ConRO_Settings_PvP = true;
 		elseif ConRO_FullButton:IsVisible() then
 			ConRO_FullButton:Hide();
 			ConRO_BurstButton:Show();
 			ConROCharacter.ConRO_Settings_Full = false;
 			ConROCharacter.ConRO_Settings_Burst = true;
+		elseif ConRO_PvPButton:IsVisible() then
+			ConRO_PvPButton:Hide();
+			ConRO_FullButton:Show();
+			ConROCharacter.ConRO_Settings_PvP = false;
+			ConROCharacter.ConRO_Settings_Full = true;
 		end
 	</Binding>
 </Bindings>

@@ -113,7 +113,7 @@ end
 
 function ConRO:BurstMode(_Spell_ID, timeShift)
 	local _Burst = ConRO_BurstButton:IsVisible();
-	local timeShift = timeShift or ConRO:EndCast();
+	timeShift = timeShift or ConRO:EndCast();
 	local _Burst_Threshold = ConRO.db.profile._Burst_Threshold;
 	local _, _, baseCooldown = ConRO:Cooldown(_Spell_ID, timeShift);
 	local _Burst_Mode = false;
@@ -128,7 +128,7 @@ end
 function ConRO:FullMode(_Spell_ID, timeShift)
 	local _Full = ConRO_FullButton:IsVisible();
 	local _Burst = ConRO_BurstButton:IsVisible();
-	local timeShift = timeShift or ConRO:EndCast();
+	timeShift = timeShift or ConRO:EndCast();
 	local _Burst_Threshold = ConRO.db.profile._Burst_Threshold;
 	local _, _, baseCooldown = ConRO:Cooldown(_Spell_ID, timeShift);
 	local _Full_Mode = false;
