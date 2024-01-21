@@ -199,14 +199,13 @@ function ConRO:DisplayToggleFrame()
 				end
 			end
 		end)
-		frame:Show()
 
-	local lockButton = CreateFrame("Button", 'ConRO_LockButton', nil);
+	local lockButton = CreateFrame("Button", 'ConRO_LockButton', frame);
 		lockButton:SetFrameStrata('MEDIUM');
-		lockButton:SetFrameLevel('75');
+		lockButton:SetFrameLevel('74');
 		lockButton:SetPoint("TOPLEFT", frame, "BOTTOMLEFT", -2, 5);
-		lockButton:SetSize(10, 10);
-		lockButton:SetAlpha(0.25);
+		lockButton:SetSize(15, 15);
+		lockButton:SetAlpha(0.50);
 
 	local lockTexture = lockButton:CreateTexture(nil, "OVERLAY");
 		lockTexture:SetAllPoints();
@@ -219,7 +218,7 @@ function ConRO:DisplayToggleFrame()
 
 		lockButton:SetScript("OnLeave", function(self)
 			ConROTTOnLeave(self)
-			self:SetAlpha(0.25) -- Reset alpha to half on mouse out
+			self:SetAlpha(0.50) -- Reset alpha to half on mouse out
 		end)
 
 		lockButton:SetScript("OnClick", function()
@@ -229,7 +228,7 @@ function ConRO:DisplayToggleFrame()
 
 		-- Initialize the lock texture based on initial unlockWindow status
 		ConRO:UpdateLockTexture();
-		lockButton:Show();
+		frame:Show();
 end
 
 function ConRO:CreateAutoButton()
@@ -918,7 +917,6 @@ function ConRO:DisplayWindowFrame()
 			local Color = RAID_CLASS_COLORS[Class];
 			fontstring:SetTextColor(Color.r, Color.g, Color.b, 1);
 			fontstring:SetPoint('BOTTOM', frame, 'TOP', 0, 2);
-			fontstring:SetFont("Fonts\\FRIZQT__.TTF",10,"OUTLINE");
 			fontstring:SetWidth(ConRO.db.profile.windowIconSize / 1.25 + 30);
 			fontstring:SetHeight(ConRO.db.profile.windowIconSize / 1.25);
 			fontstring:SetJustifyV("BOTTOM");
@@ -1064,7 +1062,7 @@ function ConRO:DefenseWindowFrame()
 		frame:SetScript("OnDragStop", frame.StopMovingOrSizing);
 		frame:EnableMouse(ConRO.db.profile._Unlock_ConRO);
 
-		frame:SetPoint("CENTER", -280, 50);
+		frame:SetPoint("CENTER", -280, -50);
 		frame:SetSize(ConRO.db.profile.windowIconSize * .75, ConRO.db.profile.windowIconSize * .75);
 		frame:SetFrameStrata('MEDIUM');
 		frame:SetFrameLevel('73');
@@ -1097,7 +1095,6 @@ function ConRO:DefenseWindowFrame()
 			local Color = RAID_CLASS_COLORS[Class];
 			fontstring:SetTextColor(Color.r, Color.g, Color.b, 1);
 			fontstring:SetPoint('BOTTOM', frame, 'TOP', 0, 2);
-			fontstring:SetFont("Fonts\\FRIZQT__.TTF",10,"OUTLINE");
 			fontstring:SetWidth(ConRO.db.profile.windowIconSize / 1.25 + 30);
 			fontstring:SetHeight(ConRO.db.profile.windowIconSize / 1.25);
 			fontstring:SetJustifyV("BOTTOM");
