@@ -1,9 +1,11 @@
+ConRO = ConRO or {}
+
 ---@diagnostic disable: missing-parameter
 local AceGUI = LibStub('AceGUI-3.0');
 local lsm = LibStub('AceGUISharedMediaWidgets-1.0');
 local media = LibStub('LibSharedMedia-3.0');
 local addonName, addon = ...;
-local version = GetAddOnMetadata(addonName, "Version");
+local version = C_AddOns.GetAddOnMetadata(addonName, "Version");
 local addoninfo = 'Main Version: ' .. version;
 
 BINDING_HEADER_ConRO = "ConRO Hotkeys"
@@ -176,7 +178,7 @@ local _Alpha_Modes = {
 }
 
 local _, _, classIdv = UnitClass('player');
-local cversion = GetAddOnMetadata('ConRO_' .. ConRO.Classes[classIdv], 'Version');
+local cversion = C_AddOns.GetAddOnMetadata('ConRO_' .. ConRO.Classes[classIdv], 'Version');
 local classinfo = " ";
 	if cversion ~= nil then
 		classinfo = ConRO.Classes[classIdv] .. ' Version: ' .. cversion;
@@ -1962,6 +1964,29 @@ local options = {
 	},
 }
 
+function ConRO:GetSpellInfo(spell)
+    local spellInfo = C_Spell.GetSpellInfo(spell)
+
+    if spellInfo then
+        return spellInfo.name, spellInfo.iconID, spellInfo.originalIconID, spellInfo.castTime, spellInfo.minRange, spellInfo.maxRange, spellInfo.spellID
+    else
+        print("Spell not found for ID or name: " .. tostring(spell))
+        return nil, nil, nil, nil, nil, nil, nil
+    end
+end
+
+function ConRO:GetSpellCooldown(spellid)
+	local spellInfo = C_Spell.GetSpellCooldown(spellid)
+
+	if spellInfo then
+        return spellInfo.startTime, spellInfo.duration, spellInfo.isEnabled, spellInfo.modRate
+    else
+        print("Spell not found for ID or name: " .. tostring(spellid))
+        return nil, nil, nil, nil
+    end
+end
+
+
 function ConRO:GetTexture()
 	if self.db.profile.customTexture ~= '' and self.db.profile.customTexture ~= nil then
 		self.FinalTexture = self.db.profile.customTexture;
@@ -1993,6 +2018,12 @@ function ConRO:OnInitialize()
 	self:CreatePvPButton();
 	self:CreateBlockBurstButton();
 	self:CreateBlockAoEButton();
+
+	self:RegisterEvent("PLAYER_ENTERING_WORLD", "OnPlayerEnteringWorld");
+end
+
+function ConRO:OnPlayerEnteringWorld()
+    self:UpdateButtonGlow();
 end
 
 ConRO.DefaultPrint = ConRO.Print;
@@ -2322,33 +2353,41 @@ end
 
 function ConRO:PLAYER_ENTERING_WORLD()
 	C_Timer.After(3, function()
-		self:UpdateButtonGlow();
-		if not self.rotationEnabled and not UnitHasVehicleUI("player") then
-			self:Print(self.Colors.Success .. 'Auto enable on login!');
-			self:Print(self.Colors.Info .. 'Loading class module');
-			self:LoadModule();
-			self:EnableRotation()
-			self:EnableDefense();
+		if C_AddOns.IsAddOnLoaded and C_AddOns.LoadAddOn then
+			self:UpdateButtonGlow();
+			if not self.rotationEnabled and not UnitHasVehicleUI("player") then
+				self:Print(self.Colors.Success .. 'Auto enable on login!');
+				self:Print(self.Colors.Info .. 'Loading class module');
+				self:LoadModule();
+				self:EnableRotation()
+				self:EnableDefense();
+			end
+		else
+			print("PLAYER_ENTERING_WORLD: API not fully available yet.")
 		end
 	end);
 end
 
 function ConRO:LOADING_SCREEN_ENABLED()
 	--	self:Print(self.Colors.Success .. 'Lost Control!');
-			self:DisableRotation();
-			self:DisableDefense();
+	self:DisableRotation();
+	self:DisableDefense();
 end
 
 function ConRO:LOADING_SCREEN_DISABLED()
 	C_Timer.After(3, function()
-		self:UpdateButtonGlow();
-		if not self.rotationEnabled and not UnitHasVehicleUI("player") then
-			self:Print(self.Colors.Success .. 'Auto enable on login!');
-			self:Print(self.Colors.Info .. 'Loading class module');
-			self:LoadModule();
-			self:EnableRotation();
-			self:EnableDefense();
-		end
+		if C_AddOns.IsAddOnLoaded and C_AddOns.LoadAddOn then
+            self:UpdateButtonGlow();
+            if not self.rotationEnabled and not UnitHasVehicleUI("player") then
+                self:Print(self.Colors.Success .. 'Auto enable on login!');
+                self:Print(self.Colors.Info .. 'Loading class module');
+                self:LoadModule();
+                self:EnableRotation();
+                self:EnableDefense();
+            end
+        else
+            print("LOADING_SCREEN_DISABLED: API not fully available yet.")
+        end
 	end);
 end
 
@@ -2421,83 +2460,131 @@ ConRO.UPDATE_MACROS = ConRO.ButtonFetch;
 ConRO.VEHICLE_UPDATE = ConRO.ButtonFetch;
 
 function ConRO:InvokeNextSpell()
-	local oldSkill = self.Spell;
+	local oldSkill = self.Spell
 
-	local timeShift, currentSpell, gcd = ConRO:EndCast();
-	local iterate = self:NextSpell(timeShift, currentSpell, gcd, self.PlayerTalents, self.PvPTalents);
-	self.Spell = self.SuggestedSpells[1];
+	local timeShift, currentSpell, gcd = ConRO:EndCast()
+	self:NextSpell(timeShift, currentSpell, gcd, self.PlayerTalents, self.PvPTalents)
+	self.Spell = self.SuggestedSpells[1]
 
-	ConRO:GetTimeToDie();
---	ConRO:UpdateRotation();
---	ConRO:UpdateButtonGlow();
-	local spellName, _, spellTexture = GetSpellInfo(self.Spell);
-	local _, _, spellTexture2 = GetSpellInfo(self.SuggestedSpells[2]);
-	local _, _, spellTexture3 = GetSpellInfo(self.SuggestedSpells[3]);
+	ConRO:GetTimeToDie()
 
-	if (oldSkill ~= self.Spell or oldSkill == nil) and self.Spell ~= nil then
-		self:GlowNextSpell(self.Spell);
-		ConROWindow.fontkey:SetText(ConRO:improvedGetBindingText(ConRO:FindKeybinding(self.Spell)));
-		ConROWindow2.fontkey:SetText(ConRO:improvedGetBindingText(ConRO:FindKeybinding(self.SuggestedSpells[2])));
-		ConROWindow3.fontkey:SetText(ConRO:improvedGetBindingText(ConRO:FindKeybinding(self.SuggestedSpells[3])));
-		if spellName ~= nil then
-			ConROWindow.texture:SetTexture(spellTexture);
-			ConROWindow.font:SetText(spellName);
-			ConROWindow2.texture:SetTexture(spellTexture2);
-			ConROWindow3.texture:SetTexture(spellTexture3);
+	-- Helper function to safely get spell or item info
+	local function SafeGetSpellOrItemInfo(spellOrItem)
+		if not spellOrItem then
+			return nil, nil
+		end
+
+		local name, _, texture = ConRO:GetSpellInfo(spellOrItem)
+		if name then
+			return name, texture
 		else
-			local itemName, _, _, _, _, _, _, _, _, itemTexture = GetItemInfo(self.Spell);
-			local _, _, _, _, _, _, _, _, _, itemTexture2 = GetItemInfo(self.SuggestedSpells[2]);
-			local _, _, _, _, _, _, _, _, _, itemTexture3 = GetItemInfo(self.SuggestedSpells[3]);
-			ConROWindow.texture:SetTexture(itemTexture);
-			ConROWindow.font:SetText(itemName);
-			ConROWindow2.texture:SetTexture(itemTexture2);
-			ConROWindow3.texture:SetTexture(itemTexture3);
+			local itemName, _, _, _, _, _, _, _, _, itemTexture = GetItemInfo(spellOrItem)
+			return itemName, itemTexture
 		end
 	end
 
-	if self.Spell == nil and oldSkill ~= nil then
-		self:GlowClear();
-		ConROWindow.texture:SetTexture('Interface\\AddOns\\ConRO\\images\\Bigskull');
-		ConROWindow.font:SetText(" ");
-		ConROWindow.fontkey:SetText(" ");
-		ConROWindow2.texture:SetTexture('Interface\\AddOns\\ConRO\\images\\Bigskull');
-		ConROWindow2.fontkey:SetText(" ");
-		ConROWindow3.texture:SetTexture('Interface\\AddOns\\ConRO\\images\\Bigskull');
-		ConROWindow3.fontkey:SetText(" ");
+	-- Safely fetch spell information
+	local spellName, spellTexture = SafeGetSpellOrItemInfo(self.Spell)
+	local _, spellTexture2 = SafeGetSpellOrItemInfo(self.SuggestedSpells[2])
+	local _, spellTexture3 = SafeGetSpellOrItemInfo(self.SuggestedSpells[3])
+
+	if (oldSkill ~= self.Spell or not oldSkill) and self.Spell then
+		self:GlowNextSpell(self.Spell)
+
+		-- Update spell icons and key bindings
+		ConROWindow.fontkey:SetText(ConRO:improvedGetBindingText(ConRO:FindKeybinding(self.Spell)))
+		ConROWindow2.fontkey:SetText(ConRO:improvedGetBindingText(ConRO:FindKeybinding(self.SuggestedSpells[2])))
+		ConROWindow3.fontkey:SetText(ConRO:improvedGetBindingText(ConRO:FindKeybinding(self.SuggestedSpells[3])))
+
+		if spellName then
+			-- If valid spell info, update textures and names
+			ConROWindow.texture:SetTexture(spellTexture)
+			ConROWindow.font:SetText(spellName)
+			if spellTexture2 then
+				ConROWindow2.texture:SetTexture(spellTexture2)
+			end
+			if spellTexture3 then
+				ConROWindow3.texture:SetTexture(spellTexture3)
+			end
+		else
+			-- Fallback to item info if no spell info is available
+			local itemName, itemTexture = SafeGetSpellOrItemInfo(self.Spell)
+			local _, itemTexture2 = SafeGetSpellOrItemInfo(self.SuggestedSpells[2])
+			local _, itemTexture3 = SafeGetSpellOrItemInfo(self.SuggestedSpells[3])
+
+			ConROWindow.texture:SetTexture(itemTexture)
+			ConROWindow.font:SetText(itemName)
+			if itemTexture2 then
+				ConROWindow2.texture:SetTexture(itemTexture2)
+			end
+			if itemTexture3 then
+				ConROWindow3.texture:SetTexture(itemTexture3)
+			end
+		end
+	end
+
+	if not self.Spell and oldSkill then
+		-- Clear the glow and reset textures and text
+		self:GlowClear()
+		local skullTexture = 'Interface\\AddOns\\ConRO\\images\\Bigskull'
+		ConROWindow.texture:SetTexture(skullTexture)
+		ConROWindow.font:SetText(" ")
+		ConROWindow.fontkey:SetText(" ")
+		ConROWindow2.texture:SetTexture(skullTexture)
+		ConROWindow2.fontkey:SetText(" ")
+		ConROWindow3.texture:SetTexture(skullTexture)
+		ConROWindow3.fontkey:SetText(" ")
 	end
 end
 
 function ConRO:InvokeNextDef()
-	local oldSkill = self.Def;
+	local oldSkill = self.Def
 
-	local timeShift, currentSpell, gcd = ConRO:EndCast();
+	local timeShift, currentSpell, gcd = ConRO:EndCast()
 
-	local iterateDef = self:NextDef(timeShift, currentSpell, gcd, self.PlayerTalents, self.PvPTalents);
-	self.Def = self.SuggestedDefSpells[1];
+	local iterateDef = self:NextDef(timeShift, currentSpell, gcd, self.PlayerTalents, self.PvPTalents)
+	self.Def = self.SuggestedDefSpells[1]
 
-	local spellName, _, spellTexture = GetSpellInfo(self.Def);
-	local color = ConRO.db.profile._Defense_Overlay_Color;
+	-- Helper function to safely get spell or item info
+	local function SafeGetSpellOrItemInfo(spellOrItem)
+		if not spellOrItem then
+			return nil, nil
+		end
+
+		local name, _, texture = ConRO:GetSpellInfo(spellOrItem)
+		if name then
+			return name, texture
+		else
+			local itemName, _, _, _, _, _, _, _, _, itemTexture = GetItemInfo(spellOrItem)
+			return itemName, itemTexture
+		end
+	end
+
+	-- Safely fetch spell information
+	local spellName, spellTexture = SafeGetSpellOrItemInfo(self.Def)
+	local color = ConRO.db.profile._Defense_Overlay_Color
 
 	if (oldSkill ~= self.Def or oldSkill == nil) and self.Def ~= nil then
-		self:GlowNextDef(self.Def);
-		ConRODefenseWindow.texture:SetVertexColor(1, 1, 1);
-		ConRODefenseWindow.fontkey:SetText(ConRO:improvedGetBindingText(ConRO:FindKeybinding(self.Def)));
-		if spellName ~= nil then
-			ConRODefenseWindow.texture:SetTexture(spellTexture);
-			ConRODefenseWindow.font:SetText(spellName);
+		self:GlowNextDef(self.Def)
+		ConRODefenseWindow.texture:SetVertexColor(1, 1, 1)
+		ConRODefenseWindow.fontkey:SetText(ConRO:improvedGetBindingText(ConRO:FindKeybinding(self.Def)))
+
+		if spellName then
+			ConRODefenseWindow.texture:SetTexture(spellTexture)
+			ConRODefenseWindow.font:SetText(spellName)
 		else
-			local itemName, _, _, _, _, _, _, _, _, itemTexture = GetItemInfo(self.Def);
-			ConRODefenseWindow.texture:SetTexture(itemTexture);
-			ConRODefenseWindow.font:SetText(itemName);
+			local itemName, itemTexture = SafeGetSpellOrItemInfo(self.Def)
+			ConRODefenseWindow.texture:SetTexture(itemTexture)
+			ConRODefenseWindow.font:SetText(itemName)
 		end
 	end
 
 	if self.Def == nil and oldSkill ~= nil then
-		self:GlowClearDef();
-		ConRODefenseWindow.texture:SetTexture('Interface\\AddOns\\ConRO\\images\\shield2');
-		ConRODefenseWindow.texture:SetVertexColor(color.r, color.g, color.b);
-		ConRODefenseWindow.font:SetText(" ");
-		ConRODefenseWindow.fontkey:SetText(" ");
+		self:GlowClearDef()
+		ConRODefenseWindow.texture:SetTexture('Interface\\AddOns\\ConRO\\images\\shield2')
+		ConRODefenseWindow.texture:SetVertexColor(color.r, color.g, color.b)
+		ConRODefenseWindow.font:SetText(" ")
+		ConRODefenseWindow.fontkey:SetText(" ")
 	end
 end
 
@@ -2510,9 +2597,9 @@ function ConRO:LoadModule()
 	end
 
 	local module = 'ConRO_' .. self.Classes[classId];
-	local _, _, _, loadable, reason = GetAddOnInfo(module);
+	local _, _, _, loadable, reason = C_AddOns.GetAddOnInfo(module);
 
-	if IsAddOnLoaded(module) then
+	if C_AddOns.IsAddOnLoaded(module) then
 		local mode = ConRO:CheckSpecialization();
 
 		self:EnableRotationModule(mode);
@@ -2525,7 +2612,7 @@ function ConRO:LoadModule()
 		return;
 	end
 
-	LoadAddOn(module)
+	C_AddOns.LoadAddOn(module)
 
 	local mode = ConRO:CheckSpecialization();
 
