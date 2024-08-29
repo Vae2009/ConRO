@@ -181,16 +181,16 @@ function ConRO:DisplayToggleFrame()
 		frame:EnableMouse(true)
 		frame:SetClampedToScreen(true)
 		frame:RegisterForDrag("LeftButton")
-		frame:SetScript("OnDragStart", function(self)
+		frame:SetScript("OnDragStart", function()
 			if ConRO.db.profile._Unlock_ConRO then
 				frame:StartMoving()
 			end
 		end)
 		frame:SetScript("OnDragStop", frame.StopMovingOrSizing)
-		frame:SetScript("OnEnter", function(self)
+		frame:SetScript("OnEnter", function()
 			frame:SetAlpha(1);
 		end)
-		frame:SetScript("OnLeave", function(self)
+		frame:SetScript("OnLeave", function()
 			if not MouseIsOver(frame) then
 				if ConRO.db.profile._Hide_Toggle then
 					frame:SetAlpha(0);
@@ -272,13 +272,13 @@ function ConRO:CreateAutoButton()
 			ptex:SetAllPoints()
 			tbutton:SetPushedTexture(ptex)
 
-		tbutton:SetScript("OnMouseDown", function (self, tbutton, up)
+		tbutton:SetScript("OnMouseDown", function ()
 			if ConRO.db.profile._Unlock_ConRO then
 				ConROButtonFrame:StartMoving();
 			end
 		end)
 
-		tbutton:SetScript("OnMouseUp", function (self, tbutton, up)
+		tbutton:SetScript("OnMouseUp", function (self)
 			if ConRO.db.profile._Unlock_ConRO then
 				ConROButtonFrame:StopMovingOrSizing();
 			end
@@ -331,13 +331,13 @@ function ConRO:CreateSingleButton()
 		ptex:SetAllPoints()
 		tbutton:SetPushedTexture(ptex)
 
-		tbutton:SetScript("OnMouseDown", function (self, tbutton, up)
+		tbutton:SetScript("OnMouseDown", function ()
 			if ConRO.db.profile._Unlock_ConRO then
 				ConROButtonFrame:StartMoving();
 			end
 		end)
 
-		tbutton:SetScript("OnMouseUp", function (self, tbutton, up)
+		tbutton:SetScript("OnMouseUp", function (self)
 			if ConRO.db.profile._Unlock_ConRO then
 				ConROButtonFrame:StopMovingOrSizing();
 			end
@@ -390,13 +390,13 @@ function ConRO:CreateAoEButton()
 		ptex:SetAllPoints()
 		tbutton:SetPushedTexture(ptex)
 
-		tbutton:SetScript("OnMouseDown", function (self, tbutton, up)
+		tbutton:SetScript("OnMouseDown", function (_, _, _)
 			if ConRO.db.profile._Unlock_ConRO then
 				ConROButtonFrame:StartMoving();
 			end
 		end)
 
-		tbutton:SetScript("OnMouseUp", function (self, tbutton, up)
+		tbutton:SetScript("OnMouseUp", function (self, _, _)
 			if ConRO.db.profile._Unlock_ConRO then
 				ConROButtonFrame:StopMovingOrSizing();
 			end
@@ -450,13 +450,13 @@ function ConRO:CreateFullButton()
 		ptex:SetAllPoints()
 		tbutton:SetPushedTexture(ptex)
 
-		tbutton:SetScript("OnMouseDown", function (self, tbutton, up)
+		tbutton:SetScript("OnMouseDown", function (_, _, _)
 			if ConRO.db.profile._Unlock_ConRO then
 				ConROButtonFrame:StartMoving();
 			end
 		end)
 
-		tbutton:SetScript("OnMouseUp", function (self, tbutton, up)
+		tbutton:SetScript("OnMouseUp", function (self, _, _)
 			if ConRO.db.profile._Unlock_ConRO then
 				ConROButtonFrame:StopMovingOrSizing();
 			end
@@ -524,13 +524,13 @@ function ConRO:CreateBurstButton()
 		ptex:SetAllPoints()
 		tbutton:SetPushedTexture(ptex)
 
-		tbutton:SetScript("OnMouseDown", function (self, tbutton, up)
+		tbutton:SetScript("OnMouseDown", function (_, _, _)
 			if ConRO.db.profile._Unlock_ConRO then
 				ConROButtonFrame:StartMoving();
 			end
 		end)
 
-		tbutton:SetScript("OnMouseUp", function (self, tbutton, up)
+		tbutton:SetScript("OnMouseUp", function (self, _, _)
 			if ConRO.db.profile._Unlock_ConRO then
 				ConROButtonFrame:StopMovingOrSizing();
 			end
@@ -598,13 +598,13 @@ function ConRO:CreatePvPButton()
 		ptex:SetAllPoints()
 		tbutton:SetPushedTexture(ptex)
 
-		tbutton:SetScript("OnMouseDown", function (self, tbutton, up)
+		tbutton:SetScript("OnMouseDown", function (_, _, _)
 			if ConRO.db.profile._Unlock_ConRO then
 				ConROButtonFrame:StartMoving();
 			end
 		end)
 
-		tbutton:SetScript("OnMouseUp", function (self, tbutton, up)
+		tbutton:SetScript("OnMouseUp", function (self, _, _)
 			if ConRO.db.profile._Unlock_ConRO then
 				ConROButtonFrame:StopMovingOrSizing();
 			end
@@ -653,13 +653,13 @@ function ConRO:CreateBlockBurstButton()
 		ntex:SetAllPoints()
 		tbutton:SetNormalTexture(ntex)
 
-		tbutton:SetScript("OnMouseDown", function (self, tbutton, up)
+		tbutton:SetScript("OnMouseDown", function (_, _, _)
 			if ConRO.db.profile._Unlock_ConRO then
 				ConROButtonFrame:StartMoving();
 			end
 		end)
 
-		tbutton:SetScript("OnMouseUp", function (self, tbutton, up)
+		tbutton:SetScript("OnMouseUp", function (_, _, _)
 			if ConRO.db.profile._Unlock_ConRO then
 				ConROButtonFrame:StopMovingOrSizing();
 			end
@@ -688,13 +688,13 @@ function ConRO:CreateBlockAoEButton()
 		ntex:SetAllPoints()
 		tbutton:SetNormalTexture(ntex)
 
-		tbutton:SetScript("OnMouseDown", function (self, tbutton, up)
+		tbutton:SetScript("OnMouseDown", function (_, _, _)
 			if ConRO.db.profile._Unlock_ConRO then
 				ConROButtonFrame:StartMoving();
 			end
 		end)
 
-		tbutton:SetScript("OnMouseUp", function (self, tbutton, up)
+		tbutton:SetScript("OnMouseUp", function (_, _, _)
 			if ConRO.db.profile._Unlock_ConRO then
 				ConROButtonFrame:StopMovingOrSizing();
 			end
@@ -879,7 +879,7 @@ function ConRO:DisplayWindowFrame()
 		frame:RegisterForDrag("LeftButton");
 		frame:SetScript("OnEnter", ConROTTOnEnter);
 		frame:SetScript("OnLeave", ConROTTOnLeave);
-		frame:SetScript("OnDragStart", function(self)
+		frame:SetScript("OnDragStart", function(_)
 			if ConRO.db.profile._Unlock_ConRO then
 				frame:StartMoving()
 			end
@@ -960,20 +960,28 @@ function ConRO:DisplayWindowFrame()
 		cd:SetFrameStrata('MEDIUM');
 		cd:SetFrameLevel('54');
 		if ConRO.db.profile.enableWindowCooldown then
-			cd:SetScript("OnEvent",function(self)
-				local gcdStart, gcdDuration = GetSpellCooldown(61304)
-				local _, _, _, startTimeMS, endTimeMS = UnitCastingInfo('player');
-				local _, _, _, startTimeMSchan, endTimeMSchan = UnitChannelInfo('player');
+			cd:SetScript("OnEvent", function(_)
+				local gcdStart, gcdDuration = C_Spell.GetSpellCooldown(61304)
+				local _, _, _, startTimeMS, endTimeMS = UnitCastingInfo('player')
+				local _, _, _, startTimeMSchan, endTimeMSchan = UnitChannelInfo('player')
+
+				-- Ensure gcdStart and gcdDuration are valid numbers before using them
 				if not (endTimeMS or endTimeMSchan) then
-					cd:SetCooldown(gcdStart, gcdDuration)
+					if gcdStart and gcdDuration and gcdDuration > 0 then
+						cd:SetCooldown(gcdStart, gcdDuration)
+					end
 				elseif endTimeMSchan then
-					local chanStart  = startTimeMSchan / 1000;
-					local chanDuration = endTimeMSchan/1000 - GetTime();
-					cd:SetCooldown(chanStart, chanDuration)
+					local chanStart = startTimeMSchan and startTimeMSchan / 1000 or nil
+					local chanDuration = (endTimeMSchan and endTimeMSchan / 1000 - GetTime()) or nil
+					if chanStart and chanDuration and chanDuration > 0 then
+						cd:SetCooldown(chanStart, chanDuration)
+					end
 				else
-					local spStart  = startTimeMS / 1000;
-					local spDuration = endTimeMS/1000 - GetTime();
-					cd:SetCooldown(spStart, spDuration)
+					local spStart = startTimeMS and startTimeMS / 1000 or nil
+					local spDuration = (endTimeMS and endTimeMS / 1000 - GetTime()) or nil
+					if spStart and spDuration and spDuration > 0 then
+						cd:SetCooldown(spStart, spDuration)
+					end
 				end
 			end)
 		end
@@ -1054,7 +1062,7 @@ function ConRO:DefenseWindowFrame()
 		frame:RegisterForDrag("LeftButton");
 		frame:SetScript("OnEnter", ConROTTOnEnter);
 		frame:SetScript("OnLeave", ConROTTOnLeave);
-		frame:SetScript("OnDragStart", function(self)
+		frame:SetScript("OnDragStart", function(_)
 			if ConRO.db.profile._Unlock_ConRO then
 				frame:StartMoving()
 			end
@@ -1137,24 +1145,36 @@ function ConRO:DefenseWindowFrame()
 		cd:SetAllPoints(frame);
 		cd:SetFrameStrata('MEDIUM');
 		cd:SetFrameLevel('54');
-		if ConRO.db.profile.enableWindowCooldown then
-			cd:SetScript("OnEvent",function(self)
-				local gcdStart, gcdDuration = GetSpellCooldown(61304)
-				local _, _, _, startTimeMS, endTimeMS = UnitCastingInfo('player');
-				local _, _, _, startTimeMSchan, endTimeMSchan = UnitChannelInfo('player');
-				if not (endTimeMS or endTimeMSchan) then
-					cd:SetCooldown(gcdStart, gcdDuration)
-				elseif endTimeMSchan then
-					local chanStart  = startTimeMSchan / 1000;
-					local chanDuration = endTimeMSchan/1000 - GetTime();
-					cd:SetCooldown(chanStart, chanDuration)
-				else
-					local spStart  = startTimeMS / 1000;
-					local spDuration = endTimeMS/1000 - GetTime();
-					cd:SetCooldown(spStart, spDuration)
-				end
-			end)
-		end
+	if ConRO.db.profile.enableWindowCooldown then
+		cd:SetScript("OnEvent", function(_)
+			local gcdInfo = C_Spell.GetSpellCooldown(61304)
+
+			-- gcdInfo is nil, return early
+			if not gcdInfo then return end
+
+			local gcdStart = gcdInfo.startTime
+			local gcdDuration = gcdInfo.duration
+
+			-- bad gcdDuration, return early
+			if not gcdStart or gcdDuration <= 0 then return end
+
+			local _, _, _, startTimeMS, endTimeMS = UnitCastingInfo('player')
+			local _, _, _, startTimeMSchan, endTimeMSchan = UnitChannelInfo('player')
+
+			-- what cooldown to set
+			if endTimeMSchan then
+				local chanStart = startTimeMSchan / 1000
+				local chanDuration = endTimeMSchan / 1000 - GetTime()
+				cd:SetCooldown(chanStart, chanDuration)
+			elseif endTimeMS then
+				local spStart = startTimeMS / 1000
+				local spDuration = endTimeMS / 1000 - GetTime()
+				cd:SetCooldown(spStart, spDuration)
+			else
+				cd:SetCooldown(gcdStart, gcdDuration)
+			end
+		end)
+	end
 end
 
 function ConRO:InterruptWindowFrame()
@@ -1164,7 +1184,7 @@ function ConRO:InterruptWindowFrame()
 		frame:RegisterForDrag("LeftButton");
 		frame:SetScript("OnEnter", ConROTTOnEnter);
 		frame:SetScript("OnLeave", ConROTTOnLeave);
-		frame:SetScript("OnDragStart", function(self)
+		frame:SetScript("OnDragStart", function(_)
 			if ConRO.db.profile._Unlock_ConRO then
 				frame:StartMoving()
 			end
@@ -1202,7 +1222,7 @@ function ConRO:PurgeWindowFrame()
 		frame:RegisterForDrag("LeftButton");
 		frame:SetScript("OnEnter", ConROTTOnEnter);
 		frame:SetScript("OnLeave", ConROTTOnLeave);
-		frame:SetScript("OnDragStart", function(self)
+		frame:SetScript("OnDragStart", function(_)
 			if ConRO.db.profile._Unlock_ConRO then
 				frame:StartMoving()
 			end
@@ -1259,7 +1279,7 @@ local bindingSubs = {
 function ConRO:improvedGetBindingText(binding)
     if not binding then return "" end
 
-    for i, rep in ipairs(bindingSubs) do
+    for _, rep in ipairs(bindingSubs) do
         binding = binding:gsub( rep[1], rep[2] )
     end
 
@@ -1269,7 +1289,7 @@ end
 function ConRO:FindKeybinding(id)
 	local keybind;
 	if self.Keybinds[id] ~= nil then
-		for k, button in pairs(self.Keybinds[id]) do
+		for _, button in pairs(self.Keybinds[id]) do
 			for i = 1, 12 do
 				if button == 'ActionButton' .. i then
 					button = 'ACTIONBUTTON' .. i;
@@ -1835,8 +1855,7 @@ function ConRO:CreateMovementOverlay(parent, id)
 end
 
 function ConRO:DestroyDamageOverlays()
-	local frame;
-	for key, frame in pairs(self.DamageFrames) do
+	for _, frame in pairs(self.DamageFrames) do
 		frame:GetParent().ConRODamageOverlays = nil;
 		frame:ClearAllPoints();
 		frame:Hide();
@@ -1852,8 +1871,7 @@ function ConRO:DestroyDamageOverlays()
 end
 
 function ConRO:DestroyInterruptOverlays()
-	local frame;
-	for key, frame in pairs(self.InterruptFrames) do
+	for _, frame in pairs(self.InterruptFrames) do
 		frame:GetParent().ConROInterruptOverlays = nil;
 		frame:ClearAllPoints();
 		frame:Hide();
@@ -1869,8 +1887,7 @@ function ConRO:DestroyInterruptOverlays()
 end
 
 function ConRO:DestroyPurgableOverlays()
-	local frame;
-	for key, frame in pairs(self.PurgableFrames) do
+	for _, frame in pairs(self.PurgableFrames) do
 		frame:GetParent().ConROPurgableOverlays = nil;
 		frame:ClearAllPoints();
 		frame:Hide();
@@ -1886,8 +1903,7 @@ function ConRO:DestroyPurgableOverlays()
 end
 
 function ConRO:DestroyTauntOverlays()
-	local frame;
-	for key, frame in pairs(self.TauntFrames) do
+	for _, frame in pairs(self.TauntFrames) do
 		frame:GetParent().ConROTauntOverlays = nil;
 		frame:ClearAllPoints();
 		frame:Hide();
@@ -1903,8 +1919,7 @@ function ConRO:DestroyTauntOverlays()
 end
 
 function ConRO:DestroyRaidBuffsOverlays()
-	local frame;
-	for key, frame in pairs(self.RaidBuffsFrames) do
+	for _, frame in pairs(self.RaidBuffsFrames) do
 		frame:GetParent().ConRORaidBuffsOverlays = nil;
 		frame:ClearAllPoints();
 		frame:Hide();
@@ -1920,8 +1935,7 @@ function ConRO:DestroyRaidBuffsOverlays()
 end
 
 function ConRO:DestroyMovementOverlays()
-	local frame;
-	for key, frame in pairs(self.MovementFrames) do
+	for _, frame in pairs(self.MovementFrames) do
 		frame:GetParent().ConROMovementOverlays = nil;
 		frame:ClearAllPoints();
 		frame:Hide();
@@ -1937,8 +1951,7 @@ function ConRO:DestroyMovementOverlays()
 end
 
 function ConRO:DestroyCoolDownOverlays()
-	local frame;
-	for key, frame in pairs(self.CoolDownFrames) do
+	for _, frame in pairs(self.CoolDownFrames) do
 		frame:GetParent().ConROCoolDownOverlays = nil;
 		frame:ClearAllPoints();
 		frame:Hide();
@@ -1954,8 +1967,7 @@ function ConRO:DestroyCoolDownOverlays()
 end
 
 function ConRO:DestroyDefenseOverlays()
-	local frame;
-	for key, frame in pairs(self.DefenseFrames) do
+	for _, frame in pairs(self.DefenseFrames) do
 		frame:GetParent().ConRODefenseOverlays = nil;
 		frame:ClearAllPoints();
 		frame:Hide();
@@ -1976,11 +1988,11 @@ function ConRO:UpdateButtonGlow()
 	local origShow;
 	local noFunction = function() end;
 
-	if IsAddOnLoaded('ElvUI') then
+	if C_AddOns.IsAddOnLoaded('ElvUI') then
 		LAB = LibStub:GetLibrary('LibActionButton-1.0-ElvUI');
 		LBG = LibStub:GetLibrary('LibCustomGlow-1.0');
 		origShow = LBG.ShowOverlayGlow;
-	elseif IsAddOnLoaded('Bartender4') then
+	elseif C_AddOns.IsAddOnLoaded('Bartender4') then
 		LAB = LibStub:GetLibrary('LibActionButton-1.0');
 	end
 
@@ -2162,31 +2174,31 @@ function ConRO:UpdateRotation()
 
 	self:FetchBlizzard();
 
-	if IsAddOnLoaded('Bartender4') then
+	if C_AddOns.IsAddOnLoaded('Bartender4') then
 		self:FetchBartender4();
 	end
 
-	if IsAddOnLoaded('ButtonForge') then
+	if C_AddOns.IsAddOnLoaded('ButtonForge') then
 		self:FetchButtonForge();
 	end
 
-	if IsAddOnLoaded('ElvUI') then
+	if C_AddOns.IsAddOnLoaded('ElvUI') then
 		self:FetchElvUI();
 	end
 
-	if IsAddOnLoaded('Dominos') then
+	if C_AddOns.IsAddOnLoaded('Dominos') then
 		self:FetchDominos();
 	end
 
-    if IsAddOnLoaded('DiabolicUI') then
+    if C_AddOns.IsAddOnLoaded('DiabolicUI') then
         self:FetchDiabolic();
     end
 
-    if IsAddOnLoaded('AzeriteUI') then
+    if C_AddOns.IsAddOnLoaded('AzeriteUI') then
         self:FetchAzeriteUI();
     end
 
-	if IsAddOnLoaded('ls_UI') then
+	if C_AddOns.IsAddOnLoaded('ls_UI') then
         self:FetchLSUI();
     end
 end
@@ -2207,11 +2219,10 @@ function ConRO:AddButton(spellID, button, hotkey)
 end
 
 function ConRO:AddStandardButton(button, hotkey)
-	local type = button:GetAttribute('type');
-	if type then
-		local actionType = button:GetAttribute(type);
+    local type = button:GetAttribute('type');
+    if type then
 		local id;
-		local spellId;
+        local spellId;
 
         if type == 'action' then
             local slot = button:GetAttribute('action');
@@ -2230,15 +2241,15 @@ function ConRO:AddStandardButton(button, hotkey)
         end
 
         if type == 'macro' then
-			local slot = button:GetAttribute('action');-- Thanks to Zaphon for this blizzard bug fix
+            local slot = button:GetAttribute('action'); -- Thanks to Zaphon for this blizzard bug fix
             if not slot or slot == 0 then
                 slot = button:GetPagedID();
             end
             if not slot or slot == 0 then
                 slot = button:CalculateAction();
             end
-			local macroName = GetActionText(slot);
-			id = GetMacroIndexByName(macroName);--
+            local macroName = GetActionText(slot);
+            id = GetMacroIndexByName(macroName); --
 
             spellId = GetMacroSpell(id);
             if not spellId then
@@ -2247,14 +2258,27 @@ function ConRO:AddStandardButton(button, hotkey)
         elseif type == 'item' then
             spellId = id;
         elseif type == 'spell' then
-            spellId = select(7, GetSpellInfo(id));
+            -- Debugging: Print id before using it
+            if not id then
+                print("Error: 'id' is undefined for type 'spell'.")
+                return;
+            end
+
+			if not ConRO or not ConRO.GetSpellInfo then
+				print("Error: ConRO or ConRO:GetSpellInfo is not available.")
+				return
+			end
+
+            -- Correctly reference the ConRO method
+            spellId = select(7, ConRO:GetSpellInfo(id));
         end
 
-		self:AddButton(spellId, button, hotkey);
-	end
+        self:AddButton(spellId, button, hotkey);
+    end
 end
 
 function ConRO:DefAddButton(spellID, button, hotkey)
+	--print(spellID);
 	if spellID then
 		if self.DefSpells[spellID] == nil then
 			self.DefSpells[spellID] = {};
@@ -2270,51 +2294,37 @@ function ConRO:DefAddButton(spellID, button, hotkey)
 end
 
 function ConRO:DefAddStandardButton(button, hotkey)
-	local type = button:GetAttribute('type');
-	if type then
-		local actionType = button:GetAttribute(type);
-		local id;
-		local spellId;
+	local buttonType = button:GetAttribute('type');
+	if not buttonType then return end
 
-        if type == 'action' then
-            local slot = button:GetAttribute('action');
-            if not slot or slot == 0 then
-                slot = button:GetPagedID();
-            end
-            if not slot or slot == 0 then
-                slot = button:CalculateAction();
-            end
+	local id, spellId
 
-            if HasAction(slot) then
-                type, id = GetActionInfo(slot);
-            else
-                return;
-            end
-        end
+	if buttonType == 'action' or buttonType == 'macro' then
+		local slot = button:GetAttribute('action') or button:GetPagedID() or button:CalculateAction()
+		if not (slot and HasAction(slot)) then return end
 
-        if type == 'macro' then
-			local slot = button:GetAttribute('action');-- Thanks to Zaphon for this blizzard bug fix
-            if not slot or slot == 0 then
-                slot = button:GetPagedID();
-            end
-            if not slot or slot == 0 then
-                slot = button:CalculateAction();
-            end
-			local macroName = GetActionText(slot);
-			id = GetMacroIndexByName(macroName);--
-			
-            spellId = GetMacroSpell(id);
-            if not spellId then
-                return;
-            end
-        elseif type == 'item' then
-            spellId = id;
-        elseif type == 'spell' then
-            spellId = select(7, GetSpellInfo(id));
-        end
-
-		self:DefAddButton(spellId, button, hotkey);
+		if buttonType == 'action' then
+			buttonType, id = GetActionInfo(slot)
+		elseif buttonType == 'macro' then
+			id = GetMacroIndexByName(GetActionText(slot))
+		end
 	end
+
+	if buttonType == 'item' then
+		spellId = id
+	elseif buttonType == 'spell' then
+		spellId = select(7, ConRO:GetSpellInfo(id))
+	elseif buttonType == 'summonmount' then
+		_, spellId = C_MountJournal.GetMountInfoByID(id)
+	elseif buttonType == 'macro' then
+		spellId = GetMacroSpell(id)
+		if not spellId then return end
+	else
+		print("DefAddStandardButton: unknown buttonType", buttonType)
+		return
+	end
+
+	self:DefAddButton(spellId, button, hotkey);
 end
 
 function ConRO:Fetch()
@@ -2332,35 +2342,35 @@ function ConRO:Fetch()
 
 	self:FetchBlizzard();
 
-	if IsAddOnLoaded('Bartender4') then
+	if C_AddOns.IsAddOnLoaded('Bartender4') then
 		self:FetchBartender4();
 	end
 
-	if IsAddOnLoaded('ButtonForge') then
+	if C_AddOns.IsAddOnLoaded('ButtonForge') then
 		self:FetchButtonForge();
 	end
 
-	if IsAddOnLoaded('ElvUI') then
+	if C_AddOns.IsAddOnLoaded('ElvUI') then
 		self:FetchElvUI();
 	end
 
-	if IsAddOnLoaded('Dominos') then
+	if C_AddOns.IsAddOnLoaded('Dominos') then
 		self:FetchDominos();
 	end
 
-	if IsAddOnLoaded('NDui') then
+	if C_AddOns.IsAddOnLoaded('NDui') then
 		self:FetchNDui();
 	end
 
-    if IsAddOnLoaded('DiabolicUI') then
+    if C_AddOns.IsAddOnLoaded('DiabolicUI') then
         self:FetchDiabolic();
     end
 
-    if IsAddOnLoaded('AzeriteUI') then
+    if C_AddOns.IsAddOnLoaded('AzeriteUI') then
         self:FetchAzeriteUI();
     end
 
-    if IsAddOnLoaded('ls_UI') then
+    if C_AddOns.IsAddOnLoaded('ls_UI') then
         self:FetchLSUI();
     end
 
@@ -2384,35 +2394,35 @@ function ConRO:FetchDef()
 
 	self:DefFetchBlizzard();
 
-	if IsAddOnLoaded('Bartender4') then
+	if C_AddOns.IsAddOnLoaded('Bartender4') then
 		self:DefFetchBartender4();
 	end
 
-	if IsAddOnLoaded('ButtonForge') then
+	if C_AddOns.IsAddOnLoaded('ButtonForge') then
 		self:DefFetchButtonForge();
 	end
 
-	if IsAddOnLoaded('ElvUI') then
+	if C_AddOns.IsAddOnLoaded('ElvUI') then
 		self:DefFetchElvUI();
 	end
 
-	if IsAddOnLoaded('Dominos') then
+	if C_AddOns.IsAddOnLoaded('Dominos') then
 		self:DefFetchDominos();
 	end
 
-	if IsAddOnLoaded('NDui') then
+	if C_AddOns.IsAddOnLoaded('NDui') then
 		self:DefFetchNDui();
 	end
 
-	if IsAddOnLoaded('DiabolicUI') then
+	if C_AddOns.IsAddOnLoaded('DiabolicUI') then
         self:DefFetchDiabolic();
     end
 
-    if IsAddOnLoaded('AzeriteUI') then
+    if C_AddOns.IsAddOnLoaded('AzeriteUI') then
         self:DefFetchAzeriteUI();
     end
 
-    if IsAddOnLoaded('ls_UI') then
+    if C_AddOns.IsAddOnLoaded('ls_UI') then
         self:DefFetchLSUI();
     end
 
@@ -2550,12 +2560,12 @@ function ConRO:FetchButtonForge()
 			if type == 'macro' then
 				id = GetMacroSpell(actionType);
 				if id then
-					spellId = select(7, GetSpellInfo(id));
+					spellId = select(7, ConRO:GetSpellInfo(id));
 				end
 			elseif type == 'item' then
 				spellId = GetItemInfo(actionType);
 			elseif type == 'spell' then
-				spellId = select(7, GetSpellInfo(actionType));
+				spellId = select(7, ConRO:GetSpellInfo(actionType));
 			end
 			if spellId then
 				if self.Spells[spellId] == nil then
@@ -2587,17 +2597,16 @@ function ConRO:DefFetchButtonForge()
 		local type = button:GetAttribute('type');
 		if type then
 			local actionType = button:GetAttribute(type);
-			local id;
 			local spellId;
 			if type == 'macro' then
 				local id = GetMacroSpell(actionType);
 				if id then
-					spellId = select(7, GetSpellInfo(id));
+					spellId = select(7, ConRO:GetSpellInfo(id));
 				end
 			elseif type == 'item' then
 				spellId = GetItemInfo(actionType);
 			elseif type == 'spell' then
-				spellId = select(7, GetSpellInfo(actionType));
+				spellId = select(7, ConRO:GetSpellInfo(actionType));
 			end
 			if spellId then
 				if self.DefSpells[spellId] == nil then
@@ -2848,7 +2857,7 @@ end
 
 function ConRO:Dump()
 	local s = '';
-	for k, v in pairs(self.Spells) do
+	for k, _ in pairs(self.Spells) do
 		s = s .. ', ' .. k;
 	end
 	print(s);
@@ -2860,7 +2869,7 @@ end
 
 function ConRO:AbilityBurstIndependent(_Spell_ID)
 	if self.Spells[_Spell_ID] ~= nil then
-		for k, button in pairs(self.Spells[_Spell_ID]) do
+		for _, button in pairs(self.Spells[_Spell_ID]) do
 			self:CoolDownGlow(button, _Spell_ID);
 		end
 	end
@@ -2868,7 +2877,7 @@ end
 
 function ConRO:AbilityInterruptIndependent(_Spell_ID)
 	if self.Spells[_Spell_ID] ~= nil then
-		for k, button in pairs(self.Spells[_Spell_ID]) do
+		for _, button in pairs(self.Spells[_Spell_ID]) do
 			self:InterruptGlow(button, _Spell_ID);
 		end
 	end
@@ -2876,7 +2885,7 @@ end
 
 function ConRO:AbilityPurgeIndependent(_Spell_ID)
 	if self.Spells[_Spell_ID] ~= nil then
-		for k, button in pairs(self.Spells[_Spell_ID]) do
+		for _, button in pairs(self.Spells[_Spell_ID]) do
 			self:PurgableGlow(button, _Spell_ID);
 		end
 	end
@@ -2884,7 +2893,7 @@ end
 
 function ConRO:AbilityTauntIndependent(_Spell_ID)
 	if self.Spells[_Spell_ID] ~= nil then
-		for k, button in pairs(self.Spells[_Spell_ID]) do
+		for _, button in pairs(self.Spells[_Spell_ID]) do
 			self:TauntGlow(button, _Spell_ID);
 		end
 	end
@@ -2892,7 +2901,7 @@ end
 
 function ConRO:AbilityRaidBuffsIndependent(_Spell_ID)
 	if self.Spells[_Spell_ID] ~= nil then
-		for k, button in pairs(self.Spells[_Spell_ID]) do
+		for _, button in pairs(self.Spells[_Spell_ID]) do
 			self:RaidBuffsGlow(button, _Spell_ID);
 		end
 	end
@@ -2900,7 +2909,7 @@ end
 
 function ConRO:AbilityMovementIndependent(_Spell_ID)
 	if self.Spells[_Spell_ID] ~= nil then
-		for k, button in pairs(self.Spells[_Spell_ID]) do
+		for _, button in pairs(self.Spells[_Spell_ID]) do
 			self:MovementGlow(button, _Spell_ID);
 		end
 	end
@@ -2908,7 +2917,7 @@ end
 
 function ConRO:ClearAbilityBurstIndependent(_Spell_ID)
 	if self.Spells[_Spell_ID] ~= nil then
-		for k, button in pairs(self.Spells[_Spell_ID]) do
+		for _, button in pairs(self.Spells[_Spell_ID]) do
 			self:HideCoolDownGlow(button, _Spell_ID);
 		end
 	end
@@ -2916,7 +2925,7 @@ end
 
 function ConRO:ClearAbilityInterruptIndependent(_Spell_ID)
 	if self.Spells[_Spell_ID] ~= nil then
-		for k, button in pairs(self.Spells[_Spell_ID]) do
+		for _, button in pairs(self.Spells[_Spell_ID]) do
 			self:HideInterruptGlow(button, _Spell_ID);
 		end
 	end
@@ -2924,7 +2933,7 @@ end
 
 function ConRO:ClearAbilityPurgeIndependent(_Spell_ID)
 	if self.Spells[_Spell_ID] ~= nil then
-		for k, button in pairs(self.Spells[_Spell_ID]) do
+		for _, button in pairs(self.Spells[_Spell_ID]) do
 			self:HidePurgableGlow(button, _Spell_ID);
 		end
 	end
@@ -2932,7 +2941,7 @@ end
 
 function ConRO:ClearAbilityTauntIndependent(_Spell_ID)
 	if self.Spells[_Spell_ID] ~= nil then
-		for k, button in pairs(self.Spells[_Spell_ID]) do
+		for _, button in pairs(self.Spells[_Spell_ID]) do
 			self:HideTauntGlow(button, _Spell_ID);
 		end
 	end
@@ -2940,7 +2949,7 @@ end
 
 function ConRO:ClearAbilityRaidBuffsIndependent(_Spell_ID)
 	if self.Spells[_Spell_ID] ~= nil then
-		for k, button in pairs(self.Spells[_Spell_ID]) do
+		for _, button in pairs(self.Spells[_Spell_ID]) do
 			self:HideRaidBuffsGlow(button, _Spell_ID);
 		end
 	end
@@ -2948,7 +2957,7 @@ end
 
 function ConRO:ClearAbilityMovementIndependent(_Spell_ID)
 	if self.Spells[_Spell_ID] ~= nil then
-		for k, button in pairs(self.Spells[_Spell_ID]) do
+		for _, button in pairs(self.Spells[_Spell_ID]) do
 			self:HideMovementGlow(button, _Spell_ID);
 		end
 	end
@@ -3109,10 +3118,10 @@ local swapSpells = {
 ConROSwapSpells = ConROSwapSpells or swapSpells;
 
 function ConRO:GlowSpell(spellID)
-	local spellName = GetSpellInfo(spellID);
+	local spellName = ConRO:GetSpellInfo(spellID);
 	local _IsSwapSpell = false;
 
-	for k, swapSpellID in pairs(ConROSwapSpells) do
+	for _, swapSpellID in pairs(ConROSwapSpells) do
 		if spellID == swapSpellID then
 			_IsSwapSpell = true;
 			break;
@@ -3120,18 +3129,18 @@ function ConRO:GlowSpell(spellID)
 	end
 
 	if self.Spells[spellID] ~= nil then
-		for k, button in pairs(self.Spells[spellID]) do
+		for _, button in pairs(self.Spells[spellID]) do
 			self:DamageGlow(button, 'next');
 		end
 		self.SpellsGlowing[spellID] = 1;
 	else
 		if UnitAffectingCombat('player') and not _IsSwapSpell then
 			if spellName ~= nil then
-				self:Print(self.Colors.Error .. 'Spell not found on action bars: ' .. ' ' .. spellName .. ' ' .. '(' .. spellID .. ')');
+				self:Print(self.Colors.Error .. 'GlowSpell:Spell not found on action bars: ' .. ' ' .. spellName .. ' ' .. '(' .. spellID .. ')');
 			else
 				local itemName = GetItemInfo(spellID);
 				if itemName ~= nil then
-					self:Print(self.Colors.Error .. 'Item not found on action bars: ' .. ' ' .. itemName .. ' ' .. '(' .. spellID .. ')');
+					self:Print(self.Colors.Error .. 'GlowSpell:Item not found on action bars: ' .. ' ' .. itemName .. ' ' .. '(' .. spellID .. ')');
 				end
 			end
 		end
@@ -3140,21 +3149,21 @@ function ConRO:GlowSpell(spellID)
 end
 
 function ConRO:GlowDef(spellID)
-	local spellName = GetSpellInfo(spellID);
+	local spellName = ConRO:GetSpellInfo(spellID);
 
 	if self.DefSpells[spellID] ~= nil then
-		for k, button in pairs(self.DefSpells[spellID]) do
+		for _, button in pairs(self.DefSpells[spellID]) do
 			self:DefenseGlow(button, 'nextdef');
 		end
 		self.DefGlowing[spellID] = 1;
 	else
 		if UnitAffectingCombat('player') and not _IsSwapSpell then
 			if spellName ~= nil then
-				self:Print(self.Colors.Error .. 'Spell not found on action bars: ' .. ' ' .. spellName .. ' ' .. '(' .. spellID .. ')');
+				self:Print(self.Colors.Error .. 'GlowDef:Spell not found on action bars: ' .. ' ' .. spellName .. ' ' .. '(' .. spellID .. ')');
 			else
 				local itemName = GetItemInfo(spellID);
 				if itemName ~= nil then
-					self:Print(self.Colors.Error .. 'Item not found on action bars: ' .. ' ' .. itemName .. ' ' .. '(' .. spellID .. ')');
+					self:Print(self.Colors.Error .. 'GlowDef:Item not found on action bars: ' .. ' ' .. itemName .. ' ' .. '(' .. spellID .. ')');
 				end
 			end
 		end
@@ -3175,7 +3184,7 @@ end
 function ConRO:GlowClear()
 	for spellID, v in pairs(self.SpellsGlowing) do
 		if v == 1 then
-			for k, button in pairs(self.Spells[spellID]) do
+			for _, button in pairs(self.Spells[spellID]) do
 				self:HideDamageGlow(button, 'next');
 			end
 			self.SpellsGlowing[spellID] = 0;
@@ -3186,7 +3195,7 @@ end
 function ConRO:GlowClearDef()
 	for spellID, v in pairs(self.DefGlowing) do
 		if v == 1 then
-			for k, button in pairs(self.DefSpells[spellID]) do
+			for _, button in pairs(self.DefSpells[spellID]) do
 				self:HideDefenseGlow(button, 'nextdef');
 			end
 			self.DefGlowing[spellID] = 0;
