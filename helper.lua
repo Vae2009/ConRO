@@ -38,27 +38,40 @@ function ConRO:CheckTalents()
 
 						if entryId ~= nil then
 							local entryInfo = C_Traits.GetEntryInfo(configId, entryId)
-							local definitionInfo = C_Traits.GetDefinitionInfo(entryInfo.definitionID)
 
-							if definitionInfo ~= nil then
-								local spellId = nil
-								if definitionInfo.spellID ~= nil then
-									spellId = definitionInfo.spellID
-								elseif definitionInfo.overriddenSpellID ~= nil then
-									spellId = definitionInfo.overriddenSpellID
-								end
+							if entryInfo then
+								local definitionID = entryInfo.definitionID
 
-								if spellId ~= nil then
-									local name = ConRO:GetSpellInfo(spellId)
-										tinsert(self.PlayerTalents, entryId);
-									self.PlayerTalents[entryId] = {};
+								if definitionID then
+									local definitionInfo = C_Traits.GetDefinitionInfo(definitionID)
 
-									tinsert(self.PlayerTalents[entryId], {
-										id = entryId,
-										talentName = name,
-										rank = node.currentRank,
-									})
-								end
+									if definitionInfo ~= nil then
+										local spellId = nil
+										if definitionInfo.spellID ~= nil then
+											spellId = definitionInfo.spellID
+										elseif definitionInfo.overriddenSpellID ~= nil then
+											spellId = definitionInfo.overriddenSpellID
+										end
+
+										if spellId ~= nil then
+											local name = ConRO:GetSpellInfo(spellId)
+											tinsert(self.PlayerTalents, entryId);
+											self.PlayerTalents[entryId] = {};
+
+											tinsert(self.PlayerTalents[entryId], {
+												id = entryId,
+												talentName = name,
+												rank = node.currentRank,
+											})
+										end
+									end
+								else
+									-- todo: Handle the case where definitionID is nil
+									self:Print(self.Colors.Error .. 'Warning: definitionID is nil for configId:', configId, "entryId:", entryId);
+							end
+							else
+								-- todo: Handle the nil case for entryInfo
+								self:Print(self.Colors.Error .. 'Warning: entryInfo is nil for configId:', configId, "entryId:", entryId);
 							end
 						end
 					end
