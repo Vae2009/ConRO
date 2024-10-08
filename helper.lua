@@ -1439,7 +1439,12 @@ function ConRO:PetAssist()
 end
 
 function ConRO:Totem(spellID)
-	local spellName = GetSpellInfo(spellID)
+	local spellInfo = C_Spell.GetSpellInfo(spellID)
+    if not spellInfo then
+        return false
+    end
+
+    local spellName = spellInfo.name
 	for i=1,4 do
 		local _, totemName, startTime, duration = GetTotemInfo(i);
 		if spellName == totemName then

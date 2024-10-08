@@ -82,7 +82,7 @@ ConRO.Classes = {
 
 local defaultOptions = {
 	profile = {
-		_Disable_Info_Messages = false,
+		_Disable_Info_Messages = true,
 		_Intervals = 0.20,
 		_Unlock_ConRO = true,
 
