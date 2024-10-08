@@ -34,6 +34,11 @@ local defaults = {
 
 ConROCharacter = ConROCharacter or defaults;
 
+local GetItemInfo = C_Spell.GetItemInfo;
+local GetSpellInfo = C_Spell and C_Spell.GetSpellInfo or _G.GetSpellInfo;
+local IsAddOnLoaded = C_AddOns.IsAddOnLoaded;
+local GetSpellCooldown = C_Spell and C_Spell.GetSpellCooldown;
+
 function ConROTTOnEnter(self)
 	local ttFrameName = self:GetName();
 	GameTooltip_SetDefaultAnchor(GameTooltip, UIParent)
@@ -799,7 +804,7 @@ SLASH_CONROUNLOCK1 = '/ConROUL'
 SLASH_CONROA1 = '/ConROtoggle'
 SLASH_CONROB1 = '/ConROBurstToggle'
 SLASH_CONROP1 = '/ConROPvPToggle'
-SlashCmdList["CONRO"] = function() InterfaceOptionsFrame_OpenToCategory('ConRO'); InterfaceOptionsFrame_OpenToCategory('ConRO'); end
+SlashCmdList["CONRO"] = function() Settings.OpenToCategory('ConRO'); Settings.OpenToCategory('ConRO'); end
 SlashCmdList["CONROUNLOCK"] = function() ConRO:SlashUnlock() end
 SlashCmdList["CONROA"] = function() ConRO:SlashToggle() end -- Slash Command List
 SlashCmdList["CONROB"] = function() ConRO:SlashBurstToggle() end -- Slash Command List
@@ -961,7 +966,10 @@ function ConRO:DisplayWindowFrame()
 		cd:SetFrameLevel('54');
 		if ConRO.db.profile.enableWindowCooldown then
 			cd:SetScript("OnEvent",function(self)
-				local gcdStart, gcdDuration = GetSpellCooldown(61304)
+				local gcdStart, gcdDuration;
+				local spellCooldownInfo = C_Spell.GetSpellCooldown(61304);
+					gcdStart = spellCooldownInfo and spellCooldownInfo.startTime;
+					gcdDuration = spellCooldownInfo and spellCooldownInfo.duration;
 				local _, _, _, startTimeMS, endTimeMS = UnitCastingInfo('player');
 				local _, _, _, startTimeMSchan, endTimeMSchan = UnitChannelInfo('player');
 				if not (endTimeMS or endTimeMSchan) then
@@ -1139,7 +1147,10 @@ function ConRO:DefenseWindowFrame()
 		cd:SetFrameLevel('54');
 		if ConRO.db.profile.enableWindowCooldown then
 			cd:SetScript("OnEvent",function(self)
-				local gcdStart, gcdDuration = GetSpellCooldown(61304)
+				local gcdStart, gcdDuration;
+				local spellCooldownInfo = C_Spell.GetSpellCooldown(61304);
+					gcdStart = spellCooldownInfo and spellCooldownInfo.startTime;
+					gcdDuration = spellCooldownInfo and spellCooldownInfo.duration;
 				local _, _, _, startTimeMS, endTimeMS = UnitCastingInfo('player');
 				local _, _, _, startTimeMSchan, endTimeMSchan = UnitChannelInfo('player');
 				if not (endTimeMS or endTimeMSchan) then
@@ -1976,7 +1987,7 @@ function ConRO:UpdateButtonGlow()
 	local origShow;
 	local noFunction = function() end;
 
-	if IsAddOnLoaded('ElvUI') then
+	if C_AddOns.IsAddOnLoaded('ElvUI') then
 		LAB = LibStub:GetLibrary('LibActionButton-1.0-ElvUI');
 		LBG = LibStub:GetLibrary('LibCustomGlow-1.0');
 		origShow = LBG.ShowOverlayGlow;
@@ -2214,14 +2225,7 @@ function ConRO:AddStandardButton(button, hotkey)
 		local spellId;
 
         if type == 'action' then
-            local slot = button:GetAttribute('action');
-            if not slot or slot == 0 then
-                slot = button:GetPagedID();
-            end
-            if not slot or slot == 0 then
-                slot = button:CalculateAction();
-            end
-
+            local slot = button:GetAttribute('action') or button:GetPagedID() or button:CalculateAction()
             if HasAction(slot) then
                 type, id = GetActionInfo(slot);
             else
@@ -2230,27 +2234,30 @@ function ConRO:AddStandardButton(button, hotkey)
         end
 
         if type == 'macro' then
-			local slot = button:GetAttribute('action');-- Thanks to Zaphon for this blizzard bug fix
-            if not slot or slot == 0 then
-                slot = button:GetPagedID();
-            end
-            if not slot or slot == 0 then
-                slot = button:CalculateAction();
-            end
-			local macroName = GetActionText(slot);
-			id = GetMacroIndexByName(macroName);--
-
-            spellId = GetMacroSpell(id);
+			spellId = GetMacroSpell(actionType);
             if not spellId then
-                return;
+                local slot = button:GetAttribute('action') or button:GetPagedID() or button:CalculateAction()
+                local macroName = GetActionText(slot)
+                id = GetMacroIndexByName(macroName)
+                spellId = GetMacroSpell(id)
             end
         elseif type == 'item' then
-            spellId = id;
+            spellId = C_Item.GetItemSpell(id)
         elseif type == 'spell' then
-            spellId = select(7, GetSpellInfo(id));
+			local spellInfo = C_Spell.GetSpellInfo(id)
+            spellId = spellInfo and spellInfo.spellID
         end
 
-		self:AddButton(spellId, button, hotkey);
+		if spellId then
+            self:AddButton(spellId, button, hotkey)
+        end
+    end
+	
+	if not type and button and button.HasAction then
+		local id, _, HasAction, spellID = button:HasAction()
+		if spellID then
+			self:AddButton(spellID, button)
+		end
 	end
 end
 
@@ -2270,13 +2277,13 @@ function ConRO:DefAddButton(spellID, button, hotkey)
 end
 
 function ConRO:DefAddStandardButton(button, hotkey)
-	local type = button:GetAttribute('type');
-	if type then
-		local actionType = button:GetAttribute(type);
+	local buttonType = button:GetAttribute('type');
+	if buttonType then
 		local id;
 		local spellId;
+		local actionType;
 
-        if type == 'action' then
+        if buttonType == 'action' then
             local slot = button:GetAttribute('action');
             if not slot or slot == 0 then
                 slot = button:GetPagedID();
@@ -2286,14 +2293,26 @@ function ConRO:DefAddStandardButton(button, hotkey)
             end
 
             if HasAction(slot) then
-                type, id = GetActionInfo(slot);
-            else
-                return;
-            end
-        end
-
-        if type == 'macro' then
-			local slot = button:GetAttribute('action');-- Thanks to Zaphon for this blizzard bug fix
+                actionType, id = GetActionInfo(slot);
+				if actionType == 'spell' then
+					spellId = id;
+				elseif actionType == 'macro' then
+					local macroSpellId = GetMacroSpell(id);
+					if macroSpellId then
+						spellId = macroSpellId;
+					else
+						return;  -- No spell associated with this macro
+					end
+				elseif actionType == 'item' then
+					spellId = id;
+				else
+					return;  -- Unsupported action type
+				end
+			else
+				return;  -- Action slot is empty
+			end
+		elseif buttonType == 'macro' then
+			local slot = button:GetAttribute('action');
             if not slot or slot == 0 then
                 slot = button:GetPagedID();
             end
@@ -2301,19 +2320,21 @@ function ConRO:DefAddStandardButton(button, hotkey)
                 slot = button:CalculateAction();
             end
 			local macroName = GetActionText(slot);
-			id = GetMacroIndexByName(macroName);--
+			id = GetMacroIndexByName(macroName);
 			
             spellId = GetMacroSpell(id);
             if not spellId then
-                return;
+                return;  -- No spell associated with this macro
             end
-        elseif type == 'item' then
-            spellId = id;
-        elseif type == 'spell' then
+		elseif buttonType == 'item' then
+			spellId = id;
+		elseif buttonType == 'spell' then
             spellId = select(7, GetSpellInfo(id));
         end
 
-		self:DefAddButton(spellId, button, hotkey);
+		if spellId then
+			self:DefAddButton(spellId, button, hotkey);
+		end
 	end
 end
 
@@ -3109,7 +3130,9 @@ local swapSpells = {
 ConROSwapSpells = ConROSwapSpells or swapSpells;
 
 function ConRO:GlowSpell(spellID)
-	local spellName = GetSpellInfo(spellID);
+	local spellName
+		local spellInfo = GetSpellInfo(spellID);
+		spellName = spellInfo and spellInfo.name
 	local _IsSwapSpell = false;
 
 	for k, swapSpellID in pairs(ConROSwapSpells) do
@@ -3140,7 +3163,9 @@ function ConRO:GlowSpell(spellID)
 end
 
 function ConRO:GlowDef(spellID)
-	local spellName = GetSpellInfo(spellID);
+	local spellName
+		local spellInfo = GetSpellInfo(spellID);
+		spellName = spellInfo and spellInfo.name
 
 	if self.DefSpells[spellID] ~= nil then
 		for k, button in pairs(self.DefSpells[spellID]) do

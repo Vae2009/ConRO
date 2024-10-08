@@ -3,7 +3,7 @@ local AceGUI = LibStub('AceGUI-3.0');
 local lsm = LibStub('AceGUISharedMediaWidgets-1.0');
 local media = LibStub('LibSharedMedia-3.0');
 local addonName, addon = ...;
-local version = GetAddOnMetadata(addonName, "Version");
+local version = C_AddOns.GetAddOnMetadata(addonName, "Version");
 local addoninfo = 'Main Version: ' .. version;
 
 BINDING_HEADER_ConRO = "ConRO Hotkeys"
@@ -176,7 +176,7 @@ local _Alpha_Modes = {
 }
 
 local _, _, classIdv = UnitClass('player');
-local cversion = GetAddOnMetadata('ConRO_' .. ConRO.Classes[classIdv], 'Version');
+local cversion = C_AddOns.GetAddOnMetadata('ConRO_' .. ConRO.Classes[classIdv], 'Version');
 local classinfo = " ";
 	if cversion ~= nil then
 		classinfo = ConRO.Classes[classIdv] .. ' Version: ' .. cversion;
@@ -2430,9 +2430,28 @@ function ConRO:InvokeNextSpell()
 	ConRO:GetTimeToDie();
 --	ConRO:UpdateRotation();
 --	ConRO:UpdateButtonGlow();
-	local spellName, _, spellTexture = GetSpellInfo(self.Spell);
-	local _, _, spellTexture2 = GetSpellInfo(self.SuggestedSpells[2]);
-	local _, _, spellTexture3 = GetSpellInfo(self.SuggestedSpells[3]);
+	local spellName, spellTexture;
+
+	-- Get info for the first suggested spell
+	if self.Spell then
+		local spellInfo1 = C_Spell.GetSpellInfo(self.Spell);
+		spellName = spellInfo1 and spellInfo1.name;
+		spellTexture = spellInfo1 and spellInfo1.originalIconID;
+	end
+
+	local spellTexture2;
+	-- Get info for the second suggested spell, only if it exists
+	if self.SuggestedSpells[2] then
+		local spellInfo2 = C_Spell.GetSpellInfo(self.SuggestedSpells[2]);
+		spellTexture2 = spellInfo2 and spellInfo2.originalIconID;
+	end
+
+	local spellTexture3;
+	-- Get info for the third suggested spell, only if it exists
+	if self.SuggestedSpells[3] then
+		local spellInfo3 = C_Spell.GetSpellInfo(self.SuggestedSpells[3]);
+		spellTexture3 = spellInfo3 and spellInfo3.originalIconID;
+	end
 
 	if (oldSkill ~= self.Spell or oldSkill == nil) and self.Spell ~= nil then
 		self:GlowNextSpell(self.Spell);
@@ -2475,7 +2494,14 @@ function ConRO:InvokeNextDef()
 	local iterateDef = self:NextDef(timeShift, currentSpell, gcd, self.PlayerTalents, self.PvPTalents);
 	self.Def = self.SuggestedDefSpells[1];
 
-	local spellName, _, spellTexture = GetSpellInfo(self.Def);
+	local spellName, spellTexture;
+	if self.Def then
+		local spellInfo = C_Spell.GetSpellInfo(self.Def);
+		if spellInfo then
+			spellName = spellInfo.name;
+			spellTexture = spellInfo.originalIconID;
+		end
+	end
 	local color = ConRO.db.profile._Defense_Overlay_Color;
 
 	if (oldSkill ~= self.Def or oldSkill == nil) and self.Def ~= nil then
@@ -2510,9 +2536,9 @@ function ConRO:LoadModule()
 	end
 
 	local module = 'ConRO_' .. self.Classes[classId];
-	local _, _, _, loadable, reason = GetAddOnInfo(module);
+	local _, _, _, loadable, reason = C_AddOns.GetAddOnInfo(module);
 
-	if IsAddOnLoaded(module) then
+	if C_AddOns.IsAddOnLoaded(module) then
 		local mode = ConRO:CheckSpecialization();
 
 		self:EnableRotationModule(mode);
@@ -2525,7 +2551,7 @@ function ConRO:LoadModule()
 		return;
 	end
 
-	LoadAddOn(module)
+	C_AddOns.LoadAddOn(module)
 
 	local mode = ConRO:CheckSpecialization();
 

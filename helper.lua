@@ -2,7 +2,14 @@ ConRO.RaidBuffs = {};
 ConRO.WarningFlags = {};
 
 -- Global cooldown spell id
--- GlobalCooldown = 61304;
+local _GlobalCooldown = 61304;
+
+-- Global functions
+local GetSpellCharges = C_Spell.GetSpellCharges
+local GetSpellInfo = C_Spell and C_Spell.GetSpellInfo or GetSpellInfo
+local GetSpellCooldown = C_Spell and C_Spell.GetSpellCooldown
+local IsUsableSpell = C_Spell.IsSpellUsable
+local UnitAura = C_UnitAuras.GetAuraDataByIndex
 
 local INF = 2147483647;
 
@@ -13,59 +20,43 @@ function ConRO:SpecName()
 end
 
 function ConRO:CheckTalents()
-	--print("Bing")
-	self.PlayerTalents = {};
+	self.PlayerTalents = {}
 	wipe(self.PlayerTalents)
 
-	local configId = C_ClassTalents.GetActiveConfigID()
-	if configId ~= nil then
-		local configInfo = C_Traits.GetConfigInfo(configId)
-		if configInfo ~= nil then
-			for _, treeId in pairs(configInfo.treeIDs) do
-				local nodes = C_Traits.GetTreeNodes(treeId)
-				for _, nodeId in pairs(nodes) do
-					local node = C_Traits.GetNodeInfo(configId, nodeId)
-					if node.currentRank and node.currentRank > 0 then
-						local entryId = nil
+	local configID = C_ClassTalents.GetActiveConfigID()
+    if not configID then return end
 
-						if node.activeEntry ~= nil then
-							entryId = node.activeEntry.entryID
-						elseif node.nextEntry ~= nil then
-							entryId = node.nextEntry.entryID
-						elseif node.entryIDs ~= nil then
-							entryId = node.entryIDs[1]
-						end
+    local configInfo = C_Traits.GetConfigInfo(configID)
+    local treeIDs = configInfo and configInfo.treeIDs
+    if not treeIDs then return end
 
-						if entryId ~= nil then
-							local entryInfo = C_Traits.GetEntryInfo(configId, entryId)
-							local definitionInfo = C_Traits.GetDefinitionInfo(entryInfo.definitionID)
-
-							if definitionInfo ~= nil then
-								local spellId = nil
-								if definitionInfo.spellID ~= nil then
-									spellId = definitionInfo.spellID
-								elseif definitionInfo.overriddenSpellID ~= nil then
-									spellId = definitionInfo.overriddenSpellID
-								end
-
-								if spellId ~= nil then
-									local name = GetSpellInfo(spellId)
-										tinsert(self.PlayerTalents, entryId);
-									self.PlayerTalents[entryId] = {};
-
-									tinsert(self.PlayerTalents[entryId], {
-										id = entryId,
-										talentName = name,
-										rank = node.currentRank,
-									})
-								end
-							end
-						end
-					end
-				end
-			end
-		end
-	end
+    for _, treeID in ipairs(treeIDs) do
+        local nodes = C_Traits.GetTreeNodes(treeID)
+        for _, nodeID in ipairs(nodes) do
+            local nodeInfo = C_Traits.GetNodeInfo(configID, nodeID)
+            if nodeInfo and nodeInfo.currentRank and nodeInfo.currentRank > 0 then
+                local entryID = nodeInfo.activeEntry and nodeInfo.activeEntry.entryID or 
+                                nodeInfo.entryIDs and nodeInfo.entryIDs[1]
+                if entryID then
+                    local entryInfo = C_Traits.GetEntryInfo(configID, entryID)
+                    local definitionID = entryInfo and entryInfo.definitionID
+                    if definitionID then
+                        local definitionInfo = C_Traits.GetDefinitionInfo(definitionID)
+                        if definitionInfo then
+                            local spellId = definitionInfo.spellID or definitionInfo.overriddenSpellID
+                            if spellId then
+                                self.PlayerTalents[entryID] = {
+                                    id = spellId,
+                                    rank = nodeInfo.currentRank,
+                                    isHeroTalent = nodeInfo.subTreeID ~= nil
+                                }
+                            end
+                        end
+                    end
+                end
+            end
+        end
+    end
 end
 
 function ConRO:IsPvP()
@@ -443,70 +434,70 @@ function ConRO:Targets(spellID)
 	local number_in_range = 0;
 		if spellID == "Melee" then
 			if not UnitIsFriend("player", "target") and UnitExists("target") then
-				if IsItemInRange(37727, "target") then
+				if C_Item.IsItemInRange(37727, "target") then
 					target_in_range = true;
 				end
 			end
 
 			for i = 1, 15 do
 				if not UnitIsFriend("player", 'nameplate' .. i) then
-					if UnitExists('nameplate' .. i) and IsItemInRange(37727, "nameplate"..i) == true and UnitName('nameplate' .. i) ~= "Explosive" and UnitName('nameplate' .. i) ~= "Incorporeal Being" then
+					if UnitExists('nameplate' .. i) and C_Item.IsItemInRange(37727, "nameplate"..i) == true and UnitName('nameplate' .. i) ~= "Explosive" and UnitName('nameplate' .. i) ~= "Incorporeal Being" then
 						number_in_range = number_in_range + 1
 					end
 				end
 			end
 		elseif spellID == "10" then
 			if not UnitIsFriend("player", "target") and UnitExists("target") then
-				if IsItemInRange(32321, "target") then
+				if C_Item.IsItemInRange(32321, "target") then
 					target_in_range = true;
 				end
 			end
 
 			for i = 1, 15 do
 				if not UnitIsFriend("player", 'nameplate' .. i) then
-					if UnitExists('nameplate' .. i) and IsItemInRange(32321, "nameplate"..i) == true and UnitName('nameplate' .. i) ~= "Explosive" and UnitName('nameplate' .. i) ~= "Incorporeal Being" then
+					if UnitExists('nameplate' .. i) and C_Item.IsItemInRange(32321, "nameplate"..i) == true and UnitName('nameplate' .. i) ~= "Explosive" and UnitName('nameplate' .. i) ~= "Incorporeal Being" then
 						number_in_range = number_in_range + 1
 					end
 				end
 			end
 		elseif spellID == "15" then
 			if not UnitIsFriend("player", "target") and UnitExists("target") then
-				if IsItemInRange(33069, "target") then
+				if C_Item.IsItemInRange(33069, "target") then
 					target_in_range = true;
 				end
 			end
 
 			for i = 1, 15 do
 				if not UnitIsFriend("player", 'nameplate' .. i) then
-					if UnitExists('nameplate' .. i) and IsItemInRange(33069, "nameplate"..i) == true and UnitName('nameplate' .. i) ~= "Explosive" and UnitName('nameplate' .. i) ~= "Incorporeal Being" then
+					if UnitExists('nameplate' .. i) and C_Item.IsItemInRange(33069, "nameplate"..i) == true and UnitName('nameplate' .. i) ~= "Explosive" and UnitName('nameplate' .. i) ~= "Incorporeal Being" then
 						number_in_range = number_in_range + 1
 					end
 				end
 			end
 		elseif spellID == "25" then
 			if not UnitIsFriend("player", "target") and UnitExists("target") then
-				if IsItemInRange(24268, "target") then
+				if C_Item.IsItemInRange(24268, "target") then
 					target_in_range = true;
 				end
 			end
 
 			for i = 1, 15 do
 				if not UnitIsFriend("player", 'nameplate' .. i) then
-					if UnitExists('nameplate' .. i) and IsItemInRange(24268, "nameplate"..i) == true and UnitName('nameplate' .. i) ~= "Explosive" and UnitName('nameplate' .. i) ~= "Incorporeal Being" then
+					if UnitExists('nameplate' .. i) and C_Item.IsItemInRange(24268, "nameplate"..i) == true and UnitName('nameplate' .. i) ~= "Explosive" and UnitName('nameplate' .. i) ~= "Incorporeal Being" then
 						number_in_range = number_in_range + 1
 					end
 				end
 			end
 		elseif spellID == "40" then
 			if not UnitIsFriend("player", "target") and UnitExists("target") then
-				if IsItemInRange(28767, "target") then
+				if C_Item.IsItemInRange(28767, "target") then
 					target_in_range = true;
 				end
 			end
 
 			for i = 1, 15 do
 				if not UnitIsFriend("player", 'nameplate' .. i) then
-					if UnitExists('nameplate' .. i) and IsItemInRange(28767, "nameplate"..i) == true and UnitName('nameplate' .. i) ~= "Explosive" and UnitName('nameplate' .. i) ~= "Incorporeal Being" then
+					if UnitExists('nameplate' .. i) and C_Item.IsItemInRange(28767, "nameplate"..i) == true and UnitName('nameplate' .. i) ~= "Explosive" and UnitName('nameplate' .. i) ~= "Incorporeal Being" then
 						number_in_range = number_in_range + 1
 					end
 				end
@@ -528,26 +519,34 @@ end
 
 function ConRO:UnitAura(spellID, timeShift, unit, filter, isWeapon)
 	timeShift = timeShift or 0;
+	
+	-- Handling weapon enchants
 	if isWeapon == "Weapon" then
 		local hasMainHandEnchant, mainHandExpiration, _, mainBuffId, hasOffHandEnchant, offHandExpiration, _, offBuffId = GetWeaponEnchantInfo()
 		if hasMainHandEnchant and mainBuffId == spellID then
-			if mainHandExpiration ~= nil and (mainHandExpiration/1000) > timeShift then
-				local dur = (mainHandExpiration/1000) - (timeShift or 0);
-				return true, count, dur;
+			if mainHandExpiration and (mainHandExpiration / 1000) > timeShift then
+				local dur = (mainHandExpiration / 1000) - timeShift;
+				return true, 0, dur;  -- No count information for weapon enchants
 			end
 		elseif hasOffHandEnchant and offBuffId == spellID then
-			if offHandExpiration ~= nil and (offHandExpiration/1000) > timeShift then
-				local dur = (offHandExpiration/1000) - (timeShift or 0);
-				return true, count, dur;
+			if offHandExpiration and (offHandExpiration / 1000) > timeShift then
+				local dur = (offHandExpiration / 1000) - timeShift;
+				return true, 0, dur;  -- No count information for weapon enchants
 			end
 		end
 	else
-		for i=1,40 do
-			local _, _, count, _, _, expirationTime, _, _, _, spell = UnitAura(unit, i, filter);
-			if spell == spellID then
-				if expirationTime ~= nil and (expirationTime - GetTime()) > timeShift then
-					local dur = expirationTime - GetTime() - (timeShift or 0);
-					return true, count, dur;
+		-- Iterating through unit auras
+		for i = 1, 40 do
+			local aura = C_UnitAuras.GetAuraDataByIndex(unit, i, filter)
+			if not aura then
+				break  -- No more auras to check
+			end
+
+			if aura.spellId == spellID then
+				local expirationTime = aura.expirationTime
+				if expirationTime and (expirationTime - GetTime()) > timeShift then
+					local dur = expirationTime - GetTime() - timeShift
+					return true, aura.applications or 1, dur
 				end
 			end
 		end
@@ -556,22 +555,21 @@ function ConRO:UnitAura(spellID, timeShift, unit, filter, isWeapon)
 end
 
 function ConRO:Form(spellID)
-	for i=1,40 do
-		local _, _, count, _, _, _, _, _, _, spell = UnitAura("player", i);
-			if spell == spellID then
-				return true, count;
+	for i = 1, 40 do
+		local aura = C_UnitAuras.GetAuraDataByIndex("player", i, "HELPFUL");
+		if aura and aura.spellId == spellID then
+			return true, aura.applications or 1;
 			end
 	end
 	return false, 0;
 end
 
 function ConRO:PersistentDebuff(spellID)
-	for i=1,40 do
-		local _, _, count, _, _, _, _, _, _, spell = UnitAura("target", i, 'PLAYER|HARMFUL');
-			if spell == spellID then
-				return true, count;
-			end
-
+	for i = 1, 40 do
+		local aura = C_UnitAuras.GetAuraDataByIndex("target", i, "PLAYER|HARMFUL");
+		if aura and aura.spellId == spellID then
+			return true, aura.applications or 1;
+		end
 	end
 	return false, 0;
 end
@@ -587,14 +585,21 @@ end
 function ConRO:AnyTargetAura(spellID)
 	local haveBuff = false;
 	local count = 0;
+	
+	-- Iterate over nameplates
 	for i = 1, 15 do
 		if UnitExists('nameplate' .. i) then
-			for x=1, 40 do
-				local spell = select(10, UnitAura('nameplate' .. i, x, 'PLAYER|HARMFUL'));
-				if spell == spellID then
+			-- Iterate over auras on the current nameplate
+			for x = 1, 40 do
+				local aura = C_UnitAuras.GetAuraDataByIndex('nameplate' .. i, x, 'PLAYER|HARMFUL')
+				if not aura then
+					break  -- No more auras to check
+				end
+
+				if aura.spellId == spellID then
 					haveBuff = true;
 					count = count + 1;
-					break;
+					break;  -- No need to check further auras on this nameplate
 				end
 			end
 		end
@@ -605,10 +610,11 @@ end
 
 function ConRO:Purgable()
 	local purgable = false;
-	for i=1,40 do
-	local _, _, _, _, _, _, _, isStealable = UnitAura('target', i, 'HELPFUL');
-		if isStealable == true then
+	for i = 1, 40 do
+		local aura = C_UnitAuras.GetAuraDataByIndex("target", i, "HELPFUL");
+		if aura and aura.isStealable then
 			purgable = true;
+			break;
 		end
 	end
 	return purgable;
@@ -616,7 +622,7 @@ end
 
 function ConRO:Heroism()
 	local _Bloodlust = 2825;
-	local _TimeWarp	= 80353;
+	local _TimeWarp = 80353;
 	local _Heroism = 32182;
 	local _PrimalRage = 264667;
 	local _AncientHysteria = 90355;
@@ -637,27 +643,53 @@ function ConRO:Heroism()
 	local buffed = false;
 	local sated = false;
 
+		-- Function to check for specific buffs
+		local function HasBuff(buffID)
+			return ConRO:Aura(buffID, timeShift) ~= nil
+		end
+	
+		-- Function to check for specific debuffs using the new API
+		local function HasDebuff(debuffID)
+			local i = 1
+			while true do
+				local debuff = C_UnitAuras.GetDebuffDataByIndex("player", i)
+				if not debuff then
+					break
+				end
+				if debuff.spellId == debuffID then
+					return true
+				end
+				i = i + 1
+			end
+			return false
+		end
+	
+		-- Check for Heroism/Lust buffs
 		local hasteBuff = {
-			bl = ConRO:Aura(_Bloodlust, timeShift);
-			tw = ConRO:Aura(_TimeWarp, timeShift);
-			hero = ConRO:Aura(_Heroism, timeShift);
-			pr = ConRO:Aura(_PrimalRage, timeShift);
-			ah = ConRO:Aura(_AncientHysteria, timeShift);
-			nw = ConRO:Aura(_Netherwinds, timeShift);
-			dof = ConRO:Aura(_DrumsofFuryBuff, timeShift);
-			dotm = ConRO:Aura(_DrumsoftheMountainBuff, timeShift);
-			fota = ConRO:Aura(_FuryoftheAspects, timeShift);
+			bl = HasBuff(_Bloodlust),
+			tw = HasBuff(_TimeWarp),
+			hero = HasBuff(_Heroism),
+			pr = HasBuff(_PrimalRage),
+			ah = HasBuff(_AncientHysteria),
+			nw = HasBuff(_Netherwinds),
+			dof = HasBuff(_DrumsofFuryBuff),
+			dotm = HasBuff(_DrumsoftheMountainBuff),
+			fota = HasBuff(_FuryoftheAspects)
 		}
+	
+		-- Check for Sated debuffs using the new API
 		local satedDebuff = {
-			ex = UnitDebuff('player', _Exhaustion);
-			sated = UnitDebuff('player', _Sated);
-			td = UnitDebuff('player', _TemporalDisplacement);
-			ins = UnitDebuff('player', _Insanity);
-			fat = UnitDebuff('player', _Fatigued);
-			ex2 = UnitDebuff('player', _Exhaustion2);
+			ex = HasDebuff(_Exhaustion),
+			sated = HasDebuff(_Sated),
+			td = HasDebuff(_TemporalDisplacement),
+			ins = HasDebuff(_Insanity),
+			fat = HasDebuff(_Fatigued),
+			ex2 = HasDebuff(_Exhaustion2)
 		}
+	
+		-- Count active haste buffs
 		local hasteCount = 0;
-			for k, v in pairs(hasteBuff) do
+			for _, v in pairs(hasteBuff) do
 				if v then
 					hasteCount = hasteCount + 1;
 				end
@@ -668,11 +700,11 @@ function ConRO:Heroism()
 		end
 
 		local satedCount = 0;
-			for k, v in pairs(satedDebuff) do
-				if v then
-					satedCount = satedCount + 1;
-				end
+		for _, v in pairs(satedDebuff) do
+			if v then
+				satedCount = satedCount + 1;
 			end
+		end
 
 		if satedCount > 0 then
 			sated = true;
@@ -720,9 +752,11 @@ function ConRO:RaidBuff(spellID)
 				local unit = "raid" .. i;
 				if UnitExists(unit) then
 					if not UnitIsDeadOrGhost(unit) and UnitInRange(unit) then
-						for x=1, 40 do
-							local spell = select(10, UnitAura(unit, x, 'HELPFUL'));
-							if spell == spellID then
+						for x = 1, 40 do
+							local aura = C_UnitAuras.GetAuraDataByIndex(unit, x, 'HELPFUL');
+							if not aura then break end  -- Exit if no more auras
+
+							if aura.spellId == spellID then
 								haveBuff = true;
 								break;
 							end
@@ -740,9 +774,11 @@ function ConRO:RaidBuff(spellID)
 				local unit = "party" .. i;
 				if UnitExists(unit) then
 					if not UnitIsDeadOrGhost(unit) and UnitInRange(unit) then
-						for x=1, 40 do
-							local spell = select(10, UnitAura(unit, x, 'HELPFUL'));
-							if spell == spellID then
+						for x = 1, 40 do
+							local aura = C_UnitAuras.GetAuraDataByIndex(unit, x, 'HELPFUL');
+							if not aura then break end  -- Exit if no more auras
+
+							if aura.spellId == spellID then
 								haveBuff = true;
 								break;
 							end
@@ -755,27 +791,32 @@ function ConRO:RaidBuff(spellID)
 					end
 				end
 			end
-			for x=1, 40 do
-				local spell = select(10, UnitAura('player', x, 'HELPFUL'));
-				if spell == spellID then
+			for x = 1, 40 do
+				local aura = C_UnitAuras.GetAuraDataByIndex('player', x, 'HELPFUL');
+				if not aura then break end  -- Exit if no more auras
+
+				if aura.spellId == spellID then
 					selfhasBuff = true;
 					break;
 				end
 			end
 		elseif numGroupMembers <= 1 then
-			for x=1, 40 do
-				local spell = select(10, UnitAura('player', x, 'HELPFUL'));
-				if spell == spellID then
+			for x = 1, 40 do
+				local aura = C_UnitAuras.GetAuraDataByIndex('player', x, 'HELPFUL');
+				if not aura then break end  -- Exit if no more auras
+
+				if aura.spellId == spellID then
 					selfhasBuff = true;
 					haveBuff = true;
 					break;
 				end
 			end
 		end
+
 		if selfhasBuff and haveBuff then
 			buffedRaid = true;
 		end
---	self:Print(self.Colors.Info .. numGroupMembers);
+
 	return buffedRaid;
 end
 
@@ -785,13 +826,50 @@ function ConRO:OneBuff(spellID)
 	local someoneHas = false;
 
 	local numGroupMembers = GetNumGroupMembers();
-		if numGroupMembers >= 6 then
-			for i = 1, numGroupMembers do -- For each raid member
-				local unit = "raid" .. i;
+	
+	-- For raid groups
+	if numGroupMembers >= 6 then
+		for i = 1, numGroupMembers do -- For each raid member
+			local unit = "raid" .. i;
+			if UnitExists(unit) then
+				for x = 1, 40 do
+					local aura = C_UnitAuras.GetAuraDataByIndex(unit, x, 'PLAYER|HELPFUL');
+					if not aura then break end  -- Exit if no more auras
+
+					if aura.spellId == spellID then
+						haveBuff = true;
+						break;
+					end
+				end
+				if haveBuff then
+					break;
+				end
+			end
+		end
+		
+	-- For party groups
+	elseif numGroupMembers >= 2 and numGroupMembers <= 5 then
+		-- Check the player first
+		for x = 1, 40 do
+			local aura = C_UnitAuras.GetAuraDataByIndex('player', x, 'PLAYER|HELPFUL');
+			if not aura then break end  -- Exit if no more auras
+
+			if aura.spellId == spellID then
+				selfhasBuff = true;
+				break;
+			end
+		end
+		
+		-- If the player doesn't have the buff, check the party
+		if not selfhasBuff then
+			for i = 1, 4 do -- For each party member
+				local unit = "party" .. i;
 				if UnitExists(unit) then
-					for x=1, 40 do
-						local spell = select(10, UnitAura(unit, x, 'PLAYER|HELPFUL'));
-						if spell == spellID then
+					for x = 1, 40 do
+						local aura = C_UnitAuras.GetAuraDataByIndex(unit, x, 'PLAYER|HELPFUL');
+						if not aura then break end  -- Exit if no more auras
+
+						if aura.spellId == spellID then
 							haveBuff = true;
 							break;
 						end
@@ -801,91 +879,90 @@ function ConRO:OneBuff(spellID)
 					end
 				end
 			end
-		elseif numGroupMembers >= 2 and numGroupMembers <= 5 then
-			for x=1, 40 do
-				local spell = select(10, UnitAura('player', x, 'PLAYER|HELPFUL'));
-				if spell == spellID then
-					selfhasBuff = true;
-					break;
-				end
-			end
-			if not selfhasBuff then
-				for i = 1, 4 do -- For each party member
-					local unit = "party" .. i;
-					if UnitExists(unit) then
-						for x=1, 40 do
-							local spell = select(10, UnitAura(unit, x, 'PLAYER|HELPFUL'));
-							if spell == spellID then
-								haveBuff = true;
-								break;
-							end
-						end
-						if haveBuff then
-							break;
-						end
-					end
-				end
-			end
-		elseif numGroupMembers <= 1 then
-			for x=1, 40 do
-				local spell = select(10, UnitAura('player', x, 'PLAYER|HELPFUL'));
-				if spell == spellID then
-					selfhasBuff = true;
-					break;
-				end
+		end
+		
+	-- For solo players
+	elseif numGroupMembers <= 1 then
+		for x = 1, 40 do
+			local aura = C_UnitAuras.GetAuraDataByIndex('player', x, 'PLAYER|HELPFUL');
+			if not aura then break end  -- Exit if no more auras
+
+			if aura.spellId == spellID then
+				selfhasBuff = true;
+				break;
 			end
 		end
-		if selfhasBuff or haveBuff then
-			someoneHas = true;
-		end
---	self:Print(self.Colors.Info .. numGroupMembers);
+	end
+
+	if selfhasBuff or haveBuff then
+		someoneHas = true;
+	end
+
 	return someoneHas;
 end
 
 function ConRO:GroupBuffCount(spellID)
 	local buffCount = 0;
-
 	local numGroupMembers = GetNumGroupMembers();
-		if numGroupMembers >= 6 then
-			for i = 1, numGroupMembers do -- For each raid member
-				local unit = "raid" .. i;
-				if UnitExists(unit) then
-					for x=1, 40 do
-						local spell = select(10, UnitAura(unit, x, 'PLAYER|HELPFUL'));
-						if spell == spellID then
-							buffCount = buffCount + 1;
-						end
+
+	if numGroupMembers >= 6 then
+		-- For each raid member
+		for i = 1, numGroupMembers do
+			local unit = "raid" .. i;
+			if UnitExists(unit) then
+				for x = 1, 40 do
+					local aura = C_UnitAuras.GetAuraDataByIndex(unit, x, 'PLAYER|HELPFUL');
+					if not aura then break end  -- Exit if no more auras
+
+					if aura.spellId == spellID then
+						buffCount = buffCount + 1;
+						break;  -- Exit loop after finding the buff
 					end
-				end
-			end
-		elseif numGroupMembers >= 2 and numGroupMembers <= 5 then
-			for i = 1, 4 do -- For each party member
-				local unit = "party" .. i;
-				if UnitExists(unit) then
-					for x=1, 40 do
-						local spell = select(10, UnitAura(unit, x, 'PLAYER|HELPFUL'));
-						if spell == spellID then
-							buffCount = buffCount + 1;
-						end
-					end
-				end
-			end
-			for x=1, 40 do
-				local spell = select(10, UnitAura('player', x, 'PLAYER|HELPFUL'));
-				if spell == spellID then
-					buffCount = buffCount + 1;
-				end
-			end
-		elseif numGroupMembers <= 1 then
-			for x=1, 40 do
-				local spell = select(10, UnitAura('player', x, 'PLAYER|HELPFUL'));
-				if spell == spellID then
-					buffCount = buffCount + 1;
 				end
 			end
 		end
 
---	self:Print(self.Colors.Info .. numGroupMembers);
+	elseif numGroupMembers >= 2 and numGroupMembers <= 5 then
+		-- For each party member
+		for i = 1, 4 do
+			local unit = "party" .. i;
+			if UnitExists(unit) then
+				for x = 1, 40 do
+					local aura = C_UnitAuras.GetAuraDataByIndex(unit, x, 'PLAYER|HELPFUL');
+					if not aura then break end  -- Exit if no more auras
+
+					if aura.spellId == spellID then
+						buffCount = buffCount + 1;
+						break;  -- Exit loop after finding the buff
+					end
+				end
+			end
+		end
+
+		-- Check the player
+		for x = 1, 40 do
+			local aura = C_UnitAuras.GetAuraDataByIndex('player', x, 'PLAYER|HELPFUL');
+			if not aura then break end  -- Exit if no more auras
+
+			if aura.spellId == spellID then
+				buffCount = buffCount + 1;
+				break;  -- Exit loop after finding the buff
+			end
+		end
+
+	elseif numGroupMembers <= 1 then
+		-- Check solo player
+		for x = 1, 40 do
+			local aura = C_UnitAuras.GetAuraDataByIndex('player', x, 'PLAYER|HELPFUL');
+			if not aura then break end  -- Exit if no more auras
+
+			if aura.spellId == spellID then
+				buffCount = buffCount + 1;
+				break;  -- Exit loop after finding the buff
+			end
+		end
+	end
+
 	return buffCount;
 end
 
@@ -898,7 +975,10 @@ function ConRO:EndCast(target)
 
 	-- we can only check player global cooldown
 	if target == 'player' then
-		local gstart, gduration = GetSpellCooldown(61304);
+		local gstart, gduration;
+		local spellCooldownInfo = _GlobalCooldown and C_Spell.GetSpellCooldown(_GlobalCooldown)
+			gstart = spellCooldownInfo and spellCooldownInfo.startTime
+			gduration = spellCooldownInfo and spellCooldownInfo.duration
 		gcd = gduration - (t - gstart);
 
 		if gcd < 0 then
@@ -927,7 +1007,11 @@ function ConRO:EndChannel(target)
 
 	-- we can only check player global cooldown
 	if target == 'player' then
-		local gstart, gduration = GetSpellCooldown(61304);
+		local gstart, gduration;
+			local gstart, gduration
+			local spellCooldownInfo = _GlobalCooldown and C_Spell.GetSpellCooldown(_GlobalCooldown)
+			gstart = spellCooldownInfo and spellCooldownInfo.startTime
+			gduration = spellCooldownInfo and spellCooldownInfo.duration
 		gcd = gduration - (t - gstart);
 
 		if gcd < 0 then
@@ -986,56 +1070,89 @@ end
 
 ConRO.Spellbook = {};
 function ConRO:FindSpellInSpellbook(spellID)
-	local spellName = GetSpellInfo(spellID);
+	local spellInfo = C_Spell.GetSpellInfo(spellID);
+		if not spellInfo then
+			return nil
+		end
+
+		local spellName = spellInfo.name
 	if ConRO.Spellbook[spellName] then
 		return ConRO.Spellbook[spellName];
 	end
 
-	local _, _, offset, numSpells = GetSpellTabInfo(2);
-	local booktype = 'spell';
+	-- Check the first skill line tab (index 2 in your original code)
+	local skillLineInfo = C_SpellBook.GetSpellBookSkillLineInfo(2)
+    if skillLineInfo then
+        local offset = skillLineInfo.itemIndexOffset
+        local numSpells = skillLineInfo.numSpellBookItems
+        local booktype = Enum.SpellBookSpellBank.Player
 
-	for index = offset + 1, numSpells + offset do
-		local spellID = select(2, GetSpellBookItemInfo(index, booktype));
-		if spellID and spellName == GetSpellBookItemName(index, booktype) then
-			ConRO.Spellbook[spellName] = index;
-			return index;
+		for index = offset + 1, numSpells + offset do
+			local spellBookInfo = C_SpellBook.GetSpellBookItemInfo(index, booktype)
+            if spellBookInfo and spellName == spellBookInfo.name then
+                ConRO.Spellbook[spellName] = index
+                return index
+			end
 		end
 	end
 
-	local _, _, offset, numSpells = GetSpellTabInfo(3);
-	local booktype = 'spell';
+	-- Check the second skill line tab (index 3 in your original code)
+	skillLineInfo = C_SpellBook.GetSpellBookSkillLineInfo(3)
+    if skillLineInfo then
+        local offset = skillLineInfo.itemIndexOffset
+        local numSpells = skillLineInfo.numSpellBookItems
+        local booktype = Enum.SpellBookSpellBank.Player
 
-	for index = offset + 1, numSpells + offset do
-		local spellID = select(2, GetSpellBookItemInfo(index, booktype));
-		if spellID and spellName == GetSpellBookItemName(index, booktype) then
-			ConRO.Spellbook[spellName] = index;
-			return index;
-		end
-	end
+        for index = offset + 1, numSpells + offset do
+            local spellBookInfo = C_SpellBook.GetSpellBookItemInfo(index, booktype)
+            if spellBookInfo and spellName == spellBookInfo.name then
+                ConRO.Spellbook[spellName] = index
+                return index
+            end
+        end
+    end
 
 	return nil;
 end
 
 function ConRO:FindCurrentSpell(spellID)
-	local spellName = GetSpellInfo(spellID);
-	local _, _, offset, numSpells = GetSpellTabInfo(2);
-	local booktype = 'spell';
-	local hasSpell = false;
+	local spellInfo = C_Spell.GetSpellInfo(spellID)
+    if not spellInfo then
+        return false
+    end
 
-	for index = offset + 1, numSpells + offset do
-		local spellID = select(2, GetSpellBookItemInfo(index, booktype));
-		if spellID and spellName == GetSpellBookItemName(index, booktype) then
-			hasSpell = true;
+    local spellName = spellInfo.name
+    local hasSpell = false
+
+    -- Check the first skill line tab (index 2 in your original code)
+    local skillLineInfo = C_SpellBook.GetSpellBookSkillLineInfo(2)
+    if skillLineInfo then
+        local offset = skillLineInfo.itemIndexOffset
+        local numSpells = skillLineInfo.numSpellBookItems
+        local booktype = Enum.SpellBookSpellBank.Player
+
+		for index = offset + 1, numSpells + offset do
+			local spellBookInfo = C_SpellBook.GetSpellBookItemInfo(index, booktype)
+			if spellBookInfo and spellName == spellBookInfo.name then
+				hasSpell = true
+				break
+			end
 		end
 	end
 
-	local _, _, offset, numSpells = GetSpellTabInfo(3);
-	local booktype = 'spell';
+	-- Check the second skill line tab (index 3 in your original code)
+	skillLineInfo = C_SpellBook.GetSpellBookSkillLineInfo(3)
+	if skillLineInfo then
+		local offset = skillLineInfo.itemIndexOffset
+		local numSpells = skillLineInfo.numSpellBookItems
+		local booktype = Enum.SpellBookSpellBank.Player
 
-	for index = offset + 1, numSpells + offset do
-		local spellID = select(2, GetSpellBookItemInfo(index, booktype));
-		if spellID and spellName == GetSpellBookItemName(index, booktype) then
-			hasSpell = true;
+		for index = offset + 1, numSpells + offset do
+			local spellBookInfo = C_SpellBook.GetSpellBookItemInfo(index, booktype)
+            if spellBookInfo and spellName == spellBookInfo.name then
+                hasSpell = true
+                break
+            end
 		end
 	end
 
@@ -1047,7 +1164,6 @@ function ConRO:IsSpellInRange(spellCheck, unit)
 	local range = false;
 	local spellid = spellCheck.spellID;
 	local talentID = spellCheck.talentID;
-	local spell = GetSpellInfo(spellid);
 	local have = ConRO:TalentChosen(talentID);
 	local known = IsPlayerSpell(spellid);
 
@@ -1056,46 +1172,54 @@ function ConRO:IsSpellInRange(spellCheck, unit)
 	end
 
 	if known and ConRO:TarHostile() then
-		local inRange = IsSpellInRange(spell, unit);
-		if inRange == nil then
-			local myIndex = nil;
-			local name, texture, offset, numSpells, isGuild = GetSpellTabInfo(2);
-			local booktype = "spell";
-			for index = offset + 1, numSpells + offset do
-				local spellID = select(2, GetSpellBookItemInfo(index, booktype));
-				if spellID and spell == GetSpellBookItemName(index, booktype) then
-					myIndex = index;
-					break;
-				end
-			end
+		-- Use C_Spell.IsSpellInRange instead of IsSpellInRange
+		local inRange = C_Spell.IsSpellInRange(spellid, unit);
 
-			local numPetSpells = HasPetSpells();
-			if myIndex == 0 and numPetSpells then
-				booktype = "pet";
+		if inRange == nil then
+			local myIndex = nil
+            local skillLineInfo = C_SpellBook.GetSpellBookSkillLineInfo(2) -- Get skill line info for the second tab
+            
+            if skillLineInfo then
+                local offset = skillLineInfo.itemIndexOffset
+                local numSpells = skillLineInfo.numSpellBookItems
+                local booktype = Enum.SpellBookSpellBank.Player
+
+                if offset and numSpells then
+					for index = offset + 1, numSpells + offset do
+						local spellBookInfo = C_SpellBook.GetSpellBookItemInfo(index, booktype)
+                        if spellBookInfo and spellid == spellBookInfo.spellID then
+                            myIndex = index
+                            break
+						end
+					end
+				end
+			else
+                -- Handle case where skillLineInfo is nil
+                print("Error: Unable to retrieve skill line information.")
+            end
+
+			local numPetSpells, _ = C_SpellBook.HasPetSpells()
+            if not myIndex and numPetSpells then
+                booktype = Enum.SpellBookSpellBank.Pet
 				for index = 1, numPetSpells do
-					local spellID = select(2, GetSpellBookItemInfo(index, booktype));
-					if spellID and spell == GetSpellBookItemName(index, booktype) then
-						myIndex = index;
-						break;
+					local spellBookInfo = C_SpellBook.GetSpellBookItemInfo(index, booktype)
+                    if spellBookInfo and spellid == spellBookInfo.spellID then
+                        myIndex = index
+                        break
 					end
 				end
 			end
 
 			if myIndex then
-				inRange = IsSpellInRange(myIndex, booktype, unit);
-			end
-
-			if inRange == 1 then
-				range = true;
-			end
-
-			return range;
+				inRange = C_Spell.IsSpellInRange(myIndex, unit)
+            end
 		end
 
-		if inRange == 1 then
-			range = true;
-		end
-	end
+		if inRange == true then
+            range = true
+        end
+    end
+
   return range;
 end
 
@@ -1142,7 +1266,12 @@ function ConRO:ItemReady(_Item_ID, timeShift)
 end
 
 function ConRO:SpellCharges(spellid)
-	local currentCharges, maxCharges, cooldownStart, maxCooldown = GetSpellCharges(spellid);
+	local currentCharges, maxCharges, cooldownStart, maxCooldown;
+	local spellChargeInfo = C_Spell.GetSpellCharges(spellid);
+			currentCharges = spellChargeInfo and spellChargeInfo.currentCharges
+			maxCharges = spellChargeInfo and spellChargeInfo.maxCharges
+			cooldownStart = spellChargeInfo and spellChargeInfo.cooldownStartTime
+			maxCooldown = spellChargeInfo and spellChargeInfo.cooldownDuration
 	local currentCooldown = 0;
 		if currentCharges ~= nil and currentCharges < maxCharges then
 			currentCooldown = (maxCooldown - (GetTime() - cooldownStart));
@@ -1208,7 +1337,11 @@ function ConRO:GlobalCooldown()
 end
 
 function ConRO:Cooldown(spellid, timeShift)
-	local start, maxCooldown, enabled = GetSpellCooldown(spellid);
+	local start, maxCooldown, enabled;
+	local spellCooldownInfo = C_Spell.GetSpellCooldown(spellid);
+		start = spellCooldownInfo and spellCooldownInfo.startTime;
+		maxCooldown = spellCooldownInfo and spellCooldownInfo.duration;
+		enabled = spellCooldownInfo and spellCooldownInfo.isEnabled;
 	local baseCooldownMS, gcdMS = GetSpellBaseCooldown(spellid);
 	local baseCooldown = 0;
 
