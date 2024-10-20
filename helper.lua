@@ -19,6 +19,18 @@ function ConRO:SpecName()
 	return currentSpecName;
 end
 
+function ConRO:HeroSpec(subTreeID)
+	local heroSpecID = C_ClassTalents.GetActiveHeroTalentSpec()
+	local currentSpec = false;
+	if heroSpecID ~= nil then
+		if heroSpecID == subTreeID then
+			currentSpec = true;
+		end
+	end
+
+	return currentSpec
+end
+
 function ConRO:CheckTalents()
 	self.PlayerTalents = {}
 	wipe(self.PlayerTalents)
