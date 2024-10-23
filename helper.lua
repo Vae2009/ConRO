@@ -1190,7 +1190,7 @@ function ConRO:IsSpellInRange(spellCheck, unit)
 		if inRange == nil then
 			local myIndex = nil
             local skillLineInfo = C_SpellBook.GetSpellBookSkillLineInfo(2) -- Get skill line info for the second tab
-            
+
             if skillLineInfo then
                 local offset = skillLineInfo.itemIndexOffset
                 local numSpells = skillLineInfo.numSpellBookItems
@@ -1212,7 +1212,7 @@ function ConRO:IsSpellInRange(spellCheck, unit)
 
 			local numPetSpells, _ = C_SpellBook.HasPetSpells()
             if not myIndex and numPetSpells then
-                booktype = Enum.SpellBookSpellBank.Pet
+                local booktype = Enum.SpellBookSpellBank.Pet
 				for index = 1, numPetSpells do
 					local spellBookInfo = C_SpellBook.GetSpellBookItemInfo(index, booktype)
                     if spellBookInfo and spellid == spellBookInfo.spellID then
@@ -1287,6 +1287,9 @@ function ConRO:SpellCharges(spellid)
 	local currentCooldown = 0;
 		if currentCharges ~= nil and currentCharges < maxCharges then
 			currentCooldown = (maxCooldown - (GetTime() - cooldownStart));
+		end
+		if currentCharges == nil then
+			currentCharges = 0;
 		end
 	return currentCharges, maxCharges, currentCooldown, maxCooldown;
 end

@@ -1,3 +1,4 @@
+---@diagnostic disable: assign-type-mismatch, ambiguity-1
 --[[-----------------------------------------------------------------------------
 ScrollFrame Container
 Plain container that scrolls its content and doesn't grow in height.

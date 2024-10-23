@@ -1,3 +1,4 @@
+---@diagnostic disable: ambiguity-1, param-type-mismatch, redundant-parameter
 --- AceTab-3.0 provides support for tab-completion.
 -- Note: This library is not yet finalized.
 -- @class file
