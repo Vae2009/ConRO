@@ -1044,9 +1044,14 @@ function ConRO:EndChannel(target)
 end
 
 function ConRO:SameSpell(spell1, spell2)
-	local spellName1 = GetSpellInfo(spell1);
-	local spellName2 = GetSpellInfo(spell2);
+	local spellName1 = C_Spell.GetSpellInfo(spell1).name;
+	local spellName2 = C_Spell.GetSpellInfo(spell2).name;
 	return spellName1 == spellName2;
+end
+
+function ConRO:IsOverride(spellID)
+	local _OverriddenBy = C_Spell.GetOverrideSpell(spellID);
+	return _OverriddenBy;
 end
 
 function ConRO:TarYou()
@@ -1082,12 +1087,11 @@ end
 
 ConRO.Spellbook = {};
 function ConRO:FindSpellInSpellbook(spellID)
-	local spellInfo = C_Spell.GetSpellInfo(spellID);
-		if not spellInfo then
-			return nil
-		end
+	local spellName = C_Spell.GetSpellInfo(spellID).name;
+	if not spellName then
+		return nil
+	end
 
-		local spellName = spellInfo.name
 	if ConRO.Spellbook[spellName] then
 		return ConRO.Spellbook[spellName];
 	end
@@ -1243,8 +1247,8 @@ function ConRO:AbilityReady(spellCheck, timeShift, spelltype)
 
 	local known = IsPlayerSpell(spellid);
 	local usable, notEnough = IsUsableSpell(spellid);
-	local castTimeMilli = select(4, GetSpellInfo(spellid));
-	local castTime;
+	local castTimeMilli = C_Spell.GetSpellInfo(spellid).castTime;
+	local castTime = 0;
 	local rdy = false;
 		if spelltype == 'pet' then
 			have = IsSpellKnown(spellid, true);
