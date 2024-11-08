@@ -1246,7 +1246,7 @@ function ConRO:AbilityReady(spellCheck, timeShift, spelltype)
 	local have = ConRO:TalentChosen(entryID);
 
 	local known = IsPlayerSpell(spellid);
-	local usable, notEnough = IsUsableSpell(spellid);
+	local usable, notEnough = C_Spell.IsSpellUsable(spellid);
 	local castTimeMilli = C_Spell.GetSpellInfo(spellid).castTime;
 	local castTime = 0;
 	local rdy = false;
