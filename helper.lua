@@ -210,7 +210,7 @@ function ConRO:ItemEquipped(_item_string)
 	return _match_item_NAME;
 end
 
-function ConRO:CountTier()
+--[[function ConRO:CountTier()
     local _, _, classIndex = UnitClass("player");
     local count = 0;
 
@@ -285,7 +285,7 @@ function ConRO:CountTier()
 		if match then count = count + 1 end
 	end
     return count
-end
+end]]
 
 function ConRO:PlayerSpeed()
 	local speed  = (GetUnitSpeed("player") / 7) * 100;
@@ -531,7 +531,7 @@ end
 
 function ConRO:UnitAura(spellID, timeShift, unit, filter, isWeapon)
 	timeShift = timeShift or 0;
-	
+
 	-- Handling weapon enchants
 	if isWeapon == "Weapon" then
 		local hasMainHandEnchant, mainHandExpiration, _, mainBuffId, hasOffHandEnchant, offHandExpiration, _, offBuffId = GetWeaponEnchantInfo()
@@ -597,7 +597,7 @@ end
 function ConRO:AnyTargetAura(spellID)
 	local haveBuff = false;
 	local count = 0;
-	
+
 	-- Iterate over nameplates
 	for i = 1, 15 do
 		if UnitExists('nameplate' .. i) then
@@ -659,7 +659,7 @@ function ConRO:Heroism()
 		local function HasBuff(buffID)
 			return ConRO:Aura(buffID, timeShift) ~= nil
 		end
-	
+
 		-- Function to check for specific debuffs using the new API
 		local function HasDebuff(debuffID)
 			local i = 1
@@ -675,7 +675,7 @@ function ConRO:Heroism()
 			end
 			return false
 		end
-	
+
 		-- Check for Heroism/Lust buffs
 		local hasteBuff = {
 			bl = HasBuff(_Bloodlust),
@@ -688,7 +688,7 @@ function ConRO:Heroism()
 			dotm = HasBuff(_DrumsoftheMountainBuff),
 			fota = HasBuff(_FuryoftheAspects)
 		}
-	
+
 		-- Check for Sated debuffs using the new API
 		local satedDebuff = {
 			ex = HasDebuff(_Exhaustion),
@@ -698,7 +698,7 @@ function ConRO:Heroism()
 			fat = HasDebuff(_Fatigued),
 			ex2 = HasDebuff(_Exhaustion2)
 		}
-	
+
 		-- Count active haste buffs
 		local hasteCount = 0;
 			for _, v in pairs(hasteBuff) do
@@ -838,7 +838,7 @@ function ConRO:OneBuff(spellID)
 	local someoneHas = false;
 
 	local numGroupMembers = GetNumGroupMembers();
-	
+
 	-- For raid groups
 	if numGroupMembers >= 6 then
 		for i = 1, numGroupMembers do -- For each raid member
@@ -858,7 +858,7 @@ function ConRO:OneBuff(spellID)
 				end
 			end
 		end
-		
+
 	-- For party groups
 	elseif numGroupMembers >= 2 and numGroupMembers <= 5 then
 		-- Check the player first
@@ -871,7 +871,7 @@ function ConRO:OneBuff(spellID)
 				break;
 			end
 		end
-		
+
 		-- If the player doesn't have the buff, check the party
 		if not selfhasBuff then
 			for i = 1, 4 do -- For each party member
@@ -892,7 +892,7 @@ function ConRO:OneBuff(spellID)
 				end
 			end
 		end
-		
+
 	-- For solo players
 	elseif numGroupMembers <= 1 then
 		for x = 1, 40 do
@@ -1075,8 +1075,8 @@ function ConRO:TarHostile()
 	return false;
 end
 
-function ConRO:PercentHealth(unit)
-	local unit = unit or 'target';
+function ConRO:PercentHealth(target_unit)
+	local unit = target_unit or 'target';
 	local health = UnitHealth(unit);
 	local healthMax = UnitHealthMax(unit);
 	if health <= 0 or healthMax <= 0 then
@@ -1175,8 +1175,8 @@ function ConRO:FindCurrentSpell(spellID)
 	return hasSpell;
 end
 
-function ConRO:IsSpellInRange(spellCheck, unit)
-	local unit = unit or 'target';
+function ConRO:IsSpellInRange(spellCheck, target_unit)
+	local unit = target_unit or 'target';
 	local range = false;
 	local spellid = spellCheck.spellID;
 	local talentID = spellCheck.talentID;
@@ -1475,24 +1475,9 @@ function ConRO:Totem(spellID)
 end
 
 function ConRO:Dragonriding()
-	local Is_Dragonriding = false;
-	local Dragons = {
-		CliffsideWylderdrake = 368901,
-		HighlandDrake = 360954,
-		RenewedProtoDrake = 368896,
-		Soar = 369536,
-		WindborneVelocidrake = 368899,
-		WindingSlitherdrake = 368893,
-	}
+	local isGliding, canGlide, forwardSpeed = C_PlayerInfo.GetGlidingInfo()
 
-	for k, v in pairs(Dragons) do
-		local Dragonriding_BUFF = ConRO:Form(v);
-		if Dragonriding_BUFF then
-			Is_Dragonriding = true;
-			break
-		end
-	end
-	return Is_Dragonriding;
+	return canGlide;
 end
 
 function ConRO:FormatTime(left)
