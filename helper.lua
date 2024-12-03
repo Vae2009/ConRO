@@ -445,71 +445,71 @@ function ConRO:Targets(spellID)
 	local target_in_range = false;
 	local number_in_range = 0;
 		if spellID == "Melee" then
-			if not UnitIsFriend("player", "target") and UnitExists("target") then
+			if UnitIsEnemy("player", "target") and UnitExists("target") then
 				if C_Item.IsItemInRange(37727, "target") then
 					target_in_range = true;
 				end
 			end
 
 			for i = 1, 15 do
-				if not UnitIsFriend("player", 'nameplate' .. i) then
-					if UnitExists('nameplate' .. i) and C_Item.IsItemInRange(37727, "nameplate"..i) == true and UnitName('nameplate' .. i) ~= "Explosive" and UnitName('nameplate' .. i) ~= "Incorporeal Being" then
+				if UnitIsEnemy("player", 'nameplate' .. i) then
+					if UnitExists('nameplate' .. i) and UnitAffectingCombat('nameplate' .. i) and C_Item.IsItemInRange(37727, "nameplate"..i) == true then
 						number_in_range = number_in_range + 1
 					end
 				end
 			end
 		elseif spellID == "10" then
-			if not UnitIsFriend("player", "target") and UnitExists("target") then
+			if UnitIsEnemy("player", "target") and UnitExists("target") then
 				if C_Item.IsItemInRange(32321, "target") then
 					target_in_range = true;
 				end
 			end
 
 			for i = 1, 15 do
-				if not UnitIsFriend("player", 'nameplate' .. i) then
-					if UnitExists('nameplate' .. i) and C_Item.IsItemInRange(32321, "nameplate"..i) == true and UnitName('nameplate' .. i) ~= "Explosive" and UnitName('nameplate' .. i) ~= "Incorporeal Being" then
+				if UnitIsEnemy("player", 'nameplate' .. i) then
+					if UnitExists('nameplate' .. i) and UnitAffectingCombat('nameplate' .. i) and C_Item.IsItemInRange(32321, "nameplate"..i) == true then
 						number_in_range = number_in_range + 1
 					end
 				end
 			end
 		elseif spellID == "15" then
-			if not UnitIsFriend("player", "target") and UnitExists("target") then
+			if UnitIsEnemy("player", "target") and UnitExists("target") then
 				if C_Item.IsItemInRange(33069, "target") then
 					target_in_range = true;
 				end
 			end
 
 			for i = 1, 15 do
-				if not UnitIsFriend("player", 'nameplate' .. i) then
-					if UnitExists('nameplate' .. i) and C_Item.IsItemInRange(33069, "nameplate"..i) == true and UnitName('nameplate' .. i) ~= "Explosive" and UnitName('nameplate' .. i) ~= "Incorporeal Being" then
+				if UnitIsEnemy("player", 'nameplate' .. i) then
+					if UnitExists('nameplate' .. i) and UnitAffectingCombat('nameplate' .. i) and C_Item.IsItemInRange(33069, "nameplate"..i) == true then
 						number_in_range = number_in_range + 1
 					end
 				end
 			end
 		elseif spellID == "25" then
-			if not UnitIsFriend("player", "target") and UnitExists("target") then
+			if UnitIsEnemy("player", "target") and UnitExists("target") then
 				if C_Item.IsItemInRange(24268, "target") then
 					target_in_range = true;
 				end
 			end
 
 			for i = 1, 15 do
-				if not UnitIsFriend("player", 'nameplate' .. i) then
-					if UnitExists('nameplate' .. i) and C_Item.IsItemInRange(24268, "nameplate"..i) == true and UnitName('nameplate' .. i) ~= "Explosive" and UnitName('nameplate' .. i) ~= "Incorporeal Being" then
+				if UnitIsEnemy("player", 'nameplate' .. i) then
+					if UnitExists('nameplate' .. i) and UnitAffectingCombat('nameplate' .. i) and C_Item.IsItemInRange(24268, "nameplate"..i) == true then
 						number_in_range = number_in_range + 1
 					end
 				end
 			end
 		elseif spellID == "40" then
-			if not UnitIsFriend("player", "target") and UnitExists("target") then
+			if UnitIsEnemy("player", "target") and UnitExists("target") then
 				if C_Item.IsItemInRange(28767, "target") then
 					target_in_range = true;
 				end
 			end
 
 			for i = 1, 15 do
-				if not UnitIsFriend("player", 'nameplate' .. i) then
-					if UnitExists('nameplate' .. i) and C_Item.IsItemInRange(28767, "nameplate"..i) == true and UnitName('nameplate' .. i) ~= "Explosive" and UnitName('nameplate' .. i) ~= "Incorporeal Being" then
+				if UnitIsEnemy("player", 'nameplate' .. i) then
+					if UnitExists('nameplate' .. i) and UnitAffectingCombat('nameplate' .. i) and C_Item.IsItemInRange(28767, "nameplate"..i) == true then
 						number_in_range = number_in_range + 1
 					end
 				end
@@ -520,7 +520,7 @@ function ConRO:Targets(spellID)
 			end
 
 			for i = 1, 15 do
-				if UnitExists('nameplate' .. i) and ConRO:IsSpellInRange(spellID, 'nameplate' .. i) and UnitName('nameplate' .. i) ~= "Explosive" and UnitName('nameplate' .. i) ~= "Incorporeal Being" then
+				if UnitExists('nameplate' .. i) and UnitAffectingCombat('nameplate' .. i) and ConRO:IsSpellInRange(spellID, 'nameplate' .. i) then
 					number_in_range = number_in_range + 1
 				end
 			end
