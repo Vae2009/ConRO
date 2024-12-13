@@ -4,13 +4,6 @@ ConRO.WarningFlags = {};
 -- Global cooldown spell id
 local _GlobalCooldown = 61304;
 
--- Global functions
-local GetSpellCharges = C_Spell.GetSpellCharges
-local GetSpellInfo = C_Spell and C_Spell.GetSpellInfo or GetSpellInfo
-local GetSpellCooldown = C_Spell and C_Spell.GetSpellCooldown
-local IsUsableSpell = C_Spell.IsSpellUsable
-local UnitAura = C_UnitAuras.GetAuraDataByIndex
-
 local INF = 2147483647;
 
 function ConRO:SpecName()
@@ -69,16 +62,6 @@ function ConRO:CheckTalents()
             end
         end
     end
-end
-
-function ConRO:IsPvP()
-	local _is_PvP = UnitIsPVP('player');
-	local _is_Arena, _is_Registered = IsActiveBattlefieldArena();
-	local _Flagged = false;
-		if _is_PvP or _is_Arena then
-			_Flagged = true;
-		end
-	return _Flagged;
 end
 
 function ConRO:CheckPvPTalents()
@@ -143,6 +126,16 @@ function ConRO:FullMode(_Spell_ID, timeShift)
 	end
 
 	return _Full_Mode;
+end
+
+function ConRO:IsPvP()
+	local _is_PvP = UnitIsPVP('player');
+	local _is_Arena, _is_Registered = IsActiveBattlefieldArena();
+	local _Flagged = false;
+		if _is_PvP or _is_Arena then
+			_Flagged = true;
+		end
+	return _Flagged;
 end
 
 function ConRO:Warnings(_Message, _Condition)
@@ -441,75 +434,137 @@ local HarmItems = {
     },
 }]]
 
+local targetDummiesIds = {
+    [31146] = true,  --raider's training dummie
+	[225983] = true, --Dungeoneer's training dummy - Dornogal
+	[225984] = true, --Normal dummy - Dornogal
+	[225979] = true, --Healing Dummy - Dornogal
+	[225982] = true, --Cleave Dummy - Dornogal
+	[225977] = true, --Dungeoneer's Tanking dummy - Dornogal
+	[225976] = true, --Normal Tanking dummy - Dornogal
+}
+
+function ConRO:GetNpcIdFromGuid(GUID)
+	local npcId = select(6, strsplit("-", GUID ))
+	if npcId then
+		npcId = tonumber(npcId)
+		return npcId or 0
+	end
+	return 0
+end
+
 function ConRO:Targets(spellID)
 	local target_in_range = false;
 	local number_in_range = 0;
 		if spellID == "Melee" then
-			if UnitIsEnemy("player", "target") and UnitExists("target") then
-				if C_Item.IsItemInRange(37727, "target") then
-					target_in_range = true;
+			if UnitReaction("player", "target") ~= nil then
+				if UnitReaction("player", "target") <= 4 and UnitExists("target") then
+					if C_Item.IsItemInRange(37727, "target") then
+						target_in_range = true;
+					end
 				end
 			end
 
 			for i = 1, 15 do
-				if UnitIsEnemy("player", 'nameplate' .. i) then
-					if UnitExists('nameplate' .. i) and UnitAffectingCombat('nameplate' .. i) and C_Item.IsItemInRange(37727, "nameplate"..i) == true then
+				if UnitReaction("player", 'nameplate' .. i) ~= nil then
+					if UnitReaction("player", 'nameplate' .. i) <= 4 and UnitExists('nameplate' .. i) and C_Item.IsItemInRange(37727, "nameplate"..i) == true then
 						number_in_range = number_in_range + 1
 					end
 				end
 			end
 		elseif spellID == "10" then
-			if UnitIsEnemy("player", "target") and UnitExists("target") then
-				if C_Item.IsItemInRange(32321, "target") then
-					target_in_range = true;
+			if UnitReaction("player", "target") ~= nil then
+				if UnitReaction("player", "target") <= 4 and UnitExists("target") then
+					if C_Item.IsItemInRange(32321, "target") then
+						target_in_range = true;
+					end
 				end
 			end
 
 			for i = 1, 15 do
-				if UnitIsEnemy("player", 'nameplate' .. i) then
-					if UnitExists('nameplate' .. i) and UnitAffectingCombat('nameplate' .. i) and C_Item.IsItemInRange(32321, "nameplate"..i) == true then
+				if UnitReaction("player", 'nameplate' .. i) ~= nil then
+					if UnitReaction("player", 'nameplate' .. i) <= 4 and UnitExists('nameplate' .. i) and C_Item.IsItemInRange(32321, "nameplate"..i) == true then
 						number_in_range = number_in_range + 1
 					end
 				end
 			end
 		elseif spellID == "15" then
-			if UnitIsEnemy("player", "target") and UnitExists("target") then
-				if C_Item.IsItemInRange(33069, "target") then
-					target_in_range = true;
+			if UnitReaction("player", "target") ~= nil then
+				if UnitReaction("player", "target") <= 4 and UnitExists("target") then
+					if C_Item.IsItemInRange(33069, "target") then
+						target_in_range = true;
+					end
 				end
 			end
 
 			for i = 1, 15 do
-				if UnitIsEnemy("player", 'nameplate' .. i) then
-					if UnitExists('nameplate' .. i) and UnitAffectingCombat('nameplate' .. i) and C_Item.IsItemInRange(33069, "nameplate"..i) == true then
+				local serial = UnitGUID('nameplate' .. i);
+				local _Is_Dummy = false;
+				if serial then
+					local npcId = ConRO:GetNpcIdFromGuid(serial)
+					if npcId then
+						if (targetDummiesIds[npcId]) then
+							_Is_Dummy = true;
+						end
+					end
+				end
+
+				if UnitReaction("player", 'nameplate' .. i) ~= nil then
+					if UnitReaction("player", 'nameplate' .. i) <= 4 and UnitExists('nameplate' .. i) and (UnitAffectingCombat('nameplate' .. i) or _Is_Dummy) and C_Item.IsItemInRange(33069, "nameplate"..i) == true then
 						number_in_range = number_in_range + 1
 					end
 				end
 			end
 		elseif spellID == "25" then
-			if UnitIsEnemy("player", "target") and UnitExists("target") then
-				if C_Item.IsItemInRange(24268, "target") then
-					target_in_range = true;
+			if UnitReaction("player", "target") ~= nil then
+				if UnitReaction("player", "target") <= 4 and UnitExists("target") then
+					if C_Item.IsItemInRange(24268, "target") then
+						target_in_range = true;
+					end
 				end
 			end
 
 			for i = 1, 15 do
-				if UnitIsEnemy("player", 'nameplate' .. i) then
-					if UnitExists('nameplate' .. i) and UnitAffectingCombat('nameplate' .. i) and C_Item.IsItemInRange(24268, "nameplate"..i) == true then
+				local serial = UnitGUID('nameplate' .. i);
+				local _Is_Dummy = false;
+				if serial then
+					local npcId = ConRO:GetNpcIdFromGuid(serial)
+					if npcId then
+						if (targetDummiesIds[npcId]) then
+							_Is_Dummy = true;
+						end
+					end
+				end
+
+				if UnitReaction("player", 'nameplate' .. i) ~= nil then
+					if UnitReaction("player", 'nameplate' .. i) <= 4 and UnitExists('nameplate' .. i) and (UnitAffectingCombat('nameplate' .. i) or _Is_Dummy) and C_Item.IsItemInRange(24268, "nameplate"..i) == true then
 						number_in_range = number_in_range + 1
 					end
 				end
 			end
 		elseif spellID == "40" then
-			if UnitIsEnemy("player", "target") and UnitExists("target") then
-				if C_Item.IsItemInRange(28767, "target") then
-					target_in_range = true;
+			if UnitReaction("player", "target") ~= nil then
+				if UnitReaction("player", "target") <= 4 and UnitExists("target") then
+					if C_Item.IsItemInRange(28767, "target") then
+						target_in_range = true;
+					end
 				end
 			end
 
 			for i = 1, 15 do
-				if UnitIsEnemy("player", 'nameplate' .. i) then
-					if UnitExists('nameplate' .. i) and UnitAffectingCombat('nameplate' .. i) and C_Item.IsItemInRange(28767, "nameplate"..i) == true then
+				local serial = UnitGUID('nameplate' .. i);
+				local _Is_Dummy = false;
+				if serial then
+					local npcId = ConRO:GetNpcIdFromGuid(serial)
+					if npcId then
+						if (targetDummiesIds[npcId]) then
+							_Is_Dummy = true;
+						end
+					end
+				end
+
+				if UnitReaction("player", 'nameplate' .. i) ~= nil then
+					if UnitReaction("player", 'nameplate' .. i) <= 4 and UnitExists('nameplate' .. i) and (UnitAffectingCombat('nameplate' .. i) or _Is_Dummy) and C_Item.IsItemInRange(28767, "nameplate"..i) == true then
 						number_in_range = number_in_range + 1
 					end
 				end
@@ -1055,11 +1110,14 @@ function ConRO:IsOverride(spellID)
 end
 
 function ConRO:TarYou()
+	local tarYou = false;
+
 	local targettarget = UnitName('targettarget');
 	local targetplayer = UnitName('player');
 	if targettarget == targetplayer then
-		return 1;
+		tarYou = true;
 	end
+	return tarYou;
 end
 
 function ConRO:TarHostile()
@@ -1351,7 +1409,7 @@ function ConRO:ExtractTooltip(spell, pattern)
 end
 
 function ConRO:GlobalCooldown()
-	local _, duration, enabled = GetSpellCooldown(61304);
+	local _, duration, enabled = C_Spell.GetSpellCooldown(61304);
 		return duration;
 end
 

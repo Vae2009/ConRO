@@ -3131,7 +3131,7 @@ ConROSwapSpells = ConROSwapSpells or swapSpells;
 
 function ConRO:GlowSpell(spellID)
 	local spellName
-		local spellInfo = GetSpellInfo(spellID);
+	local spellInfo = GetSpellInfo(spellID);
 		spellName = spellInfo and spellInfo.name
 	local _IsSwapSpell = false;
 

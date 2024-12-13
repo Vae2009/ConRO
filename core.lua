@@ -2299,14 +2299,13 @@ end
 
 function ConRO:PLAYER_CONTROL_LOST()
 --	self:Print(self.Colors.Success .. 'Lost Control!');
-		self:DisableRotation();
-		self:DisableDefense();
+	self:DisableRotation();
+	self:DisableDefense();
 end
 
 function ConRO:PLAYER_CONTROL_GAINED()
 	if not C_PetBattles.IsInBattle() then
 --		self:Print(self.Colors.Success .. 'Control Gained!');
-
 		self:DisableRotation();
 		self:DisableDefense();
 		self:EnableRotation();
@@ -2316,8 +2315,8 @@ end
 
 function ConRO:PLAYER_LEAVING_WORLD()
 	--	self:Print(self.Colors.Success .. 'Lost Control!');
-			self:DisableRotation();
-			self:DisableDefense();
+	self:DisableRotation();
+	self:DisableDefense();
 end
 
 function ConRO:PLAYER_ENTERING_WORLD()
@@ -2529,11 +2528,10 @@ end
 
 function ConRO:LoadModule()
 	local _, _, classId = UnitClass('player');
-
-	if self.Classes[classId] == nil then
-		self:Print(self.Colors.Error, 'Invalid player class, please contact author of addon.');
-		return;
-	end
+		if self.Classes[classId] == nil then
+			self:Print(self.Colors.Error, 'Invalid player class, please contact author of addon.');
+			return;
+		end
 
 	local module = 'ConRO_' .. self.Classes[classId];
 	local _, _, _, loadable, reason = C_AddOns.GetAddOnInfo(module);
