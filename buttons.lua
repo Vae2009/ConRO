@@ -2252,7 +2252,7 @@ function ConRO:AddStandardButton(button, hotkey)
             self:AddButton(spellId, button, hotkey)
         end
     end
-	
+
 	if not type and button and button.HasAction then
 		local id, _, HasAction, spellID = button:HasAction()
 		if spellID then
@@ -2501,21 +2501,75 @@ end
 
 
 function ConRO:FetchDominos()
-	for i = 1, 168 do
+	for i = 1, 132 do
 		local button = _G['DominosActionButton' .. i];
 		local hotkey = 'CLICK DominosActionButton' .. i .. ':HOTKEY';
 		if button then
 			self:AddStandardButton(button, hotkey);
 		end
 	end
+	local ActionBarsBlizzard = {'DominosStance', 'DominosPetAction', 'MultiBarBottomLeft', 'MultiBarBottomRight', 'MultiBarRight', 'MultiBarLeft', 'MultiBar5', 'MultiBar6', 'MultiBar7'};
+	for _, barName in pairs(ActionBarsBlizzard) do
+		if barName == 'Stance' then
+			local x = GetNumShapeshiftForms();
+			for i = 1, x do
+				local button = _G[barName .. 'ActionButton' .. i];
+				local hotkey = 'SHAPESHIFTBUTTON' .. i;
+				local spellID = select(4, GetShapeshiftFormInfo(i));
+				self:AddButton(spellID, button, hotkey);
+			end
+		elseif barName == 'PetAction' then
+			for i = 1, 10 do
+				local button = _G[barName .. 'ActionButton' .. i];
+				local hotkey = barName .. 'Button' .. i;
+				local spellID = select(7, GetPetActionInfo(i));
+				self:AddButton(spellID, button, hotkey);
+			end
+		else
+			for i = 1, 12 do
+				local button = _G[barName .. 'ActionButton' .. i];
+				local hotkey = barName .. 'Button' .. i;
+				if button then
+					self:AddStandardButton(button, hotkey);
+				end
+			end
+		end
+	end
 end
 
 function ConRO:DefFetchDominos()
-	for i = 1, 168 do
+	for i = 1, 132 do
 		local button = _G['DominosActionButton' .. i];
 		local hotkey = 'CLICK DominosActionButton' .. i .. ':HOTKEY';
 		if button then
 			self:DefAddStandardButton(button, hotkey);
+		end
+	end
+	local ActionBarsBlizzard = {'DominosStance', 'DominosPetAction', 'MultiBarBottomLeft', 'MultiBarBottomRight', 'MultiBarRight', 'MultiBarLeft', 'MultiBar5', 'MultiBar6', 'MultiBar7'};
+	for _, barName in pairs(ActionBarsBlizzard) do
+		if barName == 'Stance' then
+			local x = GetNumShapeshiftForms();
+			for i = 1, x do
+				local button = _G[barName .. 'ActionButton' .. i];
+				local hotkey = 'SHAPESHIFTBUTTON' .. i;
+				local spellID = select(4, GetShapeshiftFormInfo(i));
+				self:DefAddButton(spellID, button, hotkey);
+			end
+		elseif barName == 'PetAction' then
+			for i = 1, 10 do
+				local button = _G[barName .. 'ActionButton' .. i];
+				local hotkey = barName .. 'Button' .. i;
+				local spellID = select(7, GetPetActionInfo(i));
+				self:DefAddButton(spellID, button, hotkey);
+			end
+		else
+			for i = 1, 12 do
+				local button = _G[barName .. 'ActionButton' .. i];
+				local hotkey = barName .. 'Button' .. i;
+				if button then
+					self:DefAddStandardButton(button, hotkey);
+				end
+			end
 		end
 	end
 end
