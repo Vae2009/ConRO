@@ -1,8 +1,8 @@
 ## Title:-|cffFFFFFFConRO|r- Conflict Rotation Optimizer
 ## Notes: Rotation helper framework.
-## Version: 11.0.9
+## Version: 11.0.10
 ## Author: Vae
-## Interface: 110005
+## Interface: 110007
 ## SavedVariables: ConROPreferences
 ## SavedVariablesPerCharacter: ConROCharacter
 ## OptionalDependencies: Bartender4, ElvUI, ButtonForge
