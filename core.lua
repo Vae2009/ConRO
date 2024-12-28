@@ -136,6 +136,10 @@ local defaultOptions = {
 		enableDefenseWindow = true,
 		enableWindowSpellName = true,
 		enableWindowKeybinds = true,
+		_Reverse_Direction = false,
+		_Reverse_Direction1 = "BOTTOMRIGHT",
+		_Reverse_Direction2 = "BOTTOMLEFT",
+		_Reverse_Direction3 = -3,
 		transparencyWindow = 0.9,
 		windowIconSize = 50,
 		flashIconSize = 50,
@@ -212,13 +216,13 @@ local options = {
 			width = "full",
 			name = classinfo,
 		},
---Generic Addon Settings
 		spacer10 = {
 			order = 10,
 			type = "description",
 			width = "full",
 			name = "\n\n",
 		},
+--Generic Addon Settings
 		_Disable_Info_Messages = {
 			name = "Disable info messages",
 			desc = "Enables / disables info messages, if you have issues with addon, make sure to deselect this.",
@@ -1694,28 +1698,12 @@ local options = {
 					end,
 					get = function(info) return ConRO.db.profile.enableWindowCooldown end
 				},
-				enableDefenseWindow = {
-					name = 'Enable Defense Window',
-					desc = 'Show movable defense window.',
-					type = 'toggle',
-					width = 'default',
-					order = 76,
-					set = function(info, val)
-						ConRO.db.profile.enableDefenseWindow = val;
-						if val == true then
-							ConRODefenseWindow:Show();
-						else
-							ConRODefenseWindow:Hide();
-						end
-					end,
-					get = function(info) return ConRO.db.profile.enableDefenseWindow end
-				},
 				enableWindowSpellName = {
 					name = 'Show Spellname',
 					desc = 'Show spellname above Display Windows.',
 					type = 'toggle',
 					width = 'normal',
-					order = 77,
+					order = 76,
 					set = function(info, val)
 						ConRO.db.profile.enableWindowSpellName = val;
 						if val == true then
@@ -1733,7 +1721,7 @@ local options = {
 					desc = 'Show keybinds below Display Windows.',
 					type = 'toggle',
 					width = 'normal',
-					order = 78,
+					order = 77,
 					set = function(info, val)
 						ConRO.db.profile.enableWindowKeybinds = val;
 						if val == true then
@@ -1745,6 +1733,34 @@ local options = {
 						end
 					end,
 					get = function(info) return ConRO.db.profile.enableWindowKeybinds end
+				},
+				_Reverse_Direction = {
+					name = 'Reverse Direction',
+					desc = 'Reverse the direction of the next spell frames.',
+					type = 'toggle',
+					width = 'normal',
+					order = 78,
+					set = function(info, val)
+						ConRO.db.profile._Reverse_Direction = val;
+						if val == true then
+							ConRO.db.profile._Reverse_Direction1 = "BOTTOMLEFT";
+							ConRO.db.profile._Reverse_Direction2 = "BOTTOMRIGHT";
+							ConRO.db.profile._Reverse_Direction3 = 3;
+							ConROWindow2:ClearAllPoints();
+							ConROWindow3:ClearAllPoints();
+							ConROWindow2:SetPoint(ConRO.db.profile._Reverse_Direction1, ConROWindow, ConRO.db.profile._Reverse_Direction2, ConRO.db.profile._Reverse_Direction3, 0);
+							ConROWindow3:SetPoint(ConRO.db.profile._Reverse_Direction1, ConROWindow2, ConRO.db.profile._Reverse_Direction2, ConRO.db.profile._Reverse_Direction3, 0);
+						else
+							ConRO.db.profile._Reverse_Direction1 = "BOTTOMRIGHT";
+							ConRO.db.profile._Reverse_Direction2 = "BOTTOMLEFT";
+							ConRO.db.profile._Reverse_Direction3 = -3;
+							ConROWindow2:ClearAllPoints();
+							ConROWindow3:ClearAllPoints();
+							ConROWindow2:SetPoint(ConRO.db.profile._Reverse_Direction1, ConROWindow, ConRO.db.profile._Reverse_Direction2, ConRO.db.profile._Reverse_Direction3, 0);
+							ConROWindow3:SetPoint(ConRO.db.profile._Reverse_Direction1, ConROWindow2, ConRO.db.profile._Reverse_Direction2, ConRO.db.profile._Reverse_Direction3, 0);
+						end
+					end,
+					get = function(info) return ConRO.db.profile._Reverse_Direction end
 				},
 				transparencyWindow = {
 					name = 'Window Transparency',
@@ -1790,12 +1806,28 @@ local options = {
 					end,
 					get = function(info) return ConRO.db.profile.flashIconSize end
 				},
+				enableDefenseWindow = {
+					name = 'Enable Defense Window',
+					desc = 'Show movable defense window.',
+					type = 'toggle',
+					width = 'default',
+					order = 82,
+					set = function(info, val)
+						ConRO.db.profile.enableDefenseWindow = val;
+						if val == true then
+							ConRODefenseWindow:Show();
+						else
+							ConRODefenseWindow:Hide();
+						end
+					end,
+					get = function(info) return ConRO.db.profile.enableDefenseWindow end
+				},
 				enableInterruptWindow = {
 					name = 'Enable Interrupt Icon',
 					desc = 'Show movable interrupt icon.',
 					type = 'toggle',
 					width = 'default',
-					order = 82,
+					order = 83,
 					set = function(info, val)
 						ConRO.db.profile.enableInterruptWindow = val;
 						if val == true and ConRO.db.profile._Unlock_ConRO == true then
@@ -1811,7 +1843,7 @@ local options = {
 					desc = 'Show movable purge icon.',
 					type = 'toggle',
 					width = 'default',
-					order = 83,
+					order = 84,
 					set = function(info, val)
 						ConRO.db.profile.enablePurgeWindow = val;
 						if val == true and ConRO.db.profile._Unlock_ConRO == true then
@@ -1823,7 +1855,7 @@ local options = {
 					get = function(info) return ConRO.db.profile.enablePurgeWindow end
 				},
 				spacer84 = {
-					order = 84,
+					order = 85,
 					type = "description",
 					width = "normal",
 					name = "\n\n",
@@ -2429,6 +2461,7 @@ function ConRO:InvokeNextSpell()
 	ConRO:GetTimeToDie();
 --	ConRO:UpdateRotation();
 --	ConRO:UpdateButtonGlow();
+
 	local spellName, spellTexture;
 
 	-- Get info for the first suggested spell

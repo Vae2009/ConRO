@@ -730,11 +730,13 @@ function ConRO:SlashUnlock()
 	ConROPurgeWindow:EnableMouse(ConRO.db.profile._Unlock_ConRO);
 	ConROInterruptWindow:SetMovable(ConRO.db.profile._Unlock_ConRO);
 	ConROPurgeWindow:SetMovable(ConRO.db.profile._Unlock_ConRO);
+
 	if ConRO.db.profile._Unlock_ConRO and ConRO.db.profile.enableInterruptWindow == true then
 		ConROInterruptWindow:Show();
 	else
 		ConROInterruptWindow:Hide();
 	end
+
 	if ConRO.db.profile._Unlock_ConRO and ConRO.db.profile.enablePurgeWindow == true then
 		ConROPurgeWindow:Show();
 	else
@@ -992,7 +994,7 @@ function ConRO:DisplayWindowFrame()
 		frame2:SetScript("OnEnter", ConROTTOnEnter);
 		frame2:SetScript("OnLeave", ConROTTOnLeave);
 
-		frame2:SetPoint("BOTTOMRIGHT", frame, "BOTTOMLEFT", -3, 0);
+		frame2:SetPoint(ConRO.db.profile._Reverse_Direction1, frame, ConRO.db.profile._Reverse_Direction2, ConRO.db.profile._Reverse_Direction3, 0);
 		frame2:SetSize(ConRO.db.profile.windowIconSize/1.20, ConRO.db.profile.windowIconSize/1.20);
 
 	local t2 = frame2.texture;
@@ -1026,7 +1028,7 @@ function ConRO:DisplayWindowFrame()
 		frame3:SetScript("OnEnter", ConROTTOnEnter);
 		frame3:SetScript("OnLeave", ConROTTOnLeave);
 
-		frame3:SetPoint("BOTTOMRIGHT", frame2, "BOTTOMLEFT", -3, 0);
+		frame3:SetPoint(ConRO.db.profile._Reverse_Direction1, frame2, ConRO.db.profile._Reverse_Direction2, ConRO.db.profile._Reverse_Direction3, 0);
 		frame3:SetSize(ConRO.db.profile.windowIconSize/1.20, ConRO.db.profile.windowIconSize/1.20);
 
 	local t3 = frame3.texture;
@@ -2202,6 +2204,40 @@ function ConRO:UpdateRotation()
     end
 end
 
+function ConRO:UpdateDefRotation()
+	self = ConRO;
+
+	self:DefFetchBlizzard();
+
+	if IsAddOnLoaded('Bartender4') then
+		self:DefFetchBartender4();
+	end
+
+	if IsAddOnLoaded('ButtonForge') then
+		self:DefFetchButtonForge();
+	end
+
+	if IsAddOnLoaded('ElvUI') then
+		self:DefFetchElvUI();
+	end
+
+	if IsAddOnLoaded('Dominos') then
+		self:DefFetchDominos();
+	end
+
+    if IsAddOnLoaded('DiabolicUI') then
+        self:DefFetchDiabolic();
+    end
+
+    if IsAddOnLoaded('AzeriteUI') then
+        self:DefFetchAzeriteUI();
+    end
+
+	if IsAddOnLoaded('ls_UI') then
+        self:DefFetchLSUI();
+    end
+end
+
 function ConRO:AddButton(spellID, button, hotkey)
 	if spellID then
 		if self.Spells[spellID] == nil then
@@ -2498,7 +2534,6 @@ function ConRO:DefFetchBlizzard()
 		end
 	end
 end
-
 
 function ConRO:FetchDominos()
 	for i = 1, 132 do
@@ -3184,7 +3219,7 @@ local swapSpells = {
 ConROSwapSpells = ConROSwapSpells or swapSpells;
 
 function ConRO:GlowSpell(spellID)
-	local spellName
+	local spellName;
 	local spellInfo = GetSpellInfo(spellID);
 		spellName = spellInfo and spellInfo.name
 	local _IsSwapSpell = false;
@@ -3217,8 +3252,8 @@ function ConRO:GlowSpell(spellID)
 end
 
 function ConRO:GlowDef(spellID)
-	local spellName
-		local spellInfo = GetSpellInfo(spellID);
+	local spellName;
+	local spellInfo = GetSpellInfo(spellID);
 		spellName = spellInfo and spellInfo.name
 
 	if self.DefSpells[spellID] ~= nil then
