@@ -1,6 +1,6 @@
 ## Title:-|cffFFFFFFConRO|r- Conflict Rotation Optimizer
 ## Notes: Rotation helper framework.
-## Version: 11.0.11
+## Version: 11.0.12
 ## Author: Vae
 ## Interface: 110007
 ## SavedVariables: ConROPreferences
@@ -9,7 +9,6 @@
 
 # Libraries
 Libs\Libs.xml
-Libs\LibDualSpec-1.0\LibDualSpec-1.0.lua
 
 core.lua
 buttons.lua
