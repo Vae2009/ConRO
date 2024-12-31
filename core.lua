@@ -133,16 +133,18 @@ local defaultOptions = {
 		enableWindow = true,
 		combatWindow = false,
 		enableWindowCooldown = true,
-		enableDefenseWindow = true,
+		enableNextWindow = true,
 		enableWindowSpellName = true,
 		enableWindowKeybinds = true,
 		_Reverse_Direction = false,
-		_Reverse_Direction1 = "BOTTOMRIGHT",
-		_Reverse_Direction2 = "BOTTOMLEFT",
+		_Reverse_Direction1 = "RIGHT",
+		_Reverse_Direction2 = "LEFT",
 		_Reverse_Direction3 = -3,
+		_Reverse_Direction4 = 5,
 		transparencyWindow = 0.9,
 		windowIconSize = 50,
 		flashIconSize = 50,
+		enableDefenseWindow = true,
 		enableInterruptWindow = true,
 		enablePurgeWindow = true,
 
@@ -395,6 +397,12 @@ local options = {
 			name = 'Overlay Settings',
 			order = 21,
 			args = {
+				spacer1 = {
+					type = "description",
+					width = .1,
+					name = "\n\n",
+					order = 2.5,
+				},
 				_Damage_Overlay_Alpha = {
 					name = 'Show Damage Overlay',
 					desc = 'Turn damage overlay on and off.',
@@ -425,6 +433,12 @@ local options = {
 					end,
 					get = function(info) return ConRO.db.profile._Damage_Overlay_Alpha end
 				},
+				spacer3 = {
+					type = "description",
+					width = .1,
+					name = "\n\n",
+					order = 3.5,
+				},
 				_Defense_Overlay_Alpha = {
 					name = 'Show Defense Overlay',
 					desc = 'Turn defense overlay on and off.',
@@ -454,6 +468,12 @@ local options = {
 						end
 					end,
 					get = function(info) return ConRO.db.profile._Defense_Overlay_Alpha end
+				},
+				spacer4 = {
+					type = "description",
+					width = .1,
+					name = "\n\n",
+					order = 4.5,
 				},
 				_Notifier_Overlay_Alpha = {
 					name = 'Show Notifier Overlay',
@@ -496,6 +516,42 @@ local options = {
 					name = "Damage Overlays",
 					order = 11,
 				},
+				_Damage_Overlay_Class_Color = {
+					name = 'Class Colors',
+					desc = 'Change damage overlays to class colors.',
+					type = 'toggle',
+					disabled = function()
+						if ConRO.db.profile._Damage_Overlay_Alpha then
+							return false;
+						else
+							return true;
+						end
+					end,
+					width = "full",
+					order = 11.5,
+					set = function(info, val)
+						ConRO.db.profile._Damage_Overlay_Class_Color = val;
+						if val == true then
+							local _, _, classId = UnitClass('player');
+							local c = ConRO.ClassRGB[classId];
+							for k, overlay in pairs(ConRO.DamageFrames) do
+								if overlay ~= nil then
+									overlay.texture:SetVertexColor(c.r, c.g, c.b);
+									overlay.texture:SetAlpha(c.a);
+								end
+							end
+						else
+							local t = ConRO.db.profile._Damage_Overlay_Color;
+							for k, overlay in pairs(ConRO.DamageFrames) do
+								if overlay ~= nil then
+									overlay.texture:SetVertexColor(t.r, t.g, t.b);
+									overlay.texture:SetAlpha(t.a);
+								end
+							end
+						end
+					end,
+					get = function(info) return ConRO.db.profile._Damage_Overlay_Class_Color end
+				},
 				_Damage_Overlay_Color = {
 					name = 'Damage',
 					desc = 'Change damage overlays color.',
@@ -525,6 +581,12 @@ local options = {
 						return t.r, t.g, t.b, t.a;
 					end
 				},
+				spacer12 = {
+					type = "description",
+					width = .1,
+					name = "\n\n",
+					order = 12.5,
+				},
 				_Damage_Overlay_Size = {
 					name = 'Size',
 					desc = 'Sets the scale of the damage overlay texture.',
@@ -536,7 +598,7 @@ local options = {
 							return true;
 						end
 					end,
-					width = .65,
+					width = .75,
 					order = 13,
 					min = .5,
 					max = 1.5,
@@ -551,6 +613,12 @@ local options = {
 					end,
 					get = function(info) return ConRO.db.profile._Damage_Overlay_Size end
 				},
+				spacer13 = {
+					type = "description",
+					width = .1,
+					name = "\n\n",
+					order = 13.5,
+				},
 				_Damage_Icon_Style = {
 					name = "Style",
 					desc = "Sets the style of the damage overlay texture.",
@@ -562,7 +630,7 @@ local options = {
 							return true;
 						end
 					end,
-					width = .70,
+					width = .75,
 					order = 14,
 					values = _Overlay_Styles,
 					style = "dropdown",
@@ -606,6 +674,12 @@ local options = {
 					end,
 					get = function(info) return ConRO.db.profile._Damage_Icon_Style end
 				},
+				spacer14 = {
+					type = "description",
+					width = .1,
+					name = "\n\n",
+					order = 14.5,
+				},
 				_Damage_Alpha_Mode = {
 					name = "Alpha",
 					desc = "Sets the mode of the damage texture alpha.",
@@ -617,7 +691,7 @@ local options = {
 							return true;
 						end
 					end,
-					width = .55,
+					width = .75,
 					order = 15,
 					values = _Alpha_Modes,
 					style = "dropdown",
@@ -640,42 +714,6 @@ local options = {
 						end
 					end,
 					get = function(info) return ConRO.db.profile._Damage_Alpha_Mode end
-				},
-				_Damage_Overlay_Class_Color = {
-					name = 'Class Colors',
-					desc = 'Change damage overlays to class colors.',
-					type = 'toggle',
-					disabled = function()
-						if ConRO.db.profile._Damage_Overlay_Alpha then
-							return false;
-						else
-							return true;
-						end
-					end,
-					width = .60,
-					order = 16,
-					set = function(info, val)
-						ConRO.db.profile._Damage_Overlay_Class_Color = val;
-						if val == true then
-							local _, _, classId = UnitClass('player');
-							local c = ConRO.ClassRGB[classId];
-							for k, overlay in pairs(ConRO.DamageFrames) do
-								if overlay ~= nil then
-									overlay.texture:SetVertexColor(c.r, c.g, c.b);
-									overlay.texture:SetAlpha(c.a);
-								end
-							end
-						else
-							local t = ConRO.db.profile._Damage_Overlay_Color;
-							for k, overlay in pairs(ConRO.DamageFrames) do
-								if overlay ~= nil then
-									overlay.texture:SetVertexColor(t.r, t.g, t.b);
-									overlay.texture:SetAlpha(t.a);
-								end
-							end
-						end
-					end,
-					get = function(info) return ConRO.db.profile._Damage_Overlay_Class_Color end
 				},
 				_Cooldown_Overlay_Color = {
 					name = 'Cooldown',
@@ -706,6 +744,12 @@ local options = {
 						return t.r, t.g, t.b, t.a;
 					end
 				},
+				spacer17 = {
+					type = "description",
+					width = .1,
+					name = "\n\n",
+					order = 17.5,
+				},
 				_Cooldown_Overlay_Size = {
 					name = 'Size',
 					desc = 'Sets the scale of the cooldown overlay texture.',
@@ -717,7 +761,7 @@ local options = {
 							return true;
 						end
 					end,
-					width = .65,
+					width = .75,
 					order = 18,
 					min = .5,
 					max = 1.5,
@@ -732,6 +776,12 @@ local options = {
 					end,
 					get = function(info) return ConRO.db.profile._Cooldown_Overlay_Size end
 				},
+				spacer18 = {
+					type = "description",
+					width = .1,
+					name = "\n\n",
+					order = 18.5,
+				},
 				_Cooldown_Icon_Style = {
 					name = "Style",
 					desc = "Sets the style of the cooldown overlay texture.",
@@ -743,7 +793,7 @@ local options = {
 							return true;
 						end
 					end,
-					width = .70,
+					width = .75,
 					order = 19,
 					values = _Overlay_Styles,
 					style = "dropdown",
@@ -777,6 +827,12 @@ local options = {
 					end,
 					get = function(info) return ConRO.db.profile._Cooldown_Icon_Style end
 				},
+				spacer19 = {
+					type = "description",
+					width = .1,
+					name = "\n\n",
+					order = 19.5,
+				},
 				_Cooldown_Alpha_Mode = {
 					name = "Alpha",
 					desc = "Sets the mode of the cooldown texture alpha.",
@@ -788,7 +844,7 @@ local options = {
 							return true;
 						end
 					end,
-					width = .55,
+					width = .75,
 					order = 20,
 					values = _Alpha_Modes,
 					style = "dropdown",
@@ -852,6 +908,12 @@ local options = {
 						return t.r, t.g, t.b, t.a;
 					end
 				},
+				spacer32 = {
+					type = "description",
+					width = .1,
+					name = "\n\n",
+					order = 32.5,
+				},
 				_Defense_Overlay_Size = {
 					name = 'Size',
 					desc = 'Sets the scale of the defense overlay texture.',
@@ -863,7 +925,7 @@ local options = {
 							return true;
 						end
 					end,
-					width = .65,
+					width = .75,
 					order = 33,
 					min = .5,
 					max = 1.5,
@@ -878,6 +940,12 @@ local options = {
 					end,
 					get = function(info) return ConRO.db.profile._Defense_Overlay_Size end
 				},
+				spacer33 = {
+					type = "description",
+					width = .1,
+					name = "\n\n",
+					order = 33.5,
+				},
 				_Defense_Icon_Style = {
 					name = "Style",
 					desc = "Sets the style of the defense overlay texture.",
@@ -889,7 +957,7 @@ local options = {
 							return true;
 						end
 					end,
-					width = .70,
+					width = .75,
 					order = 34,
 					values = _Overlay_Styles,
 					style = "dropdown",
@@ -923,6 +991,12 @@ local options = {
 					end,
 					get = function(info) return ConRO.db.profile._Defense_Icon_Style end
 				},
+				spacer34 = {
+					type = "description",
+					width = .1,
+					name = "\n\n",
+					order = 34.5,
+				},
 				_Defense_Alpha_Mode = {
 					name = "Alpha",
 					desc = "Sets the mode of the defense texture alpha.",
@@ -934,7 +1008,7 @@ local options = {
 							return true;
 						end
 					end,
-					width = .55,
+					width = .75,
 					order = 35,
 					values = _Alpha_Modes,
 					style = "dropdown",
@@ -987,6 +1061,12 @@ local options = {
 						return t.r, t.g, t.b, t.a;
 					end
 				},
+				spacer36 = {
+					type = "description",
+					width = .1,
+					name = "\n\n",
+					order = 36.5,
+				},
 				_Taunt_Overlay_Size = {
 					name = 'Size',
 					desc = 'Sets the scale of the taunt overlay texture.',
@@ -998,7 +1078,7 @@ local options = {
 							return true;
 						end
 					end,
-					width = .65,
+					width = .75,
 					order = 37,
 					min = .5,
 					max = 1.5,
@@ -1013,6 +1093,12 @@ local options = {
 					end,
 					get = function(info) return ConRO.db.profile._Taunt_Overlay_Size end
 				},
+				spacer37 = {
+					type = "description",
+					width = .1,
+					name = "\n\n",
+					order = 37.5,
+				},
 				_Taunt_Icon_Style = {
 					name = "Style",
 					desc = "Sets the style of the taunt overlay texture.",
@@ -1024,7 +1110,7 @@ local options = {
 							return true;
 						end
 					end,
-					width = .70,
+					width = .75,
 					order = 38,
 					values = _Overlay_Styles,
 					style = "dropdown",
@@ -1058,6 +1144,12 @@ local options = {
 					end,
 					get = function(info) return ConRO.db.profile._Taunt_Icon_Style end
 				},
+				spacer38 = {
+					type = "description",
+					width = .1,
+					name = "\n\n",
+					order = 38.5,
+				},
 				_Taunt_Alpha_Mode = {
 					name = "Alpha",
 					desc = "Sets the mode of the taunt texture alpha.",
@@ -1069,7 +1161,7 @@ local options = {
 							return true;
 						end
 					end,
-					width = .55,
+					width = .75,
 					order = 39,
 					values = _Alpha_Modes,
 					style = "dropdown",
@@ -1133,6 +1225,12 @@ local options = {
 						return t.r, t.g, t.b, t.a;
 					end
 				},
+				spacer52 = {
+					type = "description",
+					width = .1,
+					name = "\n\n",
+					order = 52.5,
+				},
 				_Interrupt_Overlay_Size = {
 					name = 'Size',
 					desc = 'Sets the scale of the interrupt overlay texture.',
@@ -1144,7 +1242,7 @@ local options = {
 							return true;
 						end
 					end,
-					width = .65,
+					width = .75,
 					order = 53,
 					min = .5,
 					max = 1.5,
@@ -1159,6 +1257,12 @@ local options = {
 					end,
 					get = function(info) return ConRO.db.profile._Interrupt_Overlay_Size end
 				},
+				spacer53 = {
+					type = "description",
+					width = .1,
+					name = "\n\n",
+					order = 53.5,
+				},
 				_Interrupt_Icon_Style = {
 					name = "Style",
 					desc = "Sets the style of the interrupt overlay texture.",
@@ -1170,7 +1274,7 @@ local options = {
 							return true;
 						end
 					end,
-					width = .70,
+					width = .75,
 					order = 54,
 					values = _Overlay_Styles,
 					style = "dropdown",
@@ -1204,6 +1308,12 @@ local options = {
 					end,
 					get = function(info) return ConRO.db.profile._Interrupt_Icon_Style end
 				},
+				spacer54 = {
+					type = "description",
+					width = .1,
+					name = "\n\n",
+					order = 54.5,
+				},
 				_Interrupt_Alpha_Mode = {
 					name = "Alpha",
 					desc = "Sets the mode of the interrupt texture alpha.",
@@ -1215,7 +1325,7 @@ local options = {
 							return true;
 						end
 					end,
-					width = .55,
+					width = .75,
 					order = 55,
 					values = _Alpha_Modes,
 					style = "dropdown",
@@ -1268,6 +1378,12 @@ local options = {
 						return t.r, t.g, t.b, t.a;
 					end
 				},
+				spacer56 = {
+					type = "description",
+					width = .1,
+					name = "\n\n",
+					order = 56.5,
+				},
 				_Purge_Overlay_Size = {
 					name = 'Size',
 					desc = 'Sets the scale of the purge overlay texture.',
@@ -1279,7 +1395,7 @@ local options = {
 							return true;
 						end
 					end,
-					width = .65,
+					width = .75,
 					order = 57,
 					min = .5,
 					max = 1.5,
@@ -1294,6 +1410,12 @@ local options = {
 					end,
 					get = function(info) return ConRO.db.profile._Purge_Overlay_Size end
 				},
+				spacer57 = {
+					type = "description",
+					width = .1,
+					name = "\n\n",
+					order = 57.5,
+				},
 				_Purge_Icon_Style = {
 					name = "Style",
 					desc = "Sets the style of the purge overlay texture.",
@@ -1305,7 +1427,7 @@ local options = {
 							return true;
 						end
 					end,
-					width = .70,
+					width = .75,
 					order = 58,
 					values = _Overlay_Styles,
 					style = "dropdown",
@@ -1339,6 +1461,12 @@ local options = {
 					end,
 					get = function(info) return ConRO.db.profile._Purge_Icon_Style end
 				},
+				spacer58 = {
+					type = "description",
+					width = .1,
+					name = "\n\n",
+					order = 58.5,
+				},
 				_Purge_Alpha_Mode = {
 					name = "Alpha",
 					desc = "Sets the mode of the purge texture alpha.",
@@ -1350,7 +1478,7 @@ local options = {
 							return true;
 						end
 					end,
-					width = .55,
+					width = .75,
 					order = 59,
 					values = _Alpha_Modes,
 					style = "dropdown",
@@ -1403,6 +1531,12 @@ local options = {
 						return t.r, t.g, t.b, t.a;
 					end
 				},
+				spacer60 = {
+					type = "description",
+					width = .1,
+					name = "\n\n",
+					order = 60.5,
+				},
 				_RaidBuffs_Overlay_Size = {
 					name = 'Size',
 					desc = 'Sets the scale of the raid buffs overlay texture.',
@@ -1414,7 +1548,7 @@ local options = {
 							return true;
 						end
 					end,
-					width = .65,
+					width = .75,
 					order = 61,
 					min = .5,
 					max = 1.5,
@@ -1429,6 +1563,12 @@ local options = {
 					end,
 					get = function(info) return ConRO.db.profile._RaidBuffs_Overlay_Size end
 				},
+				spacer61 = {
+					type = "description",
+					width = .1,
+					name = "\n\n",
+					order = 61.5,
+				},
 				_RaidBuffs_Icon_Style = {
 					name = "Style",
 					desc = "Sets the style of the raid buffs overlay texture.",
@@ -1440,7 +1580,7 @@ local options = {
 							return true;
 						end
 					end,
-					width = .70,
+					width = .75,
 					order = 62,
 					values = _Overlay_Styles,
 					style = "dropdown",
@@ -1474,6 +1614,12 @@ local options = {
 					end,
 					get = function(info) return ConRO.db.profile._RaidBuffs_Icon_Style end
 				},
+				spacer62 = {
+					type = "description",
+					width = .1,
+					name = "\n\n",
+					order = 62.5,
+				},
 				_RaidBuffs_Alpha_Mode = {
 					name = "Alpha",
 					desc = "Sets the mode of the raid buffs texture alpha.",
@@ -1485,7 +1631,7 @@ local options = {
 							return true;
 						end
 					end,
-					width = .55,
+					width = .75,
 					order = 63,
 					values = _Alpha_Modes,
 					style = "dropdown",
@@ -1538,6 +1684,12 @@ local options = {
 						return t.r, t.g, t.b, t.a;
 					end
 				},
+				spacer64 = {
+					type = "description",
+					width = .1,
+					name = "\n\n",
+					order = 64.5,
+				},
 				_Movement_Overlay_Size = {
 					name = 'Size',
 					desc = 'Sets the scale of the movement overlay texture.',
@@ -1549,7 +1701,7 @@ local options = {
 							return true;
 						end
 					end,
-					width = .65,
+					width = .75,
 					order = 65,
 					min = .5,
 					max = 1.5,
@@ -1564,6 +1716,12 @@ local options = {
 					end,
 					get = function(info) return ConRO.db.profile._Movement_Overlay_Size end
 				},
+				spacer65 = {
+					type = "description",
+					width = .1,
+					name = "\n\n",
+					order = 65.5,
+				},
 				_Movement_Icon_Style = {
 					name = "Style",
 					desc = "Sets the style of the movement overlay texture.",
@@ -1575,7 +1733,7 @@ local options = {
 							return true;
 						end
 					end,
-					width = .70,
+					width = .75,
 					order = 66,
 					values = _Overlay_Styles,
 					style = "dropdown",
@@ -1609,6 +1767,12 @@ local options = {
 					end,
 					get = function(info) return ConRO.db.profile._Movement_Icon_Style end
 				},
+				spacer66 = {
+					type = "description",
+					width = .1,
+					name = "\n\n",
+					order = 66.5,
+				},
 				_Movement_Alpha_Mode = {
 					name = "Alpha",
 					desc = "Sets the mode of the movement texture alpha.",
@@ -1620,7 +1784,7 @@ local options = {
 							return true;
 						end
 					end,
-					width = .55,
+					width = .75,
 					order = 67,
 					values = _Alpha_Modes,
 					style = "dropdown",
@@ -1698,6 +1862,24 @@ local options = {
 					end,
 					get = function(info) return ConRO.db.profile.enableWindowCooldown end
 				},
+				enableNextWindow = {
+					name = 'Enable Next Windows',
+					desc = 'Show movable future spell windowss.',
+					type = 'toggle',
+					width = 'default',
+					order = 75.5,
+					set = function(info, val)
+						ConRO.db.profile.enableNextWindow = val;
+						if val == true and not ConRO:HealSpec() then
+							ConROWindow2:Show();
+							ConROWindow3:Show();
+						else
+							ConROWindow2:Hide();
+							ConROWindow3:Hide();
+						end
+					end,
+					get = function(info) return ConRO.db.profile.enableNextWindow end
+				},
 				enableWindowSpellName = {
 					name = 'Show Spellname',
 					desc = 'Show spellname above Display Windows.',
@@ -1743,24 +1925,40 @@ local options = {
 					set = function(info, val)
 						ConRO.db.profile._Reverse_Direction = val;
 						if val == true then
-							ConRO.db.profile._Reverse_Direction1 = "BOTTOMLEFT";
-							ConRO.db.profile._Reverse_Direction2 = "BOTTOMRIGHT";
+							ConRO.db.profile._Reverse_Direction1 = "LEFT";
+							ConRO.db.profile._Reverse_Direction2 = "RIGHT";
 							ConRO.db.profile._Reverse_Direction3 = 3;
+							ConRO.db.profile._Reverse_Direction4 = -5;
 							ConROWindow2:ClearAllPoints();
 							ConROWindow3:ClearAllPoints();
-							ConROWindow2:SetPoint(ConRO.db.profile._Reverse_Direction1, ConROWindow, ConRO.db.profile._Reverse_Direction2, ConRO.db.profile._Reverse_Direction3, 0);
-							ConROWindow3:SetPoint(ConRO.db.profile._Reverse_Direction1, ConROWindow2, ConRO.db.profile._Reverse_Direction2, ConRO.db.profile._Reverse_Direction3, 0);
+							ConROInterruptWindow:ClearAllPoints();
+							ConROPurgeWindow:ClearAllPoints();
+							ConROWindow2:SetPoint("BOTTOM" .. ConRO.db.profile._Reverse_Direction1, ConROWindow, "BOTTOM" .. ConRO.db.profile._Reverse_Direction2, ConRO.db.profile._Reverse_Direction3, 0);
+							ConROWindow3:SetPoint("BOTTOM" .. ConRO.db.profile._Reverse_Direction1, ConROWindow2, "BOTTOM" .. ConRO.db.profile._Reverse_Direction2, ConRO.db.profile._Reverse_Direction3, 0);
+							ConROInterruptWindow:SetPoint(ConRO.db.profile._Reverse_Direction2, "ConROWindow", "TOP" .. ConRO.db.profile._Reverse_Direction1, ConRO.db.profile._Reverse_Direction4, 0);
+							ConROPurgeWindow:SetPoint(ConRO.db.profile._Reverse_Direction2, "ConROWindow", "BOTTOM" .. ConRO.db.profile._Reverse_Direction1, ConRO.db.profile._Reverse_Direction4, 0);
 						else
-							ConRO.db.profile._Reverse_Direction1 = "BOTTOMRIGHT";
-							ConRO.db.profile._Reverse_Direction2 = "BOTTOMLEFT";
+							ConRO.db.profile._Reverse_Direction1 = "RIGHT";
+							ConRO.db.profile._Reverse_Direction2 = "LEFT";
 							ConRO.db.profile._Reverse_Direction3 = -3;
+							ConRO.db.profile._Reverse_Direction4 = 5;
 							ConROWindow2:ClearAllPoints();
 							ConROWindow3:ClearAllPoints();
-							ConROWindow2:SetPoint(ConRO.db.profile._Reverse_Direction1, ConROWindow, ConRO.db.profile._Reverse_Direction2, ConRO.db.profile._Reverse_Direction3, 0);
-							ConROWindow3:SetPoint(ConRO.db.profile._Reverse_Direction1, ConROWindow2, ConRO.db.profile._Reverse_Direction2, ConRO.db.profile._Reverse_Direction3, 0);
+							ConROInterruptWindow:ClearAllPoints();
+							ConROPurgeWindow:ClearAllPoints();
+							ConROWindow2:SetPoint("BOTTOM" .. ConRO.db.profile._Reverse_Direction1, ConROWindow, "BOTTOM" .. ConRO.db.profile._Reverse_Direction2, ConRO.db.profile._Reverse_Direction3, 0);
+							ConROWindow3:SetPoint("BOTTOM" .. ConRO.db.profile._Reverse_Direction1, ConROWindow2, "BOTTOM" .. ConRO.db.profile._Reverse_Direction2, ConRO.db.profile._Reverse_Direction3, 0);
+							ConROInterruptWindow:SetPoint(ConRO.db.profile._Reverse_Direction2, "ConROWindow", "TOP" .. ConRO.db.profile._Reverse_Direction1, ConRO.db.profile._Reverse_Direction4, 0);
+							ConROPurgeWindow:SetPoint(ConRO.db.profile._Reverse_Direction2, "ConROWindow", "BOTTOM" .. ConRO.db.profile._Reverse_Direction1, ConRO.db.profile._Reverse_Direction4, 0);
 						end
 					end,
 					get = function(info) return ConRO.db.profile._Reverse_Direction end
+				},
+				spacer78 = {
+					order = 78.5,
+					type = "description",
+					width = "double",
+					name = "\n\n",
 				},
 				transparencyWindow = {
 					name = 'Window Transparency',
@@ -1773,6 +1971,12 @@ local options = {
 					step = 0.01,
 					set = function(info, val)
 						ConRO.db.profile.transparencyWindow = val;
+						ConROWindow:SetAlpha(val);
+						ConROWindow2:SetAlpha(val);
+						ConROWindow3:SetAlpha(val);
+						ConRODefenseWindow:SetAlpha(val);
+						ConROInterruptWindow:SetAlpha(val);
+						ConROPurgeWindow:SetAlpha(val);
 					end,
 					get = function(info) return ConRO.db.profile.transparencyWindow end
 				},

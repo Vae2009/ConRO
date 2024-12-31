@@ -965,7 +965,7 @@ function ConRO:DisplayWindowFrame()
 
 		cd:SetAllPoints(frame);
 		cd:SetFrameStrata('MEDIUM');
-		cd:SetFrameLevel('54');
+		cd:SetFrameLevel('74');
 		if ConRO.db.profile.enableWindowCooldown then
 			cd:SetScript("OnEvent",function(self)
 				local gcdStart, gcdDuration;
@@ -988,18 +988,26 @@ function ConRO:DisplayWindowFrame()
 			end)
 		end
 
-	local frame2 = CreateFrame("Frame", "ConROWindow2", frame);
+	local frame2 = CreateFrame("Frame", "ConROWindow2", UIParent);
 		frame2:SetMovable(false);
 		frame2:SetClampedToScreen(true);
 		frame2:SetScript("OnEnter", ConROTTOnEnter);
 		frame2:SetScript("OnLeave", ConROTTOnLeave);
+		frame2:SetAlpha(ConRO.db.profile.transparencyWindow);
 
-		frame2:SetPoint(ConRO.db.profile._Reverse_Direction1, frame, ConRO.db.profile._Reverse_Direction2, ConRO.db.profile._Reverse_Direction3, 0);
+		frame2:SetPoint("BOTTOM" .. ConRO.db.profile._Reverse_Direction1, frame, "BOTTOM" .. ConRO.db.profile._Reverse_Direction2, ConRO.db.profile._Reverse_Direction3, 0);
 		frame2:SetSize(ConRO.db.profile.windowIconSize/1.20, ConRO.db.profile.windowIconSize/1.20);
+		if ConRO.db.profile.combatWindow or ConRO:HealSpec() then
+			frame2:Hide();
+		elseif not ConRO.db.profile.enableNextWindow then
+			frame2:Hide();
+		else
+			frame2:Show();
+		end
 
 	local t2 = frame2.texture;
 		if not t2 then
-			t2 = frame:CreateTexture("ARTWORK");
+			t2 = frame2:CreateTexture("ARTWORK");
 			t2:SetTexture('Interface\\AddOns\\ConRO\\images\\Bigskull');
 			t2:SetBlendMode('BLEND');
 			frame2.texture = t2;
@@ -1022,18 +1030,26 @@ function ConRO:DisplayWindowFrame()
 			fontkey2:Hide();
 		end
 
-	local frame3 = CreateFrame("Frame", "ConROWindow3", frame2);
+	local frame3 = CreateFrame("Frame", "ConROWindow3", UIParent);
 		frame3:SetMovable(false);
 		frame3:SetClampedToScreen(true);
 		frame3:SetScript("OnEnter", ConROTTOnEnter);
 		frame3:SetScript("OnLeave", ConROTTOnLeave);
+		frame3:SetAlpha(ConRO.db.profile.transparencyWindow);
 
-		frame3:SetPoint(ConRO.db.profile._Reverse_Direction1, frame2, ConRO.db.profile._Reverse_Direction2, ConRO.db.profile._Reverse_Direction3, 0);
+		frame3:SetPoint("BOTTOM" .. ConRO.db.profile._Reverse_Direction1, frame2, "BOTTOM" .. ConRO.db.profile._Reverse_Direction2, ConRO.db.profile._Reverse_Direction3, 0);
 		frame3:SetSize(ConRO.db.profile.windowIconSize/1.20, ConRO.db.profile.windowIconSize/1.20);
+		if ConRO.db.profile.combatWindow or ConRO:HealSpec() then
+			frame3:Hide();
+		elseif not ConRO.db.profile.enableNextWindow then
+			frame3:Hide();
+		else
+			frame3:Show();
+		end
 
 	local t3 = frame3.texture;
 		if not t3 then
-			t3 = frame:CreateTexture("ARTWORK");
+			t3 = frame3:CreateTexture("ARTWORK");
 			t3:SetTexture('Interface\\AddOns\\ConRO\\images\\Bigskull');
 			t3:SetBlendMode('BLEND');
 			frame3.texture = t3;
@@ -1146,7 +1162,7 @@ function ConRO:DefenseWindowFrame()
 
 		cd:SetAllPoints(frame);
 		cd:SetFrameStrata('MEDIUM');
-		cd:SetFrameLevel('54');
+		cd:SetFrameLevel('74');
 		if ConRO.db.profile.enableWindowCooldown then
 			cd:SetScript("OnEvent",function(self)
 				local gcdStart, gcdDuration;
@@ -1185,7 +1201,7 @@ function ConRO:InterruptWindowFrame()
 		frame:SetScript("OnDragStop", frame.StopMovingOrSizing)
 		frame:EnableMouse(ConRO.db.profile._Unlock_ConRO);
 
-		frame:SetPoint("LEFT", "ConROWindow", "RIGHT", 5, 10);
+		frame:SetPoint(ConRO.db.profile._Reverse_Direction2, "ConROWindow", "TOP" .. ConRO.db.profile._Reverse_Direction1, ConRO.db.profile._Reverse_Direction4, 0);
 		frame:SetSize(ConRO.db.profile.flashIconSize * .25, ConRO.db.profile.flashIconSize * .25);
 		frame:SetFrameStrata('MEDIUM');
 		frame:SetFrameLevel('73');
@@ -1223,7 +1239,7 @@ function ConRO:PurgeWindowFrame()
 		frame:SetScript("OnDragStop", frame.StopMovingOrSizing)
 		frame:EnableMouse(ConRO.db.profile._Unlock_ConRO);
 
-		frame:SetPoint("LEFT", "ConROWindow", "RIGHT", 5, -10);
+		frame:SetPoint(ConRO.db.profile._Reverse_Direction2, "ConROWindow", "BOTTOM" .. ConRO.db.profile._Reverse_Direction1, ConRO.db.profile._Reverse_Direction4, 0);
 		frame:SetSize(ConRO.db.profile.flashIconSize * .25, ConRO.db.profile.flashIconSize * .25);
 		frame:SetFrameStrata('MEDIUM');
 		frame:SetFrameLevel('73');
