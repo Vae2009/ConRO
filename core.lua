@@ -1,4 +1,3 @@
----@diagnostic disable: missing-parameter
 local AceGUI = LibStub('AceGUI-3.0');
 local lsm = LibStub('AceGUISharedMediaWidgets-1.0');
 local media = LibStub('LibSharedMedia-3.0');
@@ -13,6 +12,7 @@ BINDING_NAME_CONROBOSSTOGGLE = "Enemy Set Toggle (Burst/Full)"
 
 ConRO = LibStub('AceAddon-3.0'):NewAddon('ConRO', 'AceConsole-3.0', 'AceEvent-3.0', 'AceTimer-3.0');
 
+ConRO.rc = LibStub("LibRangeCheck-3.0");
 ConRO.Textures = {
 	['Skull'] = 'Interface\\AddOns\\ConRO\\images\\skull',
 	['Starburst'] = 'Interface\\AddOns\\ConRO\\images\\starburst',
@@ -2216,11 +2216,11 @@ function ConRO:OnInitialize()
 	LibStub('AceConfig-3.0'):RegisterOptionsTable('Conflict Rotation Optimizer', options, {'conflictrotationoptimizer'});
 	self.db = LibStub('AceDB-3.0'):New('ConROPreferences', defaultOptions);
 	self.optionsFrame = LibStub('AceConfigDialog-3.0'):AddToBlizOptions('Conflict Rotation Optimizer', 'ConRO');
-	self.DisplayWindowFrame();
-	self.DefenseWindowFrame();
-	self.InterruptWindowFrame();
-	self.PurgeWindowFrame();
-	self.DisplayToggleFrame();
+	self:DisplayWindowFrame();
+	self:DefenseWindowFrame();
+	self:InterruptWindowFrame();
+	self:PurgeWindowFrame();
+	self:DisplayToggleFrame();
 	self:CreateAutoButton();
 	self:CreateSingleButton();
 	self:CreateAoEButton();
@@ -2245,7 +2245,7 @@ function ConRO:EnableRotation()
 		return;
 	end
 
-	self.Fetch();
+	self:Fetch();
 	self:CheckTalents();
 	self:CheckPvPTalents();
 
@@ -2263,7 +2263,7 @@ function ConRO:EnableDefense()
 		return;
 	end
 
-	self.FetchDef();
+	self:FetchDef();
 	self:CheckTalents();
 	self:CheckPvPTalents();
 

@@ -456,43 +456,85 @@ end
 function ConRO:Targets(spellID)
 	local target_in_range = false;
 	local number_in_range = 0;
+	local minRange, maxRange = false, false;
 		if spellID == "Melee" then
 			if UnitReaction("player", "target") ~= nil then
 				if UnitReaction("player", "target") <= 4 and UnitExists("target") then
-					if C_Item.IsItemInRange(37727, "target") then
-						target_in_range = true;
+					_, maxRange = ConRO.rc:getRange("target");
+					if maxRange then
+						if tonumber(maxRange) <= 5 then
+							target_in_range = true;
+						end
 					end
 				end
 			end
 
 			for i = 1, 15 do
+				local serial = UnitGUID('nameplate' .. i);
+				local _Is_Dummy = false;
+				if serial then
+					local npcId = ConRO:GetNpcIdFromGuid(serial)
+					if npcId then
+						if (targetDummiesIds[npcId]) then
+							_Is_Dummy = true;
+						end
+					end
+				end
+
 				if UnitReaction("player", 'nameplate' .. i) ~= nil then
-					if UnitReaction("player", 'nameplate' .. i) <= 4 and UnitExists('nameplate' .. i) and C_Item.IsItemInRange(37727, "nameplate"..i) == true then
-						number_in_range = number_in_range + 1
+					if UnitReaction("player", 'nameplate' .. i) <= 4 and UnitExists('nameplate' .. i) and (UnitAffectingCombat('nameplate' .. i) or _Is_Dummy) then
+						_, maxRange = ConRO.rc:getRange('nameplate' .. i);
+						if maxRange then
+							if tonumber(maxRange) <= 5 then
+								number_in_range = number_in_range + 1
+							end
+						end
 					end
 				end
 			end
 		elseif spellID == "10" then
 			if UnitReaction("player", "target") ~= nil then
 				if UnitReaction("player", "target") <= 4 and UnitExists("target") then
-					if C_Item.IsItemInRange(32321, "target") then
-						target_in_range = true;
+					_, maxRange = ConRO.rc:getRange("target");
+					if maxRange then
+						if tonumber(maxRange) <= 10 then
+							target_in_range = true;
+						end
 					end
 				end
 			end
 
 			for i = 1, 15 do
+				local serial = UnitGUID('nameplate' .. i);
+				local _Is_Dummy = false;
+				if serial then
+					local npcId = ConRO:GetNpcIdFromGuid(serial)
+					if npcId then
+						if (targetDummiesIds[npcId]) then
+							_Is_Dummy = true;
+						end
+					end
+				end
+
 				if UnitReaction("player", 'nameplate' .. i) ~= nil then
-					if UnitReaction("player", 'nameplate' .. i) <= 4 and UnitExists('nameplate' .. i) and C_Item.IsItemInRange(32321, "nameplate"..i) == true then
-						number_in_range = number_in_range + 1
+					if UnitReaction("player", 'nameplate' .. i) <= 4 and UnitExists('nameplate' .. i) and (UnitAffectingCombat('nameplate' .. i) or _Is_Dummy) then
+						_, maxRange = ConRO.rc:getRange('nameplate' .. i);
+						if maxRange then
+							if tonumber(maxRange) <= 10 then
+								number_in_range = number_in_range + 1
+							end
+						end
 					end
 				end
 			end
 		elseif spellID == "15" then
 			if UnitReaction("player", "target") ~= nil then
 				if UnitReaction("player", "target") <= 4 and UnitExists("target") then
-					if C_Item.IsItemInRange(33069, "target") then
-						target_in_range = true;
+					_, maxRange = ConRO.rc:getRange("target");
+					if maxRange then
+						if tonumber(maxRange) <= 15 then
+							target_in_range = true;
+						end
 					end
 				end
 			end
@@ -510,16 +552,24 @@ function ConRO:Targets(spellID)
 				end
 
 				if UnitReaction("player", 'nameplate' .. i) ~= nil then
-					if UnitReaction("player", 'nameplate' .. i) <= 4 and UnitExists('nameplate' .. i) and (UnitAffectingCombat('nameplate' .. i) or _Is_Dummy) and C_Item.IsItemInRange(33069, "nameplate"..i) == true then
-						number_in_range = number_in_range + 1
+					if UnitReaction("player", 'nameplate' .. i) <= 4 and UnitExists('nameplate' .. i) and (UnitAffectingCombat('nameplate' .. i) or _Is_Dummy) then
+						_, maxRange = ConRO.rc:getRange('nameplate' .. i);
+						if maxRange then
+							if tonumber(maxRange) <= 15 then
+								number_in_range = number_in_range + 1
+							end
+						end
 					end
 				end
 			end
 		elseif spellID == "25" then
 			if UnitReaction("player", "target") ~= nil then
 				if UnitReaction("player", "target") <= 4 and UnitExists("target") then
-					if C_Item.IsItemInRange(24268, "target") then
-						target_in_range = true;
+					_, maxRange = ConRO.rc:getRange("target");
+					if maxRange then
+						if tonumber(maxRange) <= 25 then
+							target_in_range = true;
+						end
 					end
 				end
 			end
@@ -537,16 +587,59 @@ function ConRO:Targets(spellID)
 				end
 
 				if UnitReaction("player", 'nameplate' .. i) ~= nil then
-					if UnitReaction("player", 'nameplate' .. i) <= 4 and UnitExists('nameplate' .. i) and (UnitAffectingCombat('nameplate' .. i) or _Is_Dummy) and C_Item.IsItemInRange(24268, "nameplate"..i) == true then
-						number_in_range = number_in_range + 1
+					if UnitReaction("player", 'nameplate' .. i) <= 4 and UnitExists('nameplate' .. i) and (UnitAffectingCombat('nameplate' .. i) or _Is_Dummy) then
+						_, maxRange = ConRO.rc:getRange('nameplate' .. i);
+						if maxRange then
+							if tonumber(maxRange) <= 25 then
+								number_in_range = number_in_range + 1
+							end
+						end
+					end
+				end
+			end
+		elseif spellID == "30" then
+			if UnitReaction("player", "target") ~= nil then
+				if UnitReaction("player", "target") <= 4 and UnitExists("target") then
+					_, maxRange = ConRO.rc:getRange("target");
+					if maxRange then
+						if tonumber(maxRange) <= 30 then
+							target_in_range = true;
+						end
+					end
+				end
+			end
+
+			for i = 1, 15 do
+				local serial = UnitGUID('nameplate' .. i);
+				local _Is_Dummy = false;
+				if serial then
+					local npcId = ConRO:GetNpcIdFromGuid(serial)
+					if npcId then
+						if (targetDummiesIds[npcId]) then
+							_Is_Dummy = true;
+						end
+					end
+				end
+
+				if UnitReaction("player", 'nameplate' .. i) ~= nil then
+					if UnitReaction("player", 'nameplate' .. i) <= 4 and UnitExists('nameplate' .. i) and (UnitAffectingCombat('nameplate' .. i) or _Is_Dummy) then
+						_, maxRange = ConRO.rc:getRange('nameplate' .. i);
+						if maxRange then
+							if tonumber(maxRange) <= 30 then
+								number_in_range = number_in_range + 1
+							end
+						end
 					end
 				end
 			end
 		elseif spellID == "40" then
 			if UnitReaction("player", "target") ~= nil then
 				if UnitReaction("player", "target") <= 4 and UnitExists("target") then
-					if C_Item.IsItemInRange(28767, "target") then
-						target_in_range = true;
+					_, maxRange = ConRO.rc:getRange("target");
+					if maxRange then
+						if tonumber(maxRange) <= 40 then
+							target_in_range = true;
+						end
 					end
 				end
 			end
@@ -564,8 +657,13 @@ function ConRO:Targets(spellID)
 				end
 
 				if UnitReaction("player", 'nameplate' .. i) ~= nil then
-					if UnitReaction("player", 'nameplate' .. i) <= 4 and UnitExists('nameplate' .. i) and (UnitAffectingCombat('nameplate' .. i) or _Is_Dummy) and C_Item.IsItemInRange(28767, "nameplate"..i) == true then
-						number_in_range = number_in_range + 1
+					if UnitReaction("player", 'nameplate' .. i) <= 4 and UnitExists('nameplate' .. i) and (UnitAffectingCombat('nameplate' .. i) or _Is_Dummy) then
+						_, maxRange = ConRO.rc:getRange('nameplate' .. i);
+						if maxRange then
+							if tonumber(maxRange) <= 40 then
+								number_in_range = number_in_range + 1
+							end
+						end
 					end
 				end
 			end
