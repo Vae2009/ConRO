@@ -83,7 +83,7 @@ function ConROTTOnEnter(self)
 			GameTooltip:AddLine('"This can be toggled during combat as phases change."', 1, 1, 0, true)
 	end
 
-	if ttFrameName == "ConROWindow" or ttFrameName == "ConROWindow2" then
+	if ttFrameName == "ConROWindow" or ttFrameName == "ConROWindow2" or ttFrameName == "ConROWindow3" then
 		GameTooltip:SetText("ConRO Window")  -- This sets the top line of text, in gold.
 		GameTooltip:AddLine("", .2, 1, .2)
 			GameTooltip:AddLine("This window displays up to the next three(3) suggested abilities in your rotation.", 1, 1, 1, true)

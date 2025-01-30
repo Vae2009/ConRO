@@ -1414,10 +1414,14 @@ function ConRO:AbilityReady(spellCheck, timeShift, spelltype)
 		if have then
 			known = true;
 		end
-		if known and usable and _CD <= 0 and not notEnough then
-			rdy = true;
+		if spelltype == 'known' then
+			if known and _CD <= 0 then
+				rdy = true;
+			end
 		else
-			rdy = false;
+			if known and usable and _CD <= 0 and not notEnough then
+				rdy = true;
+			end
 		end
 		if castTimeMilli ~= nil then
 			castTime = castTimeMilli/1000;

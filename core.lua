@@ -303,10 +303,16 @@ local options = {
 
 						if ConRO:HealSpec() then
 							ConROWindow:Hide();
+							ConROWindow2:Hide();
+							ConROWindow3:Hide();
 						elseif ConRO.db.profile.enableWindow and not ConRO.db.profile.combatWindow then
 							ConROWindow:Show();
+							ConROWindow2:Show();
+							ConROWindow3:Show();
 						else
 							ConROWindow:Hide();
+							ConROWindow2:Hide();
+							ConROWindow3:Hide();
 						end
 					end,
 					get = function(info) return ConRO.db.profile._Spec_1_Enabled end
@@ -328,10 +334,16 @@ local options = {
 
 						if ConRO:HealSpec() then
 							ConROWindow:Hide();
+							ConROWindow2:Hide();
+							ConROWindow3:Hide();
 						elseif ConRO.db.profile.enableWindow and not ConRO.db.profile.combatWindow then
 							ConROWindow:Show();
+							ConROWindow2:Show();
+							ConROWindow3:Show();
 						else
 							ConROWindow:Hide();
+							ConROWindow2:Hide();
+							ConROWindow3:Hide();
 						end
 					end,
 					get = function(info) return ConRO.db.profile._Spec_2_Enabled end
@@ -354,10 +366,16 @@ local options = {
 
 						if ConRO:HealSpec() then
 							ConROWindow:Hide();
+							ConROWindow2:Hide();
+							ConROWindow3:Hide();
 						elseif ConRO.db.profile.enableWindow and not ConRO.db.profile.combatWindow then
 							ConROWindow:Show();
+							ConROWindow2:Show();
+							ConROWindow3:Show();
 						else
 							ConROWindow:Hide();
+							ConROWindow2:Hide();
+							ConROWindow3:Hide();
 						end
 					end,
 					get = function(info) return ConRO.db.profile._Spec_3_Enabled end
@@ -380,10 +398,16 @@ local options = {
 
 						if ConRO:HealSpec() then
 							ConROWindow:Hide();
+							ConROWindow2:Hide();
+							ConROWindow3:Hide();
 						elseif ConRO.db.profile.enableWindow and not ConRO.db.profile.combatWindow then
 							ConROWindow:Show();
+							ConROWindow2:Show();
+							ConROWindow3:Show();
 						else
 							ConROWindow:Hide();
+							ConROWindow2:Hide();
+							ConROWindow3:Hide();
 						end
 					end,
 					get = function(info) return ConRO.db.profile._Spec_4_Enabled end
@@ -1827,8 +1851,12 @@ local options = {
 						ConRO.db.profile.enableWindow = val;
 						if val == true and not ConRO:HealSpec() then
 							ConROWindow:Show();
+							ConROWindow2:Show();
+							ConROWindow3:Show();
 						else
 							ConROWindow:Hide();
+							ConROWindow2:Hide();
+							ConROWindow3:Hide();
 						end
 					end,
 					get = function(info) return ConRO.db.profile.enableWindow end
@@ -1843,9 +1871,13 @@ local options = {
 						ConRO.db.profile.combatWindow = val;
 						if val == true then
 							ConROWindow:Hide();
+							ConROWindow2:Hide();
+							ConROWindow3:Hide();
 							ConRODefenseWindow:Hide();
 						else
 							ConROWindow:Show();
+							ConROWindow2:Show();
+							ConROWindow3:Show();
 							ConRODefenseWindow:Show();
 						end
 					end,
@@ -1908,9 +1940,13 @@ local options = {
 						ConRO.db.profile.enableWindowKeybinds = val;
 						if val == true then
 							ConROWindow.fontkey:Show();
+							ConROWindow2.fontkey:Show();
+							ConROWindow3.fontkey:Show();
 							ConRODefenseWindow.fontkey:Show();
 						else
 							ConROWindow.fontkey:Hide();
+							ConROWindow2.fontkey:Hide();
+							ConROWindow3.fontkey:Hide();
 							ConRODefenseWindow.fontkey:Hide();
 						end
 					end,
@@ -2373,10 +2409,16 @@ function ConRO:ACTIVE_PLAYER_SPECIALIZATION_CHANGED()
 
 		if ConRO:HealSpec() then
 			ConROWindow:Hide();
+			ConROWindow2:Hide();
+			ConROWindow3:Hide();
 		elseif ConRO.db.profile.enableWindow and not ConRO.db.profile.combatWindow then
 			ConROWindow:Show();
+			ConROWindow2:Show();
+			ConROWindow3:Show();
 		else
 			ConROWindow:Hide();
+			ConROWindow2:Hide();
+			ConROWindow3:Hide();
 		end
 
 		ConRO:ButtonFetch()
@@ -2394,10 +2436,16 @@ function ConRO:ACTIVE_COMBAT_CONFIG_CHANGED()
 
 		if ConRO:HealSpec() then
 			ConROWindow:Hide();
+			ConROWindow2:Hide();
+			ConROWindow3:Hide();
 		elseif ConRO.db.profile.enableWindow and not ConRO.db.profile.combatWindow then
 			ConROWindow:Show();
+			ConROWindow2:Show();
+			ConROWindow3:Show();
 		else
 			ConROWindow:Hide();
+			ConROWindow2:Hide();
+			ConROWindow3:Hide();
 		end
 
 		ConRO:ButtonFetch()
@@ -2415,10 +2463,16 @@ function ConRO:PLAYER_SPECIALIZATION_CHANGED()
 
 		if ConRO:HealSpec() then
 			ConROWindow:Hide();
+			ConROWindow2:Hide();
+			ConROWindow3:Hide();
 		elseif ConRO.db.profile.enableWindow and not ConRO.db.profile.combatWindow then
 			ConROWindow:Show();
+			ConROWindow2:Show();
+			ConROWindow3:Show();
 		else
 			ConROWindow:Hide();
+			ConROWindow2:Hide();
+			ConROWindow3:Hide();
 		end
 
 		ConRO:ButtonFetch()
@@ -2437,10 +2491,16 @@ function ConRO:TRAIT_CONFIG_UPDATED()
 
 		if ConRO:HealSpec() then
 			ConROWindow:Hide();
+			ConROWindow2:Hide();
+			ConROWindow3:Hide();
 		elseif ConRO.db.profile.enableWindow and not ConRO.db.profile.combatWindow then
 			ConROWindow:Show();
+			ConROWindow2:Show();
+			ConROWindow3:Show();
 		else
 			ConROWindow:Hide();
+			ConROWindow2:Hide();
+			ConROWindow3:Hide();
 		end
 
 		ConRO:ButtonFetch()
@@ -2505,6 +2565,8 @@ function ConRO:PET_BATTLE_OPENING_START()
 	self:DisableRotation();
 	self:DisableDefense();
 	ConROWindow:Hide();
+	ConROWindow2:Hide();
+	ConROWindow3:Hide();
 	ConRODefenseWindow:Hide();
 end
 
@@ -2518,10 +2580,16 @@ function ConRO:PET_BATTLE_OVER()
 
 	if ConRO.db.profile.enableWindow and (ConRO.db.profile.combatWindow or ConRO:HealSpec()) and ConRO:TarHostile() then
 		ConROWindow:Show();
+		ConROWindow2:Show();
+		ConROWindow3:Show();
 	elseif ConRO.db.profile.enableWindow and not (ConRO.db.profile.combatWindow or ConRO:HealSpec()) then
 		ConROWindow:Show();
+		ConROWindow2:Show();
+		ConROWindow3:Show();
 	else
 		ConROWindow:Hide();
+		ConROWindow2:Hide();
+		ConROWindow3:Hide();
 	end
 
 	if ConRO.db.profile.enableDefenseWindow and ConRO.db.profile.combatWindow and ConRO:TarHostile() then
@@ -2570,8 +2638,8 @@ end
 
 function ConRO:LOADING_SCREEN_ENABLED()
 	--	self:Print(self.Colors.Success .. 'Lost Control!');
-			self:DisableRotation();
-			self:DisableDefense();
+	self:DisableRotation();
+	self:DisableDefense();
 end
 
 function ConRO:LOADING_SCREEN_DISABLED()
@@ -2602,10 +2670,16 @@ function ConRO:PLAYER_TARGET_CHANGED()
 
 		if ConRO.db.profile.enableWindow and (ConRO.db.profile.combatWindow or ConRO:HealSpec()) and ConRO:TarHostile() then
 			ConROWindow:Show();
+			ConROWindow2:Show();
+			ConROWindow3:Show();
 		elseif ConRO.db.profile.enableWindow and not (ConRO.db.profile.combatWindow or ConRO:HealSpec()) then
 			ConROWindow:Show();
+			ConROWindow2:Show();
+			ConROWindow3:Show();
 		else
 			ConROWindow:Hide();
+			ConROWindow2:Hide();
+			ConROWindow3:Hide();
 		end
 
 		if ConRO.db.profile.enableDefenseWindow and ConRO.db.profile.combatWindow and ConRO:TarHostile() then
