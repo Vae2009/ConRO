@@ -2294,7 +2294,7 @@ function ConRO:AddStandardButton(button, hotkey)
                 spellId = GetMacroSpell(id)
             end
         elseif type == 'item' then
-            spellId = C_Item.GetItemSpell(id)
+			spellId = id
         elseif type == 'spell' then
 			local spellInfo = C_Spell.GetSpellInfo(id)
             spellId = spellInfo and spellInfo.spellID

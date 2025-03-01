@@ -2395,10 +2395,11 @@ function ConRO:OnEnable()
 	self:RegisterEvent('ACTIVE_TALENT_GROUP_CHANGED');
 	self:RegisterEvent('PLAYER_SPECIALIZATION_CHANGED');
 	self:RegisterEvent('UPDATE_MACROS');
+	
 	self:RegisterEvent('VEHICLE_UPDATE');
-
 	self:RegisterEvent('UNIT_ENTERED_VEHICLE');
 	self:RegisterEvent('UNIT_EXITED_VEHICLE');
+
 	self:RegisterEvent('PLAYER_CONTROL_LOST');
 	self:RegisterEvent('PLAYER_CONTROL_GAINED');
 
@@ -2726,6 +2727,11 @@ function ConRO:ACTIONBAR_SLOT_CHANGED()
 	ConRO:ButtonFetch()
 end
 
+function ConRO:UPDATE_MACROS()
+	self:UpdateButtonGlow();
+	ConRO:ButtonFetch()
+end
+
 function ConRO:ButtonFetch()
 	if self.rotationEnabled then
 		if self.fetchTimer then
@@ -2744,7 +2750,6 @@ ConRO.UPDATE_STEALTH = ConRO.ButtonFetch;
 ConRO.LEARNED_SPELL_IN_TAB = ConRO.ButtonFetch;
 ConRO.CHARACTER_POINTS_CHANGED = ConRO.ButtonFetch;
 ConRO.ACTIVE_TALENT_GROUP_CHANGED = ConRO.ButtonFetch;
-ConRO.UPDATE_MACROS = ConRO.ButtonFetch;
 ConRO.VEHICLE_UPDATE = ConRO.ButtonFetch;
 
 function ConRO:InvokeNextSpell()
@@ -2759,26 +2764,40 @@ function ConRO:InvokeNextSpell()
 --	ConRO:UpdateButtonGlow();
 
 	local spellName, spellTexture;
-
 	-- Get info for the first suggested spell
 	if self.Spell then
-		local spellInfo1 = C_Spell.GetSpellInfo(self.Spell);
-		spellName = spellInfo1 and spellInfo1.name;
-		spellTexture = spellInfo1 and spellInfo1.originalIconID;
+		if type(self.Spell) == "string" then
+			self.Spell = tonumber(self.Spell)
+			spellName, _, _, _, _, _, _, _, _, spellTexture = GetItemInfo(self.Spell);
+		else
+			local spellInfo1 = C_Spell.GetSpellInfo(self.Spell);
+			spellName = spellInfo1 and spellInfo1.name;
+			spellTexture = spellInfo1 and spellInfo1.originalIconID;
+		end
 	end
 
 	local spellTexture2;
 	-- Get info for the second suggested spell, only if it exists
 	if self.SuggestedSpells[2] then
-		local spellInfo2 = C_Spell.GetSpellInfo(self.SuggestedSpells[2]);
-		spellTexture2 = spellInfo2 and spellInfo2.originalIconID;
+		if type(self.SuggestedSpells[2]) == "string" then
+			spell_2 = tonumber(self.SuggestedSpells[2])
+			_, _, _, _, _, _, _, _, _, spellTexture2 = GetItemInfo(self.SuggestedSpells[2]);
+		else
+			local spellInfo2 = C_Spell.GetSpellInfo(self.SuggestedSpells[2]);
+			spellTexture2 = spellInfo2 and spellInfo2.originalIconID;
+		end
 	end
 
 	local spellTexture3;
 	-- Get info for the third suggested spell, only if it exists
 	if self.SuggestedSpells[3] then
-		local spellInfo3 = C_Spell.GetSpellInfo(self.SuggestedSpells[3]);
-		spellTexture3 = spellInfo3 and spellInfo3.originalIconID;
+		if type(self.SuggestedSpells[3]) == "string" then
+			spell_3 = tonumber(self.SuggestedSpells[3])
+			_, _, _, _, _, _, _, _, _, spellTexture3 = GetItemInfo(self.SuggestedSpells[3]);
+		else
+			local spellInfo3 = C_Spell.GetSpellInfo(self.SuggestedSpells[3]);
+			spellTexture3 = spellInfo3 and spellInfo3.originalIconID;
+		end
 	end
 
 	if (oldSkill ~= self.Spell or oldSkill == nil) and self.Spell ~= nil then

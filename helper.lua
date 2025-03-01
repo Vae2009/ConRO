@@ -101,11 +101,18 @@ function ConRO:BurstMode(_Spell_ID, timeShift)
 	local _Burst = ConRO_BurstButton:IsVisible();
 	timeShift = timeShift or ConRO:EndCast();
 	local _Burst_Threshold = ConRO.db.profile._Burst_Threshold;
-	local _, _, baseCooldown = ConRO:Cooldown(_Spell_ID, timeShift);
 	local _Burst_Mode = false;
 
-	if _Burst and baseCooldown >= _Burst_Threshold then
-		_Burst_Mode = true;
+	if _Spell_ID == "item" then
+		if _Burst then
+			_Burst_Mode = true;
+		end
+	else
+		local _, _, baseCooldown = ConRO:Cooldown(_Spell_ID, timeShift);
+
+		if _Burst and baseCooldown >= _Burst_Threshold then
+			_Burst_Mode = true;
+		end
 	end
 
 	return _Burst_Mode;
@@ -116,13 +123,20 @@ function ConRO:FullMode(_Spell_ID, timeShift)
 	local _Burst = ConRO_BurstButton:IsVisible();
 	timeShift = timeShift or ConRO:EndCast();
 	local _Burst_Threshold = ConRO.db.profile._Burst_Threshold;
-	local _, _, baseCooldown = ConRO:Cooldown(_Spell_ID, timeShift);
 	local _Full_Mode = false;
 
-	if _Burst and baseCooldown < _Burst_Threshold then
-		_Full_Mode = true;
-	elseif _Full then
-		_Full_Mode = true;
+	if _Spell_ID == "item" then
+		if _Full then
+			_Full_Mode = true;
+		end
+	else
+		local _, _, baseCooldown = ConRO:Cooldown(_Spell_ID, timeShift);
+
+		if _Burst and baseCooldown < _Burst_Threshold then
+			_Full_Mode = true;
+		elseif _Full then
+			_Full_Mode = true;
+		end
 	end
 
 	return _Full_Mode;
@@ -201,6 +215,30 @@ function ConRO:ItemEquipped(_item_string)
 		end
 	end
 	return _match_item_NAME;
+end
+
+function ConRO:UsableTrinket()
+	local t13_Usable, t13_RDY, t14_Usable, t14_RDY = false, false, false, false;
+
+	local item13ID = GetInventoryItemID("player", 13)
+	local _, duration13, enable13 = GetItemCooldown(item13ID)
+	if enable13 == 1 then
+		t13_Usable = true;
+		if duration13 == 0 then
+			t13_RDY = true;
+		end
+	end
+
+	local item14ID = GetInventoryItemID("player", 14)
+	local _, duration14, enable14 = GetItemCooldown(item14ID)
+	if enable14 then
+		t14_Usable = true;
+		if duration14 == 0 then
+			t14_RDY = true;
+		end
+	end
+
+	return item13ID, t13_Usable, t13_RDY, item14ID, t14_Usable, t14_RDY
 end
 
 --[[function ConRO:CountTier()
