@@ -221,20 +221,24 @@ function ConRO:UsableTrinket()
 	local t13_Usable, t13_RDY, t14_Usable, t14_RDY = false, false, false, false;
 
 	local item13ID = GetInventoryItemID("player", 13)
-	local _, duration13, enable13 = GetItemCooldown(item13ID)
-	if enable13 == 1 then
-		t13_Usable = true;
-		if duration13 == 0 then
-			t13_RDY = true;
+	if item13ID then
+		local _, duration13, enable13 = GetItemCooldown(item13ID)
+		if enable13 == 1 then
+			t13_Usable = true;
+			if duration13 == 0 then
+				t13_RDY = true;
+			end
 		end
 	end
 
 	local item14ID = GetInventoryItemID("player", 14)
-	local _, duration14, enable14 = GetItemCooldown(item14ID)
-	if enable14 then
-		t14_Usable = true;
-		if duration14 == 0 then
-			t14_RDY = true;
+	if item14ID then
+		local _, duration14, enable14 = GetItemCooldown(item14ID)
+		if enable14 then
+			t14_Usable = true;
+			if duration14 == 0 then
+				t14_RDY = true;
+			end
 		end
 	end
 
