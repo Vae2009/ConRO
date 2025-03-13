@@ -999,7 +999,7 @@ function ConRO:DisplayWindowFrame()
 		frame2:SetSize(ConRO.db.profile.windowIconSize/1.20, ConRO.db.profile.windowIconSize/1.20);
 		if ConRO.db.profile.combatWindow or ConRO:HealSpec() then
 			frame2:Hide();
-		elseif not ConRO.db.profile.enableNextWindow then
+		elseif not ConRO.db.profile.enableNextWindow or not ConRO.db.profile.enableWindow then
 			frame2:Hide();
 		else
 			frame2:Show();
@@ -1041,7 +1041,7 @@ function ConRO:DisplayWindowFrame()
 		frame3:SetSize(ConRO.db.profile.windowIconSize/1.20, ConRO.db.profile.windowIconSize/1.20);
 		if ConRO.db.profile.combatWindow or ConRO:HealSpec() then
 			frame3:Hide();
-		elseif not ConRO.db.profile.enableNextWindow then
+		elseif not ConRO.db.profile.enableNextWindow or not ConRO.db.profile.enableWindow then
 			frame3:Hide();
 		else
 			frame3:Show();
