@@ -842,7 +842,7 @@ function ConRO:AnyTargetAura(spellID)
 			end
 		end
 	end
-	print(printbuff .. " " .. count)
+	--print(printbuff .. " " .. count)
 	return haveBuff, count;
 end
 
