@@ -195,26 +195,40 @@ ConRO.TierSlotList = {
 	"LegsSlot",
 }
 
+function ConRO:HasEnchant(enchantID_request)
+	local match_item_enchant = false;
+	for i, v in ipairs(ConRO.ItemSlotList) do
+		local slot_LINK = GetInventoryItemLink("player", GetInventorySlotInfo(v))
+		if slot_LINK ~= nil then
+			local enchant_number = select(3, strsplit(":", slot_LINK))
+			local enchantID = tonumber(enchant_number)
+			if enchantID == enchantID_request then
+				match_item_enchant = true
+				break
+			end
+		end
+	end
+	return match_item_enchant
+end
+
 function ConRO:ItemEquipped(_item_string)
-	local _match_item_NAME = false;
-	local _, _item_LINK = GetItemInfo(_item_string);
-
+	local match_item_name = false
+	local _, _item_LINK = GetItemInfo(_item_string)
 	if _item_LINK ~= nil then
-		local _item_NAME = GetItemInfo(_item_LINK);
-
+		local _item_NAME = GetItemInfo(_item_LINK)
 		for i, v in ipairs(ConRO.ItemSlotList) do
-			local _slot_LINK = GetInventoryItemLink("player", GetInventorySlotInfo(v));
+			local _slot_LINK = GetInventoryItemLink("player", GetInventorySlotInfo(v))
 			if _slot_LINK then
-				local _slot_item_NAME = GetItemInfo(_slot_LINK);
+				local _slot_item_NAME = GetItemInfo(_slot_LINK)
 
 				if _slot_item_NAME == _item_NAME then
-					_match_item_NAME = true;
-					break;
+					match_item_name = true
+					break
 				end
 			end
 		end
 	end
-	return _match_item_NAME;
+	return match_item_name
 end
 
 function ConRO:UsableTrinket()
@@ -790,28 +804,90 @@ function ConRO:TargetAura(spellID, timeShift)
 end
 
 function ConRO:AnyTargetAura(spellID)
-	local haveBuff = false;
-	local count = 0;
+	local haveBuff = false
+	local printbuff = "False"
+	local count = 0
 
 	-- Iterate over nameplates
 	for i = 1, 15 do
-		if UnitExists('nameplate' .. i) then
-			-- Iterate over auras on the current nameplate
-			for x = 1, 40 do
-				local aura = C_UnitAuras.GetAuraDataByIndex('nameplate' .. i, x, 'PLAYER|HARMFUL')
-				if not aura then
-					break  -- No more auras to check
+		local serial = UnitGUID('nameplate' .. i);
+		local _Is_Dummy = false;
+		if serial then
+			local npcId = ConRO:GetNpcIdFromGuid(serial)
+			if npcId then
+				if (targetDummiesIds[npcId]) then
+					_Is_Dummy = true;
 				end
+			end
+		end
 
-				if aura.spellId == spellID then
-					haveBuff = true;
-					count = count + 1;
-					break;  -- No need to check further auras on this nameplate
+		if UnitExists('nameplate' .. i) then
+			if UnitReaction("player", 'nameplate' .. i) ~= nil then
+				if UnitReaction("player", 'nameplate' .. i) <= 4 and (UnitAffectingCombat('nameplate' .. i) or _Is_Dummy) then
+					-- Iterate over auras on the current nameplate
+					for x = 1, 40 do
+						local aura = C_UnitAuras.GetAuraDataByIndex('nameplate' .. i, x, 'PLAYER|HARMFUL')
+						if not aura then
+							break  -- No more auras to check
+						end
+
+						if aura.spellId == spellID then
+							haveBuff = true
+							printbuff = "True"
+							count = count + 1
+							break -- No need to check further auras on this nameplate
+						end
+					end
 				end
 			end
 		end
 	end
+	print(printbuff .. " " .. count)
+	return haveBuff, count;
+end
 
+function ConRO:EveryTargetAura(spellID)
+	local haveBuff = false
+	--local printbuff = "False"
+	local count = 0
+
+	-- Iterate over nameplates
+	for i = 1, 15 do
+		local serial = UnitGUID('nameplate' .. i);
+		local _Is_Dummy = false;
+		if serial then
+			local npcId = ConRO:GetNpcIdFromGuid(serial)
+			if npcId then
+				if (targetDummiesIds[npcId]) then
+					_Is_Dummy = true;
+				end
+			end
+		end
+
+		if UnitExists('nameplate' .. i) then
+			if UnitReaction("player", 'nameplate' .. i) ~= nil then
+				if UnitReaction("player", 'nameplate' .. i) <= 4 and (UnitAffectingCombat('nameplate' .. i) or _Is_Dummy) then
+					haveBuff = false
+					--printbuff = "False"
+					-- Iterate over auras on the current nameplate
+					for x = 1, 40 do
+						local aura = C_UnitAuras.GetAuraDataByIndex('nameplate' .. i, x, 'PLAYER|HARMFUL')
+						if not aura then
+							break  -- No more auras to check
+						end
+
+						if aura.spellId == spellID then
+							haveBuff = true
+							--printbuff = "True"
+							count = count + 1
+							break -- No need to check further auras on this nameplate
+						end
+					end
+				end
+			end
+		end
+	end
+	--print(printbuff .. " " .. count)
 	return haveBuff, count;
 end
 
