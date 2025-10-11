@@ -2280,9 +2280,9 @@ end
 ConRO.DefaultPrint = ConRO.Print;
 function ConRO:Print(...)
 	if self.db.profile._Disable_Info_Messages then
-		return;
+		return
 	end
-	ConRO:DefaultPrint(...);
+	ConRO:DefaultPrint(...)
 end
 
 function ConRO:EnableRotation()

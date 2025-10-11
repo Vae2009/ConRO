@@ -1033,7 +1033,7 @@ function ConRO:RaidBuff(spellID)
 			selfhasBuff = true;
 			for i = 1, numGroupMembers do -- For each raid member
 				local unit = "raid" .. i;
-				if UnitExists(unit) then
+				if UnitExists(unit) and UnitIsPlayer(unit) then
 					if not UnitIsDeadOrGhost(unit) and UnitInRange(unit) then
 						for x = 1, 40 do
 							local aura = C_UnitAuras.GetAuraDataByIndex(unit, x, 'HELPFUL');
@@ -1055,7 +1055,7 @@ function ConRO:RaidBuff(spellID)
 		elseif numGroupMembers >= 2 and numGroupMembers <= 5 then
 			for i = 1, 4 do -- For each party member
 				local unit = "party" .. i;
-				if UnitExists(unit) then
+				if UnitExists(unit) and UnitIsPlayer(unit) then
 					if not UnitIsDeadOrGhost(unit) and UnitInRange(unit) then
 						for x = 1, 40 do
 							local aura = C_UnitAuras.GetAuraDataByIndex(unit, x, 'HELPFUL');
@@ -1514,37 +1514,40 @@ function ConRO:IsSpellInRange(spellCheck, target_unit)
 end
 
 function ConRO:AbilityReady(spellCheck, timeShift, spelltype)
-	local spellid = spellCheck.spellID;
-	local entryID = spellCheck.talentID;
-	local _CD, _MaxCD = ConRO:Cooldown(spellid, timeShift);
-	local have = ConRO:TalentChosen(entryID);
-
-	local known = IsPlayerSpell(spellid);
-	local usable, notEnough = C_Spell.IsSpellUsable(spellid);
-	local castTimeMilli = C_Spell.GetSpellInfo(spellid).castTime;
-	local castTime = 0;
-	local rdy = false;
+	local spellid = spellCheck.spellID
+	local entryID = spellCheck.talentID
+	local _CD, _MaxCD = ConRO:Cooldown(spellid, timeShift)
+	local have = ConRO:TalentChosen(entryID)
+	local known = IsPlayerSpell(spellid)
+	local usable, notEnough = C_Spell.IsSpellUsable(spellid)
+	local castTimeMilli = C_Spell.GetSpellInfo(spellid).castTime
+	local castTime = 0
+	local rdy = false
 		if spelltype == 'pet' then
-			have = IsSpellKnown(spellid, true);
+			have = IsSpellKnown(spellid, true)
 		elseif spelltype == 'pvp' then
-			have = ConRO:PvPTalentChosen(entryID);
+			have = ConRO:PvPTalentChosen(entryID)
 		end
+
 		if have then
-			known = true;
+			known = true
 		end
+
 		if spelltype == 'known' then
 			if known and _CD <= 0 then
-				rdy = true;
+				rdy = true
 			end
 		else
 			if known and usable and _CD <= 0 and not notEnough then
-				rdy = true;
+				rdy = true
 			end
 		end
+
 		if castTimeMilli ~= nil then
-			castTime = castTimeMilli/1000;
+			castTime = castTimeMilli/1000
 		end
-	return spellid, rdy, _CD, _MaxCD, castTime;
+
+	return spellid, rdy, _CD, _MaxCD, castTime
 end
 
 function ConRO:ItemReady(_Item_ID, timeShift)
